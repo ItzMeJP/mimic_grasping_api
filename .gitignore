@@ -4,3 +4,6 @@
 
 # ignore all logs
 *.log
+
+#ignore subdir .git folders
+/libs/SimpleSerialInterface
