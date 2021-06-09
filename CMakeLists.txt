@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(mimic_grasping_server)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(SUBDIR_LIBS_PATH libs)
 
 #set(EXPORT_PATH_USED_INTO_SUBDIRS #defining a shared CMAKE var.
@@ -31,7 +31,7 @@ include_directories(
 ## Declare a C++ library
 add_library(mimic_grasping_server
             src/mimic_grasping_server.cpp
-            src/mgs_serial.cpp
+            src/tool_firmware_interface.cpp
         )
 
 ## Set dependencies of the library
@@ -42,6 +42,7 @@ target_link_libraries(mimic_grasping_server
         ${EIGEN_LIBRARIES}
         Boost::thread
         Boost::timer
+        jsoncpp
         )
 
 ## Define an executable

@@ -3,8 +3,6 @@
 namespace mimic_grasping {
 
     MimicGraspingServer::MimicGraspingServer(){
-        serial_ = std::make_shared<SimpleSerial>("/dev/ttyUSB0",115200);
-        //serial_thread_reader_ = std::make_shared<boost::thread>(&MimicGraspingServer::readCommandCallback, this);
     }
 
     MimicGraspingServer::~MimicGraspingServer(){
@@ -14,7 +12,18 @@ namespace mimic_grasping {
     void MimicGraspingServer::start() {
 
         output_string_ = "Null";
-        if(!startToolCommunication(output_string_))
+
+        env_root_folder_path =  getenv("MIMIC_GRASPING_SERVER_ROOT");
+        if(env_root_folder_path == NULL) {
+            output_string_ = "The environment variable $MIMIC_GRASPING_SERVER_ROOT is not defined";
+            return;
+        }
+
+        root_folder_path_ = std::string(env_root_folder_path);
+
+        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ ) ||
+           !startToolCommunication(output_string_) ||
+           !setGripperType(ToolFirmwareInterface::GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER))
             return;
 
         std::string command = "";
@@ -26,7 +35,7 @@ namespace mimic_grasping {
 
             if(command == "-1")
             {
-                std::cout<< "Changing config" << std::endl;
+                std::cout<< "Changing config. Setbaudrate" << std::endl;
                 if(!setSerialConfig("/dev/ttyUSB0",115200,output_string_))
                     return;
             }
@@ -42,29 +51,21 @@ namespace mimic_grasping {
                 if(!setGripperType(GRIPPER_TYPE::SINGLE_SUCTION_CUP))
                     return;
             }
+            if(command == "-103")
+                resetFirmware();
+
+            if(command == "-n")
+                sendErrorMsg();
+
+            if(command == "-s")
+                sendSuccessMsg();
+
+            if(command == "save")
+                saveFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + "/OutputTest.json");
 
         }
 
     }
 
-    bool MimicGraspingServer::setGripperType(int _gripper)
-    {
-        writeSerialCommand(MSG_TYPE::RESET);
-        //boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-        writeSerialCommand(_gripper);
-        serial_thread_reader_->timed_join(boost::chrono::milliseconds(2500));
 
-        std::string r = received_msg_;
-
-        std::string token = r.substr(0, r.find(firmware_state_delimiter_));
-        r.erase(0, 0 + token.length());
-
-
-        std::cout << "Token: " << r << " -------"<< std::endl;
-        return true;
-    }
-
-    std::string MimicGraspingServer::getOutputString(){
-        return output_string_;
-    }
 }//end namespace

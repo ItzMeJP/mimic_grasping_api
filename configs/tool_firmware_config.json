@@ -1,0 +1,9 @@
+{
+  "serial": {
+    "port": "/dev/ttyUSB0",
+    "baud_rate": 115200
+  },
+  "tool": {
+    "type": 99
+  }
+}
