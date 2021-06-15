@@ -88,62 +88,86 @@ namespace mimic_grasping {
         }
     }
 
+    bool ToolFirmwareInterface::convertMsgToCode(std::string _msg, int &_code)
+    {
+        std::string delimiter = "#", token;
+        if(!(_msg.find(delimiter)!= std::string::npos)){
+            output_string_ = "The message does not represent a code.";
+            return false;
+        }
+        token = _msg.substr(_msg.find(delimiter)+delimiter.length(), std::string::npos);
+        output_string_ = "Identified code: " + token;
+        //std::cout << output_string_ << std::endl;
+        _code = std::stoi(token);
+        return true;
+
+    }
+
+    void ToolFirmwareInterface::spinner_sleep(int _usec){
+        serial_thread_reader_->timed_join(boost::chrono::milliseconds(_usec));
+    }
+
     bool ToolFirmwareInterface::setGripperType(int _gripper)
     {
         if(!resetFirmware())
             return false;
 
         writeSerialCommand(_gripper);
-        serial_thread_reader_->timed_join(boost::chrono::milliseconds(2500));
+        //serial_thread_reader_->timed_join(boost::chrono::milliseconds(2500));
+        spinner_sleep(2500);
         std::string msg = received_msg_;
-        if(!(msg.find("Init State") != std::string::npos)){
+
+        if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_RUNNING)) != std::string::npos)){
             output_string_ = "Gripper not initialized";
             return false;
         }
         output_string_ = "Gripper initialized";
         current_gripper_type_ = _gripper;
-        std::cout << output_string_ << std::endl;
+        //std::cout << output_string_ << std::endl;
         return true;
     }
 
     bool ToolFirmwareInterface::resetFirmware(){
         writeSerialCommand(MSG_TYPE::RESET);
-        serial_thread_reader_->timed_join(boost::chrono::milliseconds(250));
+        //serial_thread_reader_->timed_join(boost::chrono::milliseconds(1000));
+        spinner_sleep(1000);
         std::string msg = received_msg_;
-        if(!(msg.find("Waiting for server connection")!= std::string::npos)){
+        if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_INIT))!= std::string::npos)){
             output_string_ = "Firmware is not able to be reset";
             return false;
         }
         output_string_ = "Firmware reset";
-        std::cout << output_string_ << std::endl;
+        //std::cout << output_string_ << std::endl;
         return true;
     }
 
     bool ToolFirmwareInterface::sendErrorMsg() {
         writeSerialCommand(MSG_TYPE::ERROR);
-        serial_thread_reader_->timed_join(boost::chrono::milliseconds(250));
+        //serial_thread_reader_->timed_join(boost::chrono::milliseconds(250));
+        spinner_sleep(250);
         std::string msg = received_msg_;
-        if(!(msg.find("Error State")!= std::string::npos)){
+        if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_ERROR))!= std::string::npos)){
             output_string_ = "Error msg not recognized";
-            std::cout << output_string_ << std::endl;
+            //std::cout << output_string_ << std::endl;
             return false;
         }
         output_string_ = "Error msg recognized";
-        std::cout << output_string_ << std::endl;
+        //std::cout << output_string_ << std::endl;
         return true;
     }
 
     bool ToolFirmwareInterface::sendSuccessMsg(){
         writeSerialCommand(MSG_TYPE::SUCCESS);
-        serial_thread_reader_->timed_join(boost::chrono::milliseconds(250));
+        //serial_thread_reader_->timed_join(boost::chrono::milliseconds(250));
+        spinner_sleep(250);
         std::string msg = received_msg_;
-        if(!(msg.find("Success State")!= std::string::npos) && !(msg.find("Last save canceled")!= std::string::npos)){
+        if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_SUCCESS))!= std::string::npos) && !(msg.find("Last save canceled")!= std::string::npos)){
             output_string_ = "Success msg not recognized";
-            std::cout << output_string_ << std::endl;
+            //std::cout << output_string_ << std::endl;
             return false;
         }
         output_string_ = "Success msg recognized";
-        std::cout << output_string_ << std::endl;
+        //std::cout << output_string_ << std::endl;
         return true;
     }
 

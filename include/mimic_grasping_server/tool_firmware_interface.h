@@ -35,22 +35,30 @@ namespace mimic_grasping{
         bool sendSuccessMsg();
         bool saveFirmwareInterfaceConfigFile(std::string _file);
         bool loadFirmwareInterfaceConfigFile(std::string _file);
+        bool convertMsgToCode(std::string _msg, int &_code);
+        void spinner_sleep(int _usec);
         //bool run();
 
         enum MSG_TYPE
         {
-            CONNECTION_STABILISHED_TWO_ALTERNATE_RELAYS = 99,
-            CONNECTION_STABILISHED_ONE_RELAY = 100,
-            ERROR = 101,
-            SUCCESS = 102,
-            RESET = 103,
-            SAVE = 104,
-            REMOVE_LAST_SAVE = 105
+            CONNECTION_STABILISHED_TWO_ALTERNATE_RELAYS = 100,
+            CONNECTION_STABILISHED_ONE_RELAY,
+            ACK,
+            ERROR,
+            SUCCESS,
+            RESET,
+            STATE_INIT = 500,
+            STATE_RUNNING = 501,
+            STATE_ACTIVE_GRIPPER = 502,
+            STATE_SAVING = 503,
+            STATE_ERROR = 504,
+            STATE_CANCELLING = 505,
+            STATE_SUCCESS = 506
         };
 
         enum GRIPPER_TYPE{
-            PARALLEL_PNEUMATIC_TWO_FINGER = 99,
-            SINGLE_SUCTION_CUP = 100
+            PARALLEL_PNEUMATIC_TWO_FINGER = 100,
+            SINGLE_SUCTION_CUP = 101
         };
 
     protected:
