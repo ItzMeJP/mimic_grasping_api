@@ -4,9 +4,9 @@
 #include <iostream>
 #include <thread>
 
-#include <simple_serial/simple_serial.h>
+#include <simple_serial.h>
 #include <boost/thread.hpp>
-#include <mimic_grasping_server/tool_firmware_interface.h>
+#include "tool_firmware_interface.h"
 
 
 namespace mimic_grasping{
@@ -17,15 +17,19 @@ namespace mimic_grasping{
         MimicGraspingServer();
         ~MimicGraspingServer();
 
-
         void start();
-
 
     protected:
         char const* env_root_folder_path;
         std::string root_folder_path_,
                     config_folder_path_ = "/configs",
                     tool_firmware_file_ = "/tool_firmware_config.json";
+
+        void stop();
+        bool stop_ = false;
+        bool requestToolLocalization();
+        bool requestObjectLocalization();
+
 
     }; // end class
 

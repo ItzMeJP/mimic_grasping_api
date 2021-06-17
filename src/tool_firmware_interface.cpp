@@ -2,7 +2,7 @@
 // Created by joaopedro on 09/06/21.
 //
 
-#include<mimic_grasping_server/tool_firmware_interface.h>
+#include "tool_firmware_interface.h"
 
 namespace mimic_grasping {
 

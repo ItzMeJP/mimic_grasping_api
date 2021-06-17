@@ -7,7 +7,7 @@
 #include <iostream>
 #include <thread>
 
-#include <simple_serial/simple_serial.h>
+#include <simple_serial.h>
 #include <boost/thread.hpp>
 #include <jsoncpp/json/value.h>
 #include <jsoncpp/json/json.h>

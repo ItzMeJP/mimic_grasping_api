@@ -1,4 +1,4 @@
-#include <mimic_grasping_server/mimic_grasping_server.h>
+#include "mimic_grasping_server.h"
 
 namespace mimic_grasping {
 
@@ -68,7 +68,6 @@ namespace mimic_grasping {
 
     }*/
 
-
     void MimicGraspingServer::start() {
 
         output_string_ = "Null";
@@ -83,14 +82,14 @@ namespace mimic_grasping {
 
         if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ ) ||
            !startToolCommunication(output_string_) ||
-           !setGripperType(ToolFirmwareInterface::GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER)) //TODO: get from config file
+           !setGripperType(current_gripper_type_))
             return;
 
         // TODO: run and test localizations modules
-        bool stop_ = false;
         int current_code;
-
         std::string current_msg = "";
+        stop_ = false;
+
         while(!stop_) {
             current_msg = received_msg_;
             convertMsgToCode(current_msg,current_code);
@@ -114,7 +113,9 @@ namespace mimic_grasping {
             spinner_sleep(1000);
         }
 
-
     }
 
+    void MimicGraspingServer::stop(){
+        stop_ = true;
+    }
 }//end namespace
