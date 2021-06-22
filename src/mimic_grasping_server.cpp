@@ -70,49 +70,60 @@ namespace mimic_grasping {
 
     void MimicGraspingServer::start() {
 
+        if(!init())
+            return;
+
+        // TODO: run and test localizations modules
+
+        while(!stop_) {
+            spin();
+            spinner_sleep(1000);
+        }
+
+    }
+
+    bool MimicGraspingServer::init(){
         output_string_ = "Null";
 
         env_root_folder_path =  getenv("MIMIC_GRASPING_SERVER_ROOT");
         if(env_root_folder_path == NULL) {
             output_string_ = "The environment variable $MIMIC_GRASPING_SERVER_ROOT is not defined";
-            return;
+            return false;
         }
+        stop_ = false;
 
         root_folder_path_ = std::string(env_root_folder_path);
 
         if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ ) ||
            !startToolCommunication(output_string_) ||
            !setGripperType(current_gripper_type_))
-            return;
+            return false;
 
-        // TODO: run and test localizations modules
-        int current_code;
-        std::string current_msg = "";
-        stop_ = false;
+        return true;
+    }
 
-        while(!stop_) {
-            current_msg = received_msg_;
-            convertMsgToCode(current_msg,current_code);
+    bool MimicGraspingServer::spin(){
 
-            output_string_ = current_msg;
+        current_msg_ = received_msg_;
+        convertMsgToCode(current_msg_,current_code_);
+
+        output_string_ = current_msg_;
+        std::cout << output_string_ << std::endl;
+
+        if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING)
+        {
+            output_string_ = "Save pose request received.";
             std::cout << output_string_ << std::endl;
-
-            if(current_code == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING)
-            {
-                output_string_ = "Save pose request received.";
-                std::cout << output_string_ << std::endl;
-                sendSuccessMsg();
-                //TODO
-            }
-            else if(current_code == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING){
-                output_string_ = "Remove last save pose request received.";
-                std::cout << output_string_ << std::endl;
-                sendSuccessMsg();
-                //TODO
-            }
-            spinner_sleep(1000);
+            sendSuccessMsg();
+            //TODO
         }
-
+        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING){
+            output_string_ = "Remove last save pose request received.";
+            std::cout << output_string_ << std::endl;
+            sendSuccessMsg();
+            //TODO
+        }
+        return true;
     }
 
     void MimicGraspingServer::stop(){

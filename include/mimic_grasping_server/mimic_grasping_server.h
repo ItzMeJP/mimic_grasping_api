@@ -18,14 +18,17 @@ namespace mimic_grasping{
         ~MimicGraspingServer();
 
         void start();
+        bool init();
+        bool spin();
+        void stop();
 
     protected:
         char const* env_root_folder_path;
         std::string root_folder_path_,
                     config_folder_path_ = "/configs",
-                    tool_firmware_file_ = "/tool_firmware_config.json";
-
-        void stop();
+                    tool_firmware_file_ = "/tool_firmware_config.json",
+                    current_msg_ = "";
+        int current_code_;
         bool stop_ = false;
         bool requestToolLocalization();
         bool requestObjectLocalization();
