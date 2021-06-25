@@ -70,7 +70,7 @@ namespace mimic_grasping {
 
     void MimicGraspingServer::start() {
 
-        if(!init())
+        if(!load() || !init())
             return;
 
         // TODO: run and test localizations modules
@@ -82,7 +82,7 @@ namespace mimic_grasping {
 
     }
 
-    bool MimicGraspingServer::init(){
+    bool MimicGraspingServer::load(){
         output_string_ = "Null";
 
         env_root_folder_path =  getenv("MIMIC_GRASPING_SERVER_ROOT");
@@ -94,8 +94,15 @@ namespace mimic_grasping {
 
         root_folder_path_ = std::string(env_root_folder_path);
 
-        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ ) ||
-           !startToolCommunication(output_string_) ||
+        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ ))
+            return false;
+
+        return true;
+    }
+
+    bool MimicGraspingServer::init(){
+
+        if(!startToolCommunication(output_string_) ||
            !setGripperType(current_gripper_type_))
             return false;
 
@@ -124,6 +131,10 @@ namespace mimic_grasping {
             //TODO
         }
         return true;
+    }
+
+    int MimicGraspingServer::getCurrentStateCode(){
+        return current_code_;
     }
 
     void MimicGraspingServer::stop(){

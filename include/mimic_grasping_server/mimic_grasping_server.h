@@ -18,9 +18,12 @@ namespace mimic_grasping{
         ~MimicGraspingServer();
 
         void start();
+        bool load();
         bool init();
         bool spin();
         void stop();
+
+        int getCurrentStateCode();
 
     protected:
         char const* env_root_folder_path;

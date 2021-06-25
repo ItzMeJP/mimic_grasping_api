@@ -29,15 +29,19 @@ namespace mimic_grasping{
         bool startToolCommunication(std::string &_output_str);
         std::string getOutputString();
         bool setGripperType(int _gripper);
+        int getGripperType();
         bool resetFirmware();
         std::string getCurrentMsg();
         bool sendErrorMsg();
         bool sendSuccessMsg();
+        bool sendCustomMSG(std::string _in);
         bool saveFirmwareInterfaceConfigFile(std::string _file);
         bool loadFirmwareInterfaceConfigFile(std::string _file);
         bool convertMsgToCode(std::string _msg, int &_code);
         void spinner_sleep(int _usec);
-        //bool run();
+        int getBaudRate();
+        std::string getPort();
+        bool isFirmwareCommunicationInitialized();
 
         enum MSG_TYPE
         {
@@ -72,7 +76,7 @@ namespace mimic_grasping{
                 received_msg_,
                 firmware_state_delimiter_ = " >> ";
 
-        bool first_tool_communication = true;
+        bool first_tool_communication_ = true;
 
         int current_gripper_type_;
         Json::Value tool_firmware_interface_config_data_;

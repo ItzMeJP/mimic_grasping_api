@@ -38,9 +38,21 @@ namespace mimic_grasping {
 
     }
 
+    int ToolFirmwareInterface::getBaudRate(){
+        return serial_->getBaudRate();
+    }
+
+    std::string ToolFirmwareInterface::getPort(){
+        return serial_->getPort();
+    }
+
+    int ToolFirmwareInterface::getGripperType(){
+        return current_gripper_type_;
+    }
+
     bool ToolFirmwareInterface::startToolCommunication(std::string &_output_str) {
 
-        if(!first_tool_communication){
+        if(!first_tool_communication_){
             writeSerialCommand(MSG_TYPE::RESET); // put the tool to initial state
             serial_thread_reader_->interrupt();
             serial_thread_reader_->join();
@@ -53,11 +65,15 @@ namespace mimic_grasping {
         //serial_thread_reader_.reset(new std::thread(&MimicGraspingServer::readCommandCallback, this));
         serial_thread_reader_.reset(new boost::thread (boost::bind(&ToolFirmwareInterface::readCommandCallback, this)));
 
-        if(first_tool_communication)
+        if(first_tool_communication_)
             serial_thread_reader_->timed_join(boost::chrono::milliseconds(2500)); // Waiting to arduino boot and start communication
 
-        first_tool_communication = false;
+        first_tool_communication_ = false;
         return true;
+    }
+
+    bool ToolFirmwareInterface::isFirmwareCommunicationInitialized(){
+        return !first_tool_communication_;
     }
 
 
@@ -127,10 +143,19 @@ namespace mimic_grasping {
         return true;
     }
 
+    bool ToolFirmwareInterface::sendCustomMSG(std::string _in){
+        writeSerialCommand(_in);
+        //serial_thread_reader_->timed_join(boost::chrono::milliseconds(1000));
+        spinner_sleep(2000);
+        std::string msg = received_msg_;
+        output_string_ = "Custom message sent. Feedback msg: " + msg;
+        return true;
+    }
+
     bool ToolFirmwareInterface::resetFirmware(){
         writeSerialCommand(MSG_TYPE::RESET);
         //serial_thread_reader_->timed_join(boost::chrono::milliseconds(1000));
-        spinner_sleep(1000);
+        spinner_sleep(2000);
         std::string msg = received_msg_;
         if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_INIT))!= std::string::npos)){
             output_string_ = "Firmware is not able to be reset";
