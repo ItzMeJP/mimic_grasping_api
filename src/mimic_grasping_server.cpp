@@ -87,7 +87,7 @@ namespace mimic_grasping {
 
         env_root_folder_path =  getenv("MIMIC_GRASPING_SERVER_ROOT");
         if(env_root_folder_path == NULL) {
-            output_string_ = "The environment variable $MIMIC_GRASPING_SERVER_ROOT is not defined";
+            output_string_ = "The environment variable $MIMIC_GRASPING_SERVER_ROOT is not defined.";
             return false;
         }
         stop_ = false;

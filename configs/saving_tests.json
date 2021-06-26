@@ -1,0 +1,11 @@
+{
+	"serial" : 
+	{
+		"baud_rate" : 9600,
+		"port" : "/dev/ttyACM1"
+	},
+	"tool" : 
+	{
+		"type" : 100
+	}
+}

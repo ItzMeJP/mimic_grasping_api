@@ -19,7 +19,19 @@ namespace mimic_grasping {
     bool ToolFirmwareInterface::loadFirmwareInterfaceConfigFile(std::string _file) {
 
         std::ifstream config_file(_file, std::ifstream::binary);
-        config_file >> tool_firmware_interface_config_data_;
+        if(config_file){
+            try {
+                config_file >> tool_firmware_interface_config_data_;
+            } catch (const std::exception& e) {
+                //std::cerr << e.what() << std::endl;
+                output_string_ = e.what();
+                return false;
+            }
+        }
+        else{
+            output_string_ = "Firmware configuration file not found.";
+            return false;
+        }
 
         current_gripper_type_ = tool_firmware_interface_config_data_["tool"]["type"].asInt();
         serial_->setBaudRate(tool_firmware_interface_config_data_["serial"]["baud_rate"].asDouble());
@@ -34,8 +46,8 @@ namespace mimic_grasping {
         serial_->setBaudRate(_baud_rate);
         //serial_thread_reader_ = std::make_shared<boost::thread>(boost::bind(&MimicGraspingServer::readCommandCallback, this));
 
-        return startToolCommunication(_output_str);
-
+        //return startToolCommunication(_output_str);
+        return true;
     }
 
     int ToolFirmwareInterface::getBaudRate(){
@@ -210,7 +222,7 @@ namespace mimic_grasping {
     bool ToolFirmwareInterface::saveFirmwareInterfaceConfigFile(std::string _file){
 
         tool_firmware_interface_config_data_["serial"]["port"] = serial_->getPort();
-        tool_firmware_interface_config_data_["serial"]["baud_rate"] = std::to_string(serial_->getBaudRate());
+        tool_firmware_interface_config_data_["serial"]["baud_rate"] = serial_->getBaudRate();
         tool_firmware_interface_config_data_["tool"]["type"] = current_gripper_type_;
 
         std::ofstream outfile (_file);
