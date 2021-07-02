@@ -94,8 +94,12 @@ namespace mimic_grasping {
 
         root_folder_path_ = std::string(env_root_folder_path);
 
-        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ ))
+        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ ) ||
+           !loadDynamicPlugins(root_folder_path_ + plugins_folder_path_,true))
             return false;
+
+//TODO: select tool localization plugin e object localization plugin at a plugin_manager_interface.h
+
 
         return true;
     }

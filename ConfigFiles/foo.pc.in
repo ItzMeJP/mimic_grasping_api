@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: @FOO_PLUGIN@
+Description: @A test plugin@
+Version: @02_07_2021@
+
+Requires:
+Libs: -L${libdir} -lfoo
+Cflags: -I${includedir}

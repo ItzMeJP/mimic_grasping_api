@@ -7,11 +7,12 @@
 #include <simple_serial.h>
 #include <boost/thread.hpp>
 #include "tool_firmware_interface.h"
+#include <plugin_system_management/plugin_system_management.h>
 
 
 namespace mimic_grasping{
 
-    class MimicGraspingServer: public ToolFirmwareInterface{
+    class MimicGraspingServer: public ToolFirmwareInterface, PluginSystemManagement{
 
     public:
         MimicGraspingServer();
@@ -28,9 +29,11 @@ namespace mimic_grasping{
     protected:
         char const* env_root_folder_path;
         std::string root_folder_path_,
+                    plugins_folder_path_="/plugins",
                     config_folder_path_ = "/configs",
                     tool_firmware_file_ = "/tool_firmware_config.json",
                     current_msg_ = "";
+
         int current_code_;
         bool stop_ = false;
         bool requestToolLocalization();
