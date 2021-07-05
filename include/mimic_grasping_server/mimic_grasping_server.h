@@ -4,15 +4,14 @@
 #include <iostream>
 #include <thread>
 
-#include <simple_serial.h>
+#include <simple_serial/simple_serial.h>
 #include <boost/thread.hpp>
-#include "tool_firmware_interface.h"
-#include <plugin_system_management/plugin_system_management.h>
-
+#include "mimic_grasping_server/tool_firmware_interface.h"
+#include "mimic_grasping_server/localization_interface.h"
 
 namespace mimic_grasping{
 
-    class MimicGraspingServer: public ToolFirmwareInterface, PluginSystemManagement{
+    class MimicGraspingServer: public ToolFirmwareInterface, LocalizationInterface{
 
     public:
         MimicGraspingServer();
@@ -24,6 +23,7 @@ namespace mimic_grasping{
         bool spin();
         void stop();
 
+        std::string getOutputSTR();
         int getCurrentStateCode();
 
     protected:
@@ -32,6 +32,7 @@ namespace mimic_grasping{
                     plugins_folder_path_="/plugins",
                     config_folder_path_ = "/configs",
                     tool_firmware_file_ = "/tool_firmware_config.json",
+                    localization_file_ = "/localization_config.json",
                     current_msg_ = "";
 
         int current_code_;
@@ -39,7 +40,8 @@ namespace mimic_grasping{
         bool requestToolLocalization();
         bool requestObjectLocalization();
 
-
+    private:
+        std::string output_string_;
     }; // end class
 
 } // end namespace

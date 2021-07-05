@@ -7,7 +7,7 @@
 #include <iostream>
 #include <thread>
 
-#include <simple_serial.h>
+#include <simple_serial/simple_serial.h>
 #include <boost/thread.hpp>
 #include <jsoncpp/json/value.h>
 #include <jsoncpp/json/json.h>
@@ -27,7 +27,7 @@ namespace mimic_grasping{
         void writeSerialCommand(int _s);
         std::string readCommand();
         bool startToolCommunication(std::string &_output_str);
-        std::string getOutputString();
+        std::string getToolFirmwareOutputSTR();
         bool setGripperType(int _gripper);
         int getGripperType();
         bool resetFirmware();
@@ -37,6 +37,7 @@ namespace mimic_grasping{
         bool sendCustomMSG(std::string _in);
         bool saveFirmwareInterfaceConfigFile(std::string _file);
         bool loadFirmwareInterfaceConfigFile(std::string _file);
+        bool initToolFirmware();
         bool convertMsgToCode(std::string _msg, int &_code);
         void spinner_sleep(int _usec);
         int getBaudRate();
@@ -72,8 +73,7 @@ namespace mimic_grasping{
         //std::shared_ptr<std::thread> serial_thread_reader_;
         std::shared_ptr<boost::thread> serial_thread_reader_;
 
-        std::string output_string_,
-                received_msg_,
+        std::string received_msg_,
                 firmware_state_delimiter_ = " >> ";
 
         bool first_tool_communication_ = true;
@@ -81,8 +81,8 @@ namespace mimic_grasping{
         int current_gripper_type_;
         Json::Value tool_firmware_interface_config_data_;
 
-
-
+    private:
+        std::string output_string_;
     }; // end class
 
 } // end namespace

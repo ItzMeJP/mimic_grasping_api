@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(mimic_grasping_server
-        VERSION 26.06.2021
+        VERSION 05.07.2021
         DESCRIPTION
         "Mimic grasping server API to C++")
 
@@ -31,10 +31,10 @@ find_package(Boost REQUIRED COMPONENTS system thread timer) # Multithreading
 
 ## Add other libs that does not have an find_package
 add_library(simple_serial SHARED IMPORTED GLOBAL)
-set_property(TARGET simple_serial PROPERTY IMPORTED_LOCATION "/usr/local/lib/libsimple_serial.so")
+set_property(TARGET simple_serial PROPERTY IMPORTED_LOCATION "/usr/local/lib/simple_serial/libsimple_serial.so")
 
 add_library(plugin_system_management SHARED IMPORTED GLOBAL)
-set_property(TARGET plugin_system_management PROPERTY IMPORTED_LOCATION "/usr/local/lib/libplugin_system_management.so")
+set_property(TARGET plugin_system_management PROPERTY IMPORTED_LOCATION "/usr/local/lib/plugin_system_management/libplugin_system_management.so")
 
 
 #Static Libs subdirectories
@@ -44,8 +44,7 @@ set_property(TARGET plugin_system_management PROPERTY IMPORTED_LOCATION "/usr/lo
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-        include/mimic_grasping_server
-        include/plugins
+        include
         #${SIMPLE_SERIAL_INCLUDE_DIR}
         #${Eigen3_INCLUDE_DIRS}
         #${BOOST_INCLUDE_DIRS}
@@ -53,12 +52,13 @@ include_directories(
 
 ## Declare a C++ library
 add_library(mimic_grasping_server SHARED #Shared is to export it latter
-            src/mimic_grasping_server.cpp
-            src/tool_firmware_interface.cpp
+        src/mimic_grasping_server/mimic_grasping_server.cpp
+        src/mimic_grasping_server/tool_firmware_interface.cpp
+        src/mimic_grasping_server/localization_interface.cpp
         )
 
 add_library(pose SHARED #Shared is to export it latter
-        src/pose.cpp
+        src/mimic_grasping_server/pose.cpp
         )
 
 add_library(foo SHARED #Shared is to export it latter
@@ -92,7 +92,9 @@ set_target_properties(mimic_grasping_server PROPERTIES
         VERSION ${PROJECT_VERSION}
         #PUBLIC_HEADER "include/mimic_grasping_server/mimic_grasping_server.h"
         #PRIVATE_HEADER "include/mimic_grasping_server/tool_firmware_interface.h"
-        PUBLIC_HEADER "include/mimic_grasping_server/mimic_grasping_server.h;include/mimic_grasping_server/tool_firmware_interface.h" #if I want to let both visible
+        PUBLIC_HEADER "include/mimic_grasping_server/mimic_grasping_server.h;
+                        include/mimic_grasping_server/tool_firmware_interface.h;
+                        include/mimic_grasping_server/localization_interface.h" #if I want to let both visible
         )
 
 set_target_properties(foo PROPERTIES
@@ -106,7 +108,7 @@ configure_file(ConfigFiles/mimic_grasping_server.pc.in mimic_grasping_server.pc 
 configure_file(ConfigFiles/foo.pc.in foo.pc @ONLY)
 
 install(TARGETS mimic_grasping_server
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/mimic_grasping_server
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mimic_grasping_server)
 
 install(TARGETS foo
@@ -121,7 +123,7 @@ install(FILES ${CMAKE_BINARY_DIR}/foo.pc
 
 ## Define an executable
 add_executable(firmware_interface
-        examples/firmware_interface.cpp)
+        src/examples/firmware_interface.cpp)
 
 ## Define the executable dependencies
 target_link_libraries(firmware_interface

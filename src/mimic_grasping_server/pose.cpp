@@ -5,7 +5,7 @@
  * @author João Pedro Carvalho de Souza
  */
 
-#include "pose.h"
+#include "mimic_grasping_server/pose.h"
 
 Pose::Pose(){
     name_ = "NULL";

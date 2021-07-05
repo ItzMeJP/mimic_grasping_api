@@ -1,0 +1,16 @@
+{
+	"plugin_manager" :
+	{
+		"folder_path" : "$MIMIC_GRASPING_SERVER_ROOT/plugins"
+	},
+	"object_localization" :
+	{
+		"exec_command" : "",
+		"plugin_name" : "lobject_recognition_ros"
+	},
+	"tool_localization" :
+	{
+		"exec_command" : "",
+		"plugin_name" : "l6dmimic"
+	}
+}

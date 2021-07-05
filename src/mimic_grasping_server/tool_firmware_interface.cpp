@@ -2,7 +2,7 @@
 // Created by joaopedro on 09/06/21.
 //
 
-#include "tool_firmware_interface.h"
+#include "mimic_grasping_server/tool_firmware_interface.h"
 
 namespace mimic_grasping {
 
@@ -40,6 +40,15 @@ namespace mimic_grasping {
         return true;
     }
 
+    bool ToolFirmwareInterface::initToolFirmware(){
+
+        if(!startToolCommunication(output_string_) ||
+           !setGripperType(current_gripper_type_))
+            return false;
+
+        return true;
+    }
+
     bool ToolFirmwareInterface::setSerialConfig(std::string _port, unsigned int _baud_rate, std::string &_output_str){
 
         serial_->setPort(_port);
@@ -71,6 +80,7 @@ namespace mimic_grasping {
         }
 
         if(!serial_->start(_output_str)){
+            output_string_ = "Error in starting serial communication. " + _output_str;
             return false;
         }
         received_msg_ = "";
@@ -146,10 +156,10 @@ namespace mimic_grasping {
         std::string msg = received_msg_;
 
         if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_RUNNING)) != std::string::npos)){
-            output_string_ = "Gripper not initialized";
+            output_string_ = "Gripper not initialized.";
             return false;
         }
-        output_string_ = "Gripper initialized";
+        output_string_ = "Gripper initialized.";
         current_gripper_type_ = _gripper;
         //std::cout << output_string_ << std::endl;
         return true;
@@ -184,11 +194,11 @@ namespace mimic_grasping {
         spinner_sleep(250);
         std::string msg = received_msg_;
         if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_ERROR))!= std::string::npos)){
-            output_string_ = "Error msg not recognized";
+            output_string_ = "Error msg not recognized.";
             //std::cout << output_string_ << std::endl;
             return false;
         }
-        output_string_ = "Error msg recognized";
+        output_string_ = "Error msg recognized.";
         //std::cout << output_string_ << std::endl;
         return true;
     }
@@ -199,11 +209,11 @@ namespace mimic_grasping {
         spinner_sleep(250);
         std::string msg = received_msg_;
         if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_SUCCESS))!= std::string::npos) && !(msg.find("Last save canceled")!= std::string::npos)){
-            output_string_ = "Success msg not recognized";
+            output_string_ = "Success msg not recognized.";
             //std::cout << output_string_ << std::endl;
             return false;
         }
-        output_string_ = "Success msg recognized";
+        output_string_ = "Success msg recognized.";
         //std::cout << output_string_ << std::endl;
         return true;
     }
@@ -236,7 +246,7 @@ namespace mimic_grasping {
         return received_msg_;
     }
 
-    std::string ToolFirmwareInterface::getOutputString(){
+    std::string ToolFirmwareInterface::getToolFirmwareOutputSTR(){
         return output_string_;
     }
 

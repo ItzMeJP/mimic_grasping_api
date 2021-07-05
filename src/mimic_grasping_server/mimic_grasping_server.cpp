@@ -1,4 +1,4 @@
-#include "mimic_grasping_server.h"
+#include "mimic_grasping_server/mimic_grasping_server.h"
 
 namespace mimic_grasping {
 
@@ -74,7 +74,6 @@ namespace mimic_grasping {
             return;
 
         // TODO: run and test localizations modules
-
         while(!stop_) {
             spin();
             spinner_sleep(1000);
@@ -94,9 +93,20 @@ namespace mimic_grasping {
 
         root_folder_path_ = std::string(env_root_folder_path);
 
-        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ ) ||
-           !loadDynamicPlugins(root_folder_path_ + plugins_folder_path_,true))
+        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ )) {
+            output_string_ = getToolFirmwareOutputSTR();
             return false;
+        }
+        if(!loadLocalizationConfigFile(root_folder_path_ + config_folder_path_ + localization_file_)){
+            output_string_ = getLocalizationOutputSTR();
+        }
+        if(!loadDynamicPlugins(root_folder_path_ + plugins_folder_path_,true)){ // TODO: load config file for plugin
+            output_string_ = getPluginManagementOutputMsg();
+            return false;
+        }
+
+        output_string_ = "Loading process has been completed.";
+
 
 //TODO: select tool localization plugin e object localization plugin at a plugin_manager_interface.h
 
@@ -106,9 +116,10 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::init(){
 
-        if(!startToolCommunication(output_string_) ||
-           !setGripperType(current_gripper_type_))
+        if(!initToolFirmware()) {  // TODO:run tool localization and object localization
+            output_string_ = getToolFirmwareOutputSTR();
             return false;
+        }
 
         return true;
     }
@@ -143,5 +154,9 @@ namespace mimic_grasping {
 
     void MimicGraspingServer::stop(){
         stop_ = true;
+    }
+
+    std::string MimicGraspingServer::getOutputSTR(){
+        return output_string_;
     }
 }//end namespace
