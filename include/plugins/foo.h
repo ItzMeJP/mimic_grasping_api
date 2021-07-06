@@ -5,7 +5,7 @@
 #ifndef MIMIC_GRASPING_SERVER_FOO_H
 #define MIMIC_GRASPING_SERVER_FOO_H
 
-#include <localization_base.h>
+#include <mimic_grasping_server/localization_base.h>
 
 class Foo : public LocalizationBase {
 public:

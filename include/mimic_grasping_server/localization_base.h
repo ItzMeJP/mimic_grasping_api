@@ -9,7 +9,7 @@
 #define MIMIC_GRASPING_SERVER_LOCALIZATION_BASE_H
 
 #include "plugin_system_management/factory.h"
-#include <pose.h>
+#include <mimic_grasping_server/pose.h>
 #include <iostream>
 
 class LocalizationBase {

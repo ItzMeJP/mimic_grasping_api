@@ -76,12 +76,14 @@ namespace mimic_grasping {
         // TODO: run and test localizations modules
         while(!stop_) {
             spin();
-            spinner_sleep(1000);
+            firmware_spinner_sleep(1000);
+            obj_localization_spinner_sleep(1000);
         }
 
     }
 
     bool MimicGraspingServer::load(){
+
         output_string_ = "Null";
 
         env_root_folder_path =  getenv("MIMIC_GRASPING_SERVER_ROOT");
@@ -100,6 +102,7 @@ namespace mimic_grasping {
         if(!loadLocalizationConfigFile(root_folder_path_ + config_folder_path_ + localization_file_)){
             output_string_ = getLocalizationOutputSTR();
         }
+
         if(!loadDynamicPlugins(root_folder_path_ + plugins_folder_path_,true)){ // TODO: load config file for plugin
             output_string_ = getPluginManagementOutputMsg();
             return false;
@@ -116,8 +119,14 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::init(){
 
-        if(!initToolFirmware()) {  // TODO:run tool localization and object localization
+        if(!initToolFirmware()) {
             output_string_ = getToolFirmwareOutputSTR();
+            return false;
+        }
+
+        if(!initToolLocalization(root_folder_path_ + scripts_folder_) ||
+           !initObjLocalization(root_folder_path_ + scripts_folder_) ){
+            output_string_ = getLocalizationOutputSTR();
             return false;
         }
 
@@ -145,6 +154,7 @@ namespace mimic_grasping {
             sendSuccessMsg();
             //TODO
         }
+
         return true;
     }
 

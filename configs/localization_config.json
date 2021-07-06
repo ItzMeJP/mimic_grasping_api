@@ -1,8 +1,4 @@
 {
-	"plugin_manager" :
-	{
-		"folder_path" : "$MIMIC_GRASPING_SERVER_ROOT/plugins"
-	},
 	"object_localization" :
 	{
 		"exec_command" : "",

@@ -31,6 +31,7 @@ namespace mimic_grasping{
         std::string root_folder_path_,
                     plugins_folder_path_="/plugins",
                     config_folder_path_ = "/configs",
+                    scripts_folder_ = "/scripts",
                     tool_firmware_file_ = "/tool_firmware_config.json",
                     localization_file_ = "/localization_config.json",
                     current_msg_ = "";

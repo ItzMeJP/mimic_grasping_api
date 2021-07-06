@@ -39,7 +39,7 @@ namespace mimic_grasping{
         bool loadFirmwareInterfaceConfigFile(std::string _file);
         bool initToolFirmware();
         bool convertMsgToCode(std::string _msg, int &_code);
-        void spinner_sleep(int _usec);
+        void firmware_spinner_sleep(int _usec);
         int getBaudRate();
         std::string getPort();
         bool isFirmwareCommunicationInitialized();

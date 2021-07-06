@@ -141,7 +141,7 @@ namespace mimic_grasping {
 
     }
 
-    void ToolFirmwareInterface::spinner_sleep(int _usec){
+    void ToolFirmwareInterface::firmware_spinner_sleep(int _usec){
         serial_thread_reader_->timed_join(boost::chrono::milliseconds(_usec));
     }
 
@@ -152,7 +152,7 @@ namespace mimic_grasping {
 
         writeSerialCommand(_gripper);
         //serial_thread_reader_->timed_join(boost::chrono::milliseconds(2500));
-        spinner_sleep(2500);
+        firmware_spinner_sleep(2500);
         std::string msg = received_msg_;
 
         if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_RUNNING)) != std::string::npos)){
@@ -168,7 +168,7 @@ namespace mimic_grasping {
     bool ToolFirmwareInterface::sendCustomMSG(std::string _in){
         writeSerialCommand(_in);
         //serial_thread_reader_->timed_join(boost::chrono::milliseconds(1000));
-        spinner_sleep(2000);
+        firmware_spinner_sleep(2000);
         std::string msg = received_msg_;
         output_string_ = "Custom message sent. Feedback msg: " + msg;
         return true;
@@ -177,7 +177,7 @@ namespace mimic_grasping {
     bool ToolFirmwareInterface::resetFirmware(){
         writeSerialCommand(MSG_TYPE::RESET);
         //serial_thread_reader_->timed_join(boost::chrono::milliseconds(1000));
-        spinner_sleep(2000);
+        firmware_spinner_sleep(2000);
         std::string msg = received_msg_;
         if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_INIT))!= std::string::npos)){
             output_string_ = "Firmware is not able to be reset";
@@ -191,7 +191,7 @@ namespace mimic_grasping {
     bool ToolFirmwareInterface::sendErrorMsg() {
         writeSerialCommand(MSG_TYPE::ERROR);
         //serial_thread_reader_->timed_join(boost::chrono::milliseconds(250));
-        spinner_sleep(250);
+        firmware_spinner_sleep(250);
         std::string msg = received_msg_;
         if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_ERROR))!= std::string::npos)){
             output_string_ = "Error msg not recognized.";
@@ -206,7 +206,7 @@ namespace mimic_grasping {
     bool ToolFirmwareInterface::sendSuccessMsg(){
         writeSerialCommand(MSG_TYPE::SUCCESS);
         //serial_thread_reader_->timed_join(boost::chrono::milliseconds(250));
-        spinner_sleep(250);
+        firmware_spinner_sleep(250);
         std::string msg = received_msg_;
         if(!(msg.find("#"+std::to_string(MSG_TYPE::STATE_SUCCESS))!= std::string::npos) && !(msg.find("Last save canceled")!= std::string::npos)){
             output_string_ = "Success msg not recognized.";
