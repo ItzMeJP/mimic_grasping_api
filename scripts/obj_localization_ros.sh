@@ -1,2 +1,2 @@
 #!/bin/bash
-roslaunch mimic_grasping run.launch&& ff
+roslaunch mimic_grasping run.launch

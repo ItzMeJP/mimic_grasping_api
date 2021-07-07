@@ -60,31 +60,45 @@ bool LocalizationInterface::initToolLocalization(std::string _path) {
 
 bool LocalizationInterface::initObjLocalization(std::string _path) {
 
-    std::string cmd_name = "/obj_localization_ros.sh" ,
-                cmd = _path + cmd_name;
-
-    if(!first_obj_localization_communication_){
-        obj_localization_thread_reader_->interrupt();
-        obj_localization_thread_reader_->join();
-        pclose(pipe_to_obj_localization_);
+    int index = (getIndexOfPlugin(localization_data_.object_localization_plugin_name));
+    if(index < 0){
+        output_string_ = "Cannot init the object localization. There is no plugin \""+ localization_data_.object_localization_plugin_name +"\" into the loaded plugin list.";
+        return false;
     }
 
-    pipe_to_obj_localization_ = popen(cmd.c_str(), "r");
+    //auto p = CreateInstanceAs<LocalizationBase>(GetPluginFactoryInfo(index)->Name(),
+    //                                            GetPluginFactoryInfo(index)->GetClassName(0));
 
-    int descriptor = fileno(pipe_to_obj_localization_);
-    fcntl(descriptor, F_SETFL, O_NONBLOCK);
+    obj_localization_obj_.reset();
+    obj_localization_obj_ = CreateInstanceAs<LocalizationBase>(index,0);
 
-    obj_localization_thread_reader_.reset(new boost::thread (boost::bind(&LocalizationInterface::execCallback,this,descriptor,LOCALIZATION_TYPE::OBJ)));
+    if(obj_localization_obj_ == nullptr){
+        output_string_ = "Cannot init the object localization. Cannot instantiate the object localization.";
+        return false;
+    }
+    if(!obj_localization_obj_->setAppExecPath(_path+"/"+localization_data_.object_command)
+        || !obj_localization_obj_->runApp()){
 
-    //if(first_obj_localization_communication_)
-    //    obj_localization_thread_reader_->timed_join(boost::chrono::milliseconds(2500)); // Waiting to arduino boot and start communication
+        output_string_ = obj_localization_obj_->getOutputString();
 
+        return false;
 
-    //std::cout << execIt(cmd.c_str(), 8.0) << std::endl;
-    first_obj_localization_communication_ = false;
+    }
+    obj_localization_obj_->spin(1000);
+    output_string_ = obj_localization_obj_->getOutputString();
+
+    if(obj_localization_obj_->getStatus() == LocalizationBase::FEEDBACK::ERROR){
+        return false;
+    }
 
     return true;
 }
+
+bool LocalizationInterface::requestObjPose(Pose& _pose){
+    return obj_localization_obj_->requestData(_pose);
+}
+
+
 
 /*
 std::string LocalizationInterface::execIt(const char *cmd, float _startup_delay_seconds) {
@@ -117,48 +131,11 @@ std::string LocalizationInterface::getLocalizationInterfaceOutputSTR(){
     return output_string_;
 }
 
-
-std::string LocalizationInterface::execIt(int _file_descriptor,  int _type) {
-
-    char buffer[128];
-    std::string result;
-
-    ssize_t r = read(_file_descriptor, buffer, 128);
-
-    if (r == -1 && errno == EAGAIN) {}
-    else if (r > 0) {
-        result += buffer;
-    } else{
-        if(_type == LOCALIZATION_TYPE::OBJ){
-            std::cout << "Corrupted pipe to object localization interface. " << std::endl;
-            output_string_ = "Corrupted pipe to object localization interface. ";
-        }
-        else{
-            std::cout << "Corrupted pipe to tool localization interface. " << std::endl;
-            output_string_ = "Corrupted pipe to tool localization interface. ";
-        }
-
+bool LocalizationInterface::localization_spinner_sleep(int usec){
+    obj_localization_obj_->spin(usec);
+    if(obj_localization_obj_->getStatus() == LocalizationBase::ERROR){
+        output_string_ = obj_localization_obj_->getOutputString();
+        return false;
     }
-
-    return result;
-}
-
-void LocalizationInterface::execCallback(int _file_descriptor, int _type){
-    for(;;) {
-        try {
-            output_string_ = this->execIt(_file_descriptor,_type);
-            boost::this_thread::interruption_point();
-            //boost::this_thread::sleep(boost::posix_time::milliseconds(500)); //interruption with sleep
-        }
-        catch(boost::thread_interrupted&)
-        {
-            std::cout << "Localization thread is stopped" << std::endl;
-            return;
-        }
-    }
-}
-
-void LocalizationInterface::obj_localization_spinner_sleep(int _usec){
-    obj_localization_thread_reader_->timed_join(boost::chrono::milliseconds(_usec));
-
+    return true;
 }

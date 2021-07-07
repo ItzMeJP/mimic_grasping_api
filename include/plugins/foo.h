@@ -17,6 +17,9 @@ public:
     bool runApp();
     bool requestData(Pose& _result);
     int getStatus();
+    std::string getOutputString(){};
+    void spin(int _usec){};
+
 
 };
 

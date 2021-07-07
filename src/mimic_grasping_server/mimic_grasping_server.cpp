@@ -76,9 +76,18 @@ namespace mimic_grasping {
         // TODO: run and test localizations modules
         while(!stop_) {
             spin();
-            firmware_spinner_sleep(1000);
-            obj_localization_spinner_sleep(1000);
+            if(!firmware_spinner_sleep(1000)){
+                output_string_ = getToolFirmwareOutputSTR();
+                break;
+            }
+            if(!localization_spinner_sleep(1000)){
+                output_string_ = getLocalizationOutputSTR();
+                break;
+            }
+
         }
+
+        //saveDataset(root_folder_path_+"/dataset_test.yaml",EXPORT_EXTENSION::YAML); // just to test
 
     }
 
@@ -109,15 +118,12 @@ namespace mimic_grasping {
         }
 
         output_string_ = "Loading process has been completed.";
-
-
-//TODO: select tool localization plugin e object localization plugin at a plugin_manager_interface.h
-
-
         return true;
     }
 
     bool MimicGraspingServer::init(){
+
+        clearDataset();
 
         if(!initToolFirmware()) {
             output_string_ = getToolFirmwareOutputSTR();
@@ -133,6 +139,11 @@ namespace mimic_grasping {
         return true;
     }
 
+    void MimicGraspingServer::clearDataset(){
+        obj_pose_arr_.clear();
+        tool_pose_arr_.clear();
+    }
+
     bool MimicGraspingServer::spin(){
 
         current_msg_ = received_msg_;
@@ -145,12 +156,23 @@ namespace mimic_grasping {
         {
             output_string_ = "Save pose request received.";
             std::cout << output_string_ << std::endl;
-            sendSuccessMsg();
-            //TODO
+
+            if(requestObjPose(current_obj_pose_)) {
+                std::cout << "" << current_obj_pose_.getName() << std::endl;
+                obj_pose_arr_.push_back(current_obj_pose_);
+                std::cout << "Dataset size" << obj_pose_arr_.size() << std::endl; //TODO: continue here
+
+                sendSuccessMsg();
+            }
+
+            else
+                sendErrorMsg();
         }
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING){
             output_string_ = "Remove last save pose request received.";
             std::cout << output_string_ << std::endl;
+            obj_pose_arr_.erase(obj_pose_arr_.end()); // because of the firmware state machine, this condition only happen after a success stock
+            std::cout << "Dataset size" << obj_pose_arr_.size() << std::endl; //TODO: continue here
             sendSuccessMsg();
             //TODO
         }
@@ -165,6 +187,94 @@ namespace mimic_grasping {
     void MimicGraspingServer::stop(){
         stop_ = true;
     }
+
+    bool MimicGraspingServer::saveDataset(std::string _path, int _type){
+        if(_type == EXPORT_EXTENSION::JSON)
+            return exportJSONDataset(_path);
+        else
+            return exportYAMLDataset(_path);
+    }
+
+    bool MimicGraspingServer::exportJSONDataset(std::string _path) {
+
+        return true;
+    }
+
+    bool MimicGraspingServer::exportYAMLDataset(std::string _path) {
+
+        std::ofstream file;
+
+        std::stringstream toFile, dof_ss, parameters_ss;
+        std::string frame_case;
+
+        std::vector<Pose> g;
+        frame_case = "tcp_from_object";
+        //g = tool_pose_arr_; // TODO: change to this ...
+        g = obj_pose_arr_; // TODO: Just debug
+
+        for (size_t i = 0; i < g.size(); ++i) {
+
+            dof_ss.str(""); //clear it
+            dof_ss << "[]";
+
+            // TODO: future work... There is no DOF in this situation
+            /*
+              for (size_t j = 0; j < g.candidates.at(i).gripper_data.dof.size(); ++j) {
+                if(j == (g.candidates.at(i).gripper_data.dof.size()-1))
+                    dof_ss << g.candidates.at(i).gripper_data.dof.at(j) << "]" ;
+                else
+                    dof_ss << g.candidates.at(i).gripper_data.dof.at(j) << ", " ;
+            }
+            */
+
+
+            parameters_ss.str(""); //clear it
+            parameters_ss << "[]";
+
+            // TODO: future work... There is no Additional parameters in this situation since the pneumatic grippers only support ON-OFF
+            /*
+            for (size_t j = 0; j < g.candidates.at(i).gripper_data.parameters.size(); ++j) {
+                if(j == (g.candidates.at(i).gripper_data.parameters.size()-1))
+                    parameters_ss << g.candidates.at(i).gripper_data.parameters.at(j) << "]" ;
+                else
+                    parameters_ss << g.candidates.at(i).gripper_data.parameters.at(j) << ", " ;
+            }
+            */
+
+            int gripper_type_label;
+            if(current_gripper_type_==GRIPPER_TYPE::SINGLE_SUCTION_CUP)
+                gripper_type_label = GRIPPER_ID::SCHMALZ_SINGLE_RECT_X_SUCTION;
+            else if(current_gripper_type_==GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER)
+                gripper_type_label = GRIPPER_ID::FESTO_2F_HGPC_16_A;
+
+
+            toFile << "candidate_" << std::to_string(i) << ":\n" <<
+                   "  method: " << "\n" <<
+                   "    type: " << SYNTHESIS_METHOD::MIMIC_GRASPING << "\n" <<
+                   "  gripper:" << "\n" <<
+                   "    type: " <<  gripper_type_label << "\n" <<
+                   "    parameters: " << parameters_ss.str() << "\n" <<
+                   "    DOFs: " << dof_ss.str() << "\n" <<
+                   "  parent_frame_id: " << g.at(i).getParentName() << "\n" <<
+                   "  position:" << "\n" <<
+                   "    x: " << g.at(i).getPosition().x() << "\n" <<
+                   "    y: " << g.at(i).getPosition().y() << "\n" <<
+                   "    z: " << g.at(i).getPosition().z() << "\n" <<
+                   "  orientation:" << "\n" <<
+                   "    x: " << g.at(i).getQuaternionOrientation().x() << "\n" <<
+                   "    y: " << g.at(i).getQuaternionOrientation().y() << "\n" <<
+                   "    z: " << g.at(i).getQuaternionOrientation().z() << "\n" <<
+                   "    w: " << g.at(i).getQuaternionOrientation().w() << "\n";
+
+        }
+
+        file.open(_path);
+        file << toFile.str();
+        file.close();
+        return true;
+
+    }
+
 
     std::string MimicGraspingServer::getOutputSTR(){
         return output_string_;

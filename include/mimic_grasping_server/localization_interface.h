@@ -6,6 +6,7 @@
 #define MIMIC_GRASPING_SERVER_PLUGINS_INTERFACE_H
 
 #include "plugin_system_management/plugin_system_management.h"
+#include <mimic_grasping_server/localization_base.h>
 
 #include <jsoncpp/json/value.h>
 #include <jsoncpp/json/json.h>
@@ -57,9 +58,11 @@ public:
 
     bool initObjLocalization(std::string _path);
 
-    void obj_localization_spinner_sleep(int _usec);
+    bool localization_spinner_sleep(int usec);
 
     std::string getLocalizationInterfaceOutputSTR();
+
+    bool requestObjPose(Pose &_pose);
 
 
 protected:
@@ -67,20 +70,10 @@ protected:
 
     std::string getLocalizationOutputSTR();
 
-    std::string execIt(int _file_descriptor, int _type);
-    void execCallback(int _file_descriptor,int _type);
-
 private:
     std::string output_string_;
-    std::shared_ptr<boost::thread> obj_localization_thread_reader_,
-                                   tool_localization_thread_reader_;
-
-    bool first_obj_localization_communication_ = true;
-    FILE *pipe_to_obj_localization_ = NULL,
-         *pipe_to_tool_localization_= NULL;
-
-
-
+    std::shared_ptr<LocalizationBase> obj_localization_obj_,
+                    tool_localization_obj_;
 
 };
 

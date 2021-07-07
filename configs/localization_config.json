@@ -1,8 +1,8 @@
 {
 	"object_localization" :
 	{
-		"exec_command" : "",
-		"plugin_name" : "lobject_recognition_ros"
+		"exec_command" : "obj_localization_ros.sh",
+		"plugin_name" : "libobject_localization_ros"
 	},
 	"tool_localization" :
 	{

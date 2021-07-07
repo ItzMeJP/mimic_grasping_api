@@ -25,7 +25,7 @@ namespace mimic_grasping{
         bool setSerialConfig(std::string _port, unsigned int _baud_rate, std::string &_output_str);
         void writeSerialCommand(std::string _command);
         void writeSerialCommand(int _s);
-        std::string readCommand();
+        bool readCommand(std::string &_msg);
         bool startToolCommunication(std::string &_output_str);
         std::string getToolFirmwareOutputSTR();
         bool setGripperType(int _gripper);
@@ -39,7 +39,7 @@ namespace mimic_grasping{
         bool loadFirmwareInterfaceConfigFile(std::string _file);
         bool initToolFirmware();
         bool convertMsgToCode(std::string _msg, int &_code);
-        void firmware_spinner_sleep(int _usec);
+        bool firmware_spinner_sleep(int _usec);
         int getBaudRate();
         std::string getPort();
         bool isFirmwareCommunicationInitialized();
@@ -83,6 +83,7 @@ namespace mimic_grasping{
 
     private:
         std::string output_string_;
+        bool err_flag_communication_corrupted_ = false;
     }; // end class
 
 } // end namespace

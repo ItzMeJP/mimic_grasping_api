@@ -19,6 +19,7 @@ public:
 
     enum FEEDBACK{
         PROCESSING = 100,
+        RUNNING,
         FINISHED,
         ERROR,
         ABORTED
@@ -29,6 +30,15 @@ public:
     virtual bool runApp() = 0;
     virtual bool requestData(Pose &_result) = 0;
     virtual int getStatus() = 0;
+    virtual std::string getOutputString() = 0;
+    virtual void spin(int _usec) = 0;
+
+protected:
+    std::string plugin_config_path_ = "",
+                plugin_exec_path_ = "",
+                output_string_;
+
+    int status_;
 
 };
 
