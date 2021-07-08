@@ -11,6 +11,7 @@
 #include "plugin_system_management/factory.h"
 #include <mimic_grasping_server/pose.h>
 #include <iostream>
+#include <unistd.h>
 
 class LocalizationBase {
 public:
@@ -26,8 +27,11 @@ public:
     };
 
     virtual bool setAppConfigPath(std::string _path) = 0;
-    virtual bool setAppExecPath(std::string _path) = 0;
+    virtual bool setAppExec(std::string _file_with_path_or_command) = 0;
+    virtual bool setAppTermination(std::string _file_with_path_or_command) = 0;
     virtual bool runApp() = 0;
+    virtual bool stopApp() = 0;
+    virtual bool setTargetName(std::string _name) = 0;
     virtual bool requestData(Pose &_result) = 0;
     virtual int getStatus() = 0;
     virtual std::string getOutputString() = 0;
@@ -36,7 +40,11 @@ public:
 protected:
     std::string plugin_config_path_ = "",
                 plugin_exec_path_ = "",
-                output_string_;
+                plugin_terminator_path_ = "",
+                output_string_,
+                target_name_;
+
+    Pose current_pose_;
 
     int status_;
 

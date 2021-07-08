@@ -18,8 +18,11 @@ public:
     ~ObjLocalizationROS();
 
     bool setAppConfigPath(std::string _path);
-    bool setAppExecPath(std::string _path);
+    bool setAppExec(std::string _file_with_path_or_command);
+    bool setAppTermination(std::string _file_with_path_or_command);
+    bool setTargetName(std::string _name);
     bool runApp();
+    bool stopApp();
     bool requestData(Pose& _result);
     int getStatus();
     std::string getOutputString();
@@ -33,6 +36,7 @@ private:
     void exec(int _descriptor);
     bool err_flag_pipe_corrupted_ = false;
     std::string current_pipe_output_str_; // TODO: it seems to be useless in current code version
+
 };
 
 /** ################## Factory Function - Plugin EntryPoint  ##################  **/

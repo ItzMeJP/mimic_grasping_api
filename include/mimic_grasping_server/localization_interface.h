@@ -23,7 +23,8 @@
 #define JSON_TOOL_LOC_TAG "tool_localization"
 #define JSON_OBJ_LOC_TAG "object_localization"
 #define JSON_PL_NAME_TAG "plugin_name"
-#define JSON_EX_CMD_TAG "exec_command"
+#define JSON_EX_CMD_TAG "executor_command"
+#define JSON_TERM_CMD_TAG "terminator_command"
 #define JSON_PL_FOLDER_PTH "folder_path"
 
 #endif // JSON_TAGS_DEFINE_H
@@ -37,13 +38,11 @@ public:
     ~LocalizationInterface();
 
     struct LocalizationData {
-        std::string plugin_folder_path,
-                tool_localization_plugin_name,
-                object_localization_plugin_name,
-                tool_command,
-                object_command;
-
-    } localization_data_;
+        std::string plugin_name,
+                executor,
+                terminator;
+    } obj_localization_data_,
+      tool_localization_data_;
 
     enum LOCALIZATION_TYPE{
         TOOL,
@@ -54,9 +53,15 @@ public:
 
     bool loadLocalizationConfigFile(std::string _file);
 
-    bool initToolLocalization(std::string _path);
+    bool setScriptsFolderPath(std::string _path);
 
-    bool initObjLocalization(std::string _path);
+    bool initToolLocalization();
+
+    bool initObjLocalization();
+
+    bool stopObjLocalization();
+
+    bool stopToolLocalization();
 
     bool localization_spinner_sleep(int usec);
 
@@ -71,9 +76,12 @@ protected:
     std::string getLocalizationOutputSTR();
 
 private:
-    std::string output_string_;
+    std::string output_string_,
+            scripts_folder_path_;
     std::shared_ptr<LocalizationBase> obj_localization_obj_,
                     tool_localization_obj_;
+    bool isScript(std::string _s);
+    bool initLocalization(std::shared_ptr<LocalizationBase>& _loc_instance, LocalizationData _data);
 
 };
 

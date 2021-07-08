@@ -43,6 +43,7 @@ namespace mimic_grasping{
         int getBaudRate();
         std::string getPort();
         bool isFirmwareCommunicationInitialized();
+        bool stopToolCommunication();
 
         enum MSG_TYPE
         {

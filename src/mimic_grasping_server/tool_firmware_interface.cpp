@@ -11,7 +11,7 @@ namespace mimic_grasping {
     }
 
     ToolFirmwareInterface::~ToolFirmwareInterface() {
-
+        stopToolCommunication();
     }
 
 
@@ -73,11 +73,7 @@ namespace mimic_grasping {
 
         err_flag_communication_corrupted_ = false;
 
-        if (!first_tool_communication_) {
-            writeSerialCommand(MSG_TYPE::RESET); // put the tool to initial state
-            serial_thread_reader_->interrupt();
-            serial_thread_reader_->join();
-        }
+        stopToolCommunication();
 
         if (!serial_->start(_output_str)) {
             output_string_ = "Error in starting serial communication. " + _output_str;
@@ -92,6 +88,27 @@ namespace mimic_grasping {
                     boost::chrono::milliseconds(2500)); // Waiting to arduino boot and start communication
 
         first_tool_communication_ = false;
+        return true;
+    }
+
+    bool ToolFirmwareInterface::stopToolCommunication() {
+        if (!first_tool_communication_) {
+            writeSerialCommand(MSG_TYPE::RESET); // put the tool to initial state
+            serial_thread_reader_->interrupt();
+            serial_thread_reader_->join();
+
+            std::string _output_str;
+            if (!serial_->stop(_output_str)) {
+                output_string_ = "Error in stopping serial communication. " + _output_str;
+                return false;
+            }
+        }
+        else {
+            output_string_ = "Cannot stop serial communication since the process is not running.";
+            return false;
+        }
+
+        first_tool_communication_ = true;
         return true;
     }
 

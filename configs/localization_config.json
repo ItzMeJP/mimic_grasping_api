@@ -1,12 +1,14 @@
 {
 	"object_localization" :
 	{
-		"exec_command" : "obj_localization_ros.sh",
+		"executor_command" : "obj_localization_ros_init.sh",
+		"terminator_command" : "obj_localization_ros_close.sh",
 		"plugin_name" : "libobject_localization_ros"
 	},
 	"tool_localization" :
 	{
-		"exec_command" : "",
-		"plugin_name" : "l6dmimic"
+		"executor_command" : "tool_localization_ros_init.sh",
+		"terminator_command" : "tool_localization_ros_close.sh",
+		"plugin_name" : "libobject_localization_ros"
 	}
 }

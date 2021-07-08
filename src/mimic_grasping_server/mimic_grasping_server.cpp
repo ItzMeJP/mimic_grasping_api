@@ -76,18 +76,25 @@ namespace mimic_grasping {
         // TODO: run and test localizations modules
         while(!stop_) {
             spin();
-            if(!firmware_spinner_sleep(1000)){
+            if(!firmware_spinner_sleep(2000)){ // the serial reader is slow...
                 output_string_ = getToolFirmwareOutputSTR();
+                while(stopObjLocalization()!=true){};
+
+                while(stopToolLocalization()!=true){}; // TODO: check problem....
+
                 break;
             }
-            if(!localization_spinner_sleep(1000)){
+            if(!localization_spinner_sleep(300)){
                 output_string_ = getLocalizationOutputSTR();
+                while(stopToolCommunication()!=true);
                 break;
             }
+
 
         }
 
-        //saveDataset(root_folder_path_+"/dataset_test.yaml",EXPORT_EXTENSION::YAML); // just to test
+        saveDataset(root_folder_path_+"/outputs/dataset_test.yaml",EXPORT_EXTENSION::YAML); // TODO: REMOVE: just to test
+        saveDataset(root_folder_path_+"/outputs/dataset_test.json",EXPORT_EXTENSION::JSON); // TODO: REMOVE: just to test
 
     }
 
@@ -104,15 +111,16 @@ namespace mimic_grasping {
 
         root_folder_path_ = std::string(env_root_folder_path);
 
-        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ )) {
+        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_dir_ + tool_firmware_file_ )) {
             output_string_ = getToolFirmwareOutputSTR();
             return false;
         }
-        if(!loadLocalizationConfigFile(root_folder_path_ + config_folder_path_ + localization_file_)){
+        if(!loadLocalizationConfigFile(root_folder_path_ + config_folder_dir_ + localization_file_)
+        || !setScriptsFolderPath(root_folder_path_ + scripts_folder_dir_ )){
             output_string_ = getLocalizationOutputSTR();
         }
 
-        if(!loadDynamicPlugins(root_folder_path_ + plugins_folder_path_,true)){ // TODO: load config file for plugin
+        if(!loadDynamicPlugins(root_folder_path_ + plugins_folder_dir_,true)){ // TODO: load config file for plugin
             output_string_ = getPluginManagementOutputMsg();
             return false;
         }
@@ -130,8 +138,8 @@ namespace mimic_grasping {
             return false;
         }
 
-        if(!initToolLocalization(root_folder_path_ + scripts_folder_) ||
-           !initObjLocalization(root_folder_path_ + scripts_folder_) ){
+        if(!initToolLocalization() ||
+           !initObjLocalization() ){
             output_string_ = getLocalizationOutputSTR();
             return false;
         }
@@ -197,6 +205,32 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::exportJSONDataset(std::string _path) {
 
+
+        int gripper_type_label;
+        if(current_gripper_type_==GRIPPER_TYPE::SINGLE_SUCTION_CUP)
+            gripper_type_label = GRIPPER_ID::SCHMALZ_SINGLE_RECT_X_SUCTION;
+        else if(current_gripper_type_==GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER)
+            gripper_type_label = GRIPPER_ID::FESTO_2F_HGPC_16_A;
+
+        std::string name_tag;
+
+        for (size_t i = 0; i < obj_pose_arr_.size() ; ++i) { // TODO: REMOVE: just to test
+
+            name_tag = "candidate_" + std::to_string(i);
+            json_pose_arr_[name_tag]["method"] = SYNTHESIS_METHOD::MIMIC_GRASPING;
+            json_pose_arr_[name_tag]["gripper"] = gripper_type_label;
+            json_pose_arr_[name_tag]["position"]["x"] = obj_pose_arr_.at(i).getPosition().x();
+            json_pose_arr_[name_tag]["position"]["y"] = obj_pose_arr_.at(i).getPosition().y();
+            json_pose_arr_[name_tag]["position"]["z"] = obj_pose_arr_.at(i).getPosition().z();
+            json_pose_arr_[name_tag]["orientation"]["x"] = obj_pose_arr_.at(i).getQuaternionOrientation().x();
+            json_pose_arr_[name_tag]["orientation"]["y"] = obj_pose_arr_.at(i).getQuaternionOrientation().y();
+            json_pose_arr_[name_tag]["orientation"]["z"] = obj_pose_arr_.at(i).getQuaternionOrientation().z();
+            json_pose_arr_[name_tag]["orientation"]["w"] = obj_pose_arr_.at(i).getQuaternionOrientation().w();
+
+        }
+        std::ofstream outfile(_path);
+        outfile << json_pose_arr_ << std::endl;
+        outfile.close();
         return true;
     }
 
@@ -205,12 +239,10 @@ namespace mimic_grasping {
         std::ofstream file;
 
         std::stringstream toFile, dof_ss, parameters_ss;
-        std::string frame_case;
 
         std::vector<Pose> g;
-        frame_case = "tcp_from_object";
-        //g = tool_pose_arr_; // TODO: change to this ...
-        g = obj_pose_arr_; // TODO: Just debug
+        //g = tool_pose_arr_; // TODO: REMOVE change to this ...
+        g = obj_pose_arr_; // TODO: REMOVE  Just debug
 
         for (size_t i = 0; i < g.size(); ++i) {
 
@@ -279,4 +311,6 @@ namespace mimic_grasping {
     std::string MimicGraspingServer::getOutputSTR(){
         return output_string_;
     }
+
+
 }//end namespace

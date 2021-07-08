@@ -15,9 +15,7 @@ Foo::~Foo(){
 bool Foo::setAppConfigPath(std::string _path){
     return true;
 }
-bool Foo::setAppExecPath(std::string _path){
-    return true;
-}
+
 bool Foo::runApp(){
     return true;
 }

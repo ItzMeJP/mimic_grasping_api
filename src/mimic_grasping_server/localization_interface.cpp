@@ -7,15 +7,22 @@
 
 LocalizationInterface::LocalizationInterface() {};
 
-LocalizationInterface::~LocalizationInterface() {};
+LocalizationInterface::~LocalizationInterface() {
+    stopObjLocalization();
+    stopToolLocalization();
+    obj_localization_obj_.reset();
+    tool_localization_obj_.reset();
+};
 
 bool LocalizationInterface::saveLocalizationConfigFile(std::string _file) {
 
-    //localization_interface_config_data_[JSON_PLUGIN_MANAGER_TAG][JSON_PL_FOLDER_PTH] = localization_data_.plugin_folder_path;
-    localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_PL_NAME_TAG] = localization_data_.tool_localization_plugin_name;
-    localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG] = localization_data_.tool_command;
-    localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG] = localization_data_.object_localization_plugin_name;
-    localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG] = localization_data_.object_command;
+    localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_PL_NAME_TAG] = tool_localization_data_.plugin_name;
+    localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG] = tool_localization_data_.executor;
+    localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_TERM_CMD_TAG] = tool_localization_data_.terminator;
+
+    localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG] = obj_localization_data_.plugin_name;
+    localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG] = obj_localization_data_.executor;
+    localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TERM_CMD_TAG] = obj_localization_data_.terminator;
 
     std::ofstream outfile(_file);
     outfile << localization_interface_config_data_ << std::endl;
@@ -40,12 +47,20 @@ bool LocalizationInterface::loadLocalizationConfigFile(std::string _file) {
         return false;
     }
 
-    //localization_data_.plugin_folder_path = localization_interface_config_data_[JSON_PLUGIN_MANAGER_TAG][JSON_PL_FOLDER_PTH].asString();
-    localization_data_.tool_localization_plugin_name = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_PL_NAME_TAG].asString();
-    localization_data_.tool_command = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG].asString();
-    localization_data_.object_localization_plugin_name = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG].asString();
-    localization_data_.object_command = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG].asString();
+    tool_localization_data_.plugin_name = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_PL_NAME_TAG].asString();
+    tool_localization_data_.executor = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG].asString();
+    tool_localization_data_.terminator = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_TERM_CMD_TAG].asString();
 
+    obj_localization_data_.plugin_name = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG].asString();
+    obj_localization_data_.executor = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG].asString();
+    obj_localization_data_.terminator = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TERM_CMD_TAG].asString();
+
+
+    return true;
+}
+
+bool LocalizationInterface::setScriptsFolderPath(std::string _path){
+    scripts_folder_path_ = _path;
     return true;
 }
 
@@ -53,45 +68,62 @@ std::string LocalizationInterface::getLocalizationOutputSTR() {
     return output_string_;
 }
 
-bool LocalizationInterface::initToolLocalization(std::string _path) {
+bool LocalizationInterface::initToolLocalization() {
+    return (initLocalization(tool_localization_obj_,tool_localization_data_));
+}
+
+bool LocalizationInterface::initObjLocalization() {
+
+    return (initLocalization(obj_localization_obj_,obj_localization_data_));
+}
+
+bool LocalizationInterface::initLocalization(std::shared_ptr<LocalizationBase>& _loc_instance, LocalizationData _data){
+
+    int plugin_index = (getIndexOfPlugin(_data.plugin_name)),
+        class_index = 0;
+
+    if(plugin_index < 0){
+        output_string_ = "Cannot init the object localization. There is no plugin \""+ _data.plugin_name +"\" into the loaded plugin list.";
+        return false;
+    }
+
+    _loc_instance.reset();
+    _loc_instance = CreateInstanceAs<LocalizationBase>(plugin_index,class_index); //it is supposed to have only one class
+
+    if(_loc_instance == nullptr){
+        output_string_ = "Cannot instantiate the object localization for " + std::string(GetPluginFactoryInfo(plugin_index)->GetClassName(class_index)) + " class.";
+        return false;
+    }
+
+    std::string ex_cmd, term_cmd;
+    ex_cmd = isScript(_data.executor)?scripts_folder_path_+"/"+_data.executor:_data.executor;
+    term_cmd = isScript(_data.terminator)?scripts_folder_path_+"/"+_data.terminator:_data.terminator;
+
+    if(    !_loc_instance->setAppExec(ex_cmd)
+           || !_loc_instance->setAppTermination(term_cmd)
+           || !_loc_instance->runApp()){
+
+        output_string_ = _loc_instance->getOutputString();
+
+        return false;
+
+    }
+    _loc_instance->spin(1000);
+    output_string_ = _loc_instance->getOutputString();
+
+    if(_loc_instance->getStatus() == LocalizationBase::FEEDBACK::ERROR){
+        return false;
+    }
 
     return true;
 }
 
-bool LocalizationInterface::initObjLocalization(std::string _path) {
+bool LocalizationInterface::stopObjLocalization(){
+    return obj_localization_obj_->stopApp();
+}
 
-    int index = (getIndexOfPlugin(localization_data_.object_localization_plugin_name));
-    if(index < 0){
-        output_string_ = "Cannot init the object localization. There is no plugin \""+ localization_data_.object_localization_plugin_name +"\" into the loaded plugin list.";
-        return false;
-    }
-
-    //auto p = CreateInstanceAs<LocalizationBase>(GetPluginFactoryInfo(index)->Name(),
-    //                                            GetPluginFactoryInfo(index)->GetClassName(0));
-
-    obj_localization_obj_.reset();
-    obj_localization_obj_ = CreateInstanceAs<LocalizationBase>(index,0);
-
-    if(obj_localization_obj_ == nullptr){
-        output_string_ = "Cannot init the object localization. Cannot instantiate the object localization.";
-        return false;
-    }
-    if(!obj_localization_obj_->setAppExecPath(_path+"/"+localization_data_.object_command)
-        || !obj_localization_obj_->runApp()){
-
-        output_string_ = obj_localization_obj_->getOutputString();
-
-        return false;
-
-    }
-    obj_localization_obj_->spin(1000);
-    output_string_ = obj_localization_obj_->getOutputString();
-
-    if(obj_localization_obj_->getStatus() == LocalizationBase::FEEDBACK::ERROR){
-        return false;
-    }
-
-    return true;
+bool LocalizationInterface::stopToolLocalization(){
+    return tool_localization_obj_->stopApp();
 }
 
 bool LocalizationInterface::requestObjPose(Pose& _pose){
@@ -132,10 +164,27 @@ std::string LocalizationInterface::getLocalizationInterfaceOutputSTR(){
 }
 
 bool LocalizationInterface::localization_spinner_sleep(int usec){
-    obj_localization_obj_->spin(usec);
+
+    obj_localization_obj_->spin(int(usec*0.5));
     if(obj_localization_obj_->getStatus() == LocalizationBase::ERROR){
         output_string_ = obj_localization_obj_->getOutputString();
         return false;
     }
+
+    tool_localization_obj_->spin(int(usec*0.5));
+    if(tool_localization_obj_->getStatus() == LocalizationBase::ERROR){
+        output_string_ = tool_localization_obj_->getOutputString();
+        return false;
+    }
     return true;
+}
+
+bool LocalizationInterface::isScript(std::string _s){
+
+    std::string script_extension = ".sh";
+
+    if (_s.find(script_extension) != std::string::npos)
+        return true;
+
+    return false;
 }

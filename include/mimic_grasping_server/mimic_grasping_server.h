@@ -3,9 +3,9 @@
 
 #include <iostream>
 #include <thread>
+#include <boost/thread.hpp>
 
 #include <simple_serial/simple_serial.h>
-#include <boost/thread.hpp>
 #include "mimic_grasping_server/tool_firmware_interface.h"
 #include "mimic_grasping_server/localization_interface.h"
 
@@ -52,9 +52,9 @@ namespace mimic_grasping{
     protected:
         char const* env_root_folder_path;
         std::string root_folder_path_,
-                    plugins_folder_path_="/plugins",
-                    config_folder_path_ = "/configs",
-                    scripts_folder_ = "/scripts",
+                    plugins_folder_dir_="/plugins",
+                    config_folder_dir_ = "/configs",
+                    scripts_folder_dir_ = "/scripts",
                     tool_firmware_file_ = "/tool_firmware_config.json",
                     localization_file_ = "/localization_config.json",
                     current_msg_ = "";
@@ -72,6 +72,9 @@ namespace mimic_grasping{
              current_tool_pose_;
         std::vector<Pose> obj_pose_arr_,
                           tool_pose_arr_;
+
+        Json::Value json_pose_arr_;
+
     }; // end class
 
 } // end namespace

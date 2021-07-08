@@ -13,11 +13,14 @@ public:
     ~Foo();
 
     bool setAppConfigPath(std::string _path);
-    bool setAppExecPath(std::string _path);
+    bool setAppExec(std::string _file_with_path_or_command) {return true;};
+    bool setAppTermination(std::string _file_with_path_or_command) {return true;};
+    bool setTargetName(std::string _name) {return true;};
     bool runApp();
+    bool stopApp() {return true;};
     bool requestData(Pose& _result);
     int getStatus();
-    std::string getOutputString(){};
+    std::string getOutputString(){return output_string_;};
     void spin(int _usec){};
 
 
