@@ -1,0 +1,17 @@
+candidate_0:
+  method: 
+    type: 3
+  gripper:
+    type: 4
+    parameters: []
+    DOFs: []
+  parent_frame_id: object
+  position:
+    x: 0
+    y: 0
+    z: 0
+  orientation:
+    x: 0
+    y: 0
+    z: 0.38268
+    w: 0.923881

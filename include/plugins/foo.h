@@ -16,6 +16,8 @@ public:
     bool setAppExec(std::string _file_with_path_or_command) {return true;};
     bool setAppTermination(std::string _file_with_path_or_command) {return true;};
     bool setTargetName(std::string _name) {return true;};
+    bool loadAppConfiguration() {return true;};
+    bool saveAppConfiguration(std::string _path)  {return true;};
     bool runApp();
     bool stopApp() {return true;};
     bool requestData(Pose& _result);

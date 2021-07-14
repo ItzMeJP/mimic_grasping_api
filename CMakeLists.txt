@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(mimic_grasping_server
-        VERSION 07.07.2021
+        VERSION 13.07.2021
         DESCRIPTION
         "Mimic grasping server API to C++")
 
@@ -17,7 +17,7 @@ set(PLUGINS_DIR_FOLDER ${CURRENT_DIR}/plugins)
 
 set(CMAKE_CXX_STANDARD 17)
 set(SUBDIR_LIBS_PATH libs)
-set(BUILD_PLUGINS True)
+set(BUILD_PLUGINS False)
 
 #set(EXPORT_PATH_USED_INTO_SUBDIRS #defining a shared CMAKE var.
 #        include
@@ -55,15 +55,23 @@ include_directories(
 ## ----------------------------------------------------------------------------------------------------------------------------------
 
 # Declaring
+add_library(pose SHARED #Shared is to export it latter
+        src/mimic_grasping_server/pose.cpp # Maybe in future create a API to deal with homogeneous transformations
+        )
+
+target_link_libraries(pose
+        Eigen3::Eigen
+        )
+
 add_library(mimic_grasping_server SHARED #Shared is to export it latter
         src/mimic_grasping_server/mimic_grasping_server.cpp
         src/mimic_grasping_server/tool_firmware_interface.cpp
         src/mimic_grasping_server/localization_interface.cpp
-        src/mimic_grasping_server/pose.cpp # Maybe in future create a API to deal with homogeneous transformations
         )
 
 target_link_libraries(mimic_grasping_server
         simple_serial
+        pose
         plugin_system_management
         #${BOOST_LIBRARIES}
         ${CMAKE_THREAD_LIBS_INIT}
@@ -75,21 +83,38 @@ target_link_libraries(mimic_grasping_server
         )
 
 target_include_directories(mimic_grasping_server PRIVATE .)
+target_include_directories(pose PRIVATE .)
 
 # Setting installation properties
+set_target_properties(pose PROPERTIES
+VERSION ${PROJECT_VERSION}
+#PUBLIC_HEADER "include/mimic_grasping_server/mimic_grasping_server.h"
+#PRIVATE_HEADER "include/mimic_grasping_server/tool_firmware_interface.h"
+PUBLIC_HEADER "include/mimic_grasping_server/pose.h"
+)
+
 set_target_properties(mimic_grasping_server PROPERTIES
         VERSION ${PROJECT_VERSION}
         #PUBLIC_HEADER "include/mimic_grasping_server/mimic_grasping_server.h"
         #PRIVATE_HEADER "include/mimic_grasping_server/tool_firmware_interface.h"
-        PUBLIC_HEADER "include/mimic_grasping_server/mimic_grasping_server.h;include/mimic_grasping_server/tool_firmware_interface.h;include/mimic_grasping_server/localization_interface.h;include/mimic_grasping_server/pose.h"
+        PUBLIC_HEADER "include/mimic_grasping_server/mimic_grasping_server.h;include/mimic_grasping_server/localization_base.h;include/mimic_grasping_server/tool_firmware_interface.h;include/mimic_grasping_server/localization_interface.h"
         )
+
+configure_file(install_configurations/ht_manipulation.pc.in ht_manipulation.pc @ONLY)
 
 configure_file(install_configurations/mimic_grasping_server.pc.in mimic_grasping_server.pc @ONLY)
 
 # Installing libs
+install(TARGETS pose
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/ht_manipulation
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ht_manipulation)
+
 install(TARGETS mimic_grasping_server
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/mimic_grasping_server
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mimic_grasping_server)
+
+install(FILES ${CMAKE_BINARY_DIR}/ht_manipulation.pc
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
 install(FILES ${CMAKE_BINARY_DIR}/mimic_grasping_server.pc
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
@@ -119,12 +144,15 @@ if (${BUILD_PLUGINS})
             Boost::thread
             )
 
+    target_include_directories(foo PRIVATE .)
+
     set_target_properties(foo PROPERTIES
             #VERSION ${PROJECT_VERSION}
             PUBLIC_HEADER "include/plugins/foo.h"
             )
+    target_include_directories(object_localization_ros PRIVATE .)
 
-    set_target_properties(foo PROPERTIES
+    set_target_properties(object_localization_ros PROPERTIES
             #VERSION ${PROJECT_VERSION}
             PUBLIC_HEADER "include/plugins/obj_localization_ros.h"
             )

@@ -120,7 +120,7 @@ namespace mimic_grasping {
             output_string_ = getLocalizationOutputSTR();
         }
 
-        if(!loadDynamicPlugins(root_folder_path_ + plugins_folder_dir_,true)){ // TODO: load config file for plugin
+        if(!loadDynamicPlugins(root_folder_path_ + plugins_folder_dir_ +"/",true)){ // TODO: load config file for plugin
             output_string_ = getPluginManagementOutputMsg();
             return false;
         }

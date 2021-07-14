@@ -19,16 +19,19 @@ public:
     ~LocalizationBase() {};
 
     enum FEEDBACK{
-        PROCESSING = 100,
+        INITIALIZING = 100,
+        PROCESSING,
         RUNNING,
         FINISHED,
         ERROR,
         ABORTED
     };
 
-    virtual bool setAppConfigPath(std::string _path) = 0;
+    virtual bool setAppConfigPath(std::string _file_with_path) = 0;
     virtual bool setAppExec(std::string _file_with_path_or_command) = 0;
     virtual bool setAppTermination(std::string _file_with_path_or_command) = 0;
+    virtual bool loadAppConfiguration() = 0;
+    virtual bool saveAppConfiguration(std:: string _path) = 0;
     virtual bool runApp() = 0;
     virtual bool stopApp() = 0;
     virtual bool setTargetName(std::string _name) = 0;

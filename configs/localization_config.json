@@ -9,6 +9,6 @@
 	{
 		"executor_command" : "tool_localization_ros_init.sh",
 		"terminator_command" : "tool_localization_ros_close.sh",
-		"plugin_name" : "libobject_localization_ros"
+		"plugin_name" : "libfoo"
 	}
 }
