@@ -116,7 +116,8 @@ namespace mimic_grasping {
             return false;
         }
         if(!loadLocalizationConfigFile(root_folder_path_ + config_folder_dir_ + localization_file_)
-        || !setScriptsFolderPath(root_folder_path_ + scripts_folder_dir_ )){
+        || !setLocalizationScriptsFolderPath(root_folder_path_ + scripts_folder_dir_ )
+        || !setLocalizationConfigsFolderPath(root_folder_path_ + config_folder_dir_)){
             output_string_ = getLocalizationOutputSTR();
         }
 
@@ -138,7 +139,7 @@ namespace mimic_grasping {
             return false;
         }
 
-        if(!initToolLocalization() ||
+        if(//!initToolLocalization() || // TODO: include the tool localization
            !initObjLocalization() ){
             output_string_ = getLocalizationOutputSTR();
             return false;
@@ -164,8 +165,8 @@ namespace mimic_grasping {
         {
             output_string_ = "Save pose request received.";
             std::cout << output_string_ << std::endl;
-
-            if(requestObjPose(current_obj_pose_)) {
+            setObjLocalizationTarget(root_folder_path_+"/models/single_side_bracket.ply");
+            if(setObjLocalizationTarget(current_obj_localization_target_) && requestObjPose(current_obj_pose_)) {
                 std::cout << "" << current_obj_pose_.getName() << std::endl;
                 obj_pose_arr_.push_back(current_obj_pose_);
                 std::cout << "Dataset size" << obj_pose_arr_.size() << std::endl; //TODO: continue here

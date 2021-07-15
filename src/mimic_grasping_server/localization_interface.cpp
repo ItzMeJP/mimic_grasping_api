@@ -2,6 +2,7 @@
 // Created by joaopedro on 05/07/21.
 //
 
+#include <mimic_grasping_server/localization_interface.h>
 #include "mimic_grasping_server/localization_interface.h"
 
 
@@ -50,22 +51,38 @@ bool LocalizationInterface::loadLocalizationConfigFile(std::string _file) {
     tool_localization_data_.plugin_name = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_PL_NAME_TAG].asString();
     tool_localization_data_.executor = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG].asString();
     tool_localization_data_.terminator = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_TERM_CMD_TAG].asString();
+    tool_localization_data_.specific_configuration_file = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG].asString();
 
     obj_localization_data_.plugin_name = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG].asString();
     obj_localization_data_.executor = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG].asString();
     obj_localization_data_.terminator = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TERM_CMD_TAG].asString();
-
+    obj_localization_data_.specific_configuration_file = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG].asString();
 
     return true;
 }
 
-bool LocalizationInterface::setScriptsFolderPath(std::string _path){
+bool LocalizationInterface::setLocalizationConfigsFolderPath(std::string _path){
+    config_folder_path_ = _path;
+    return true;
+}
+
+bool LocalizationInterface::setLocalizationScriptsFolderPath(std::string _path){
     scripts_folder_path_ = _path;
     return true;
 }
 
 std::string LocalizationInterface::getLocalizationOutputSTR() {
     return output_string_;
+}
+
+bool LocalizationInterface::setObjLocalizationTarget(std::string _target){
+    obj_localization_obj_->setTargetName(_target);
+    return true;
+}
+
+bool LocalizationInterface::setToolLocalizationTarget(std::string _target){
+    tool_localization_obj_->setTargetName(_target);
+    return true;
 }
 
 bool LocalizationInterface::initToolLocalization() {
@@ -95,12 +112,15 @@ bool LocalizationInterface::initLocalization(std::shared_ptr<LocalizationBase>& 
         return false;
     }
 
-    std::string ex_cmd, term_cmd;
+    std::string ex_cmd, term_cmd, config_path;
     ex_cmd = isScript(_data.executor)?scripts_folder_path_+"/"+_data.executor:_data.executor;
     term_cmd = isScript(_data.terminator)?scripts_folder_path_+"/"+_data.terminator:_data.terminator;
+    config_path = config_folder_path_ + "/" + _data.specific_configuration_file;
 
     if(    !_loc_instance->setAppExec(ex_cmd)
            || !_loc_instance->setAppTermination(term_cmd)
+           || !_loc_instance->setAppConfigPath(config_path)
+           || !_loc_instance->loadAppConfiguration()
            || !_loc_instance->runApp()){
 
         output_string_ = _loc_instance->getOutputString();
@@ -130,6 +150,14 @@ bool LocalizationInterface::requestObjPose(Pose& _pose){
     return obj_localization_obj_->requestData(_pose);
 }
 
+bool LocalizationInterface::setObjLocalizationTarget(std::string _target_name_with_path){
+    current_obj_localization_target_ = _target_name_with_path;
+    return true;
+}
+bool LocalizationInterface::setToolLocalizationTarget(std::string _target_name_with_path){
+    current_tool_localization_target_ = _target_name_with_path;
+    return true;
+}
 
 
 /*
@@ -171,11 +199,13 @@ bool LocalizationInterface::localization_spinner_sleep(int usec){
         return false;
     }
 
+    /* TODO: added tool localization
     tool_localization_obj_->spin(int(usec*0.5));
     if(tool_localization_obj_->getStatus() == LocalizationBase::ERROR){
         output_string_ = tool_localization_obj_->getOutputString();
         return false;
     }
+    */
     return true;
 }
 
