@@ -150,14 +150,6 @@ bool LocalizationInterface::requestObjPose(Pose& _pose){
     return obj_localization_obj_->requestData(_pose);
 }
 
-bool LocalizationInterface::setObjLocalizationTarget(std::string _target_name_with_path){
-    current_obj_localization_target_ = _target_name_with_path;
-    return true;
-}
-bool LocalizationInterface::setToolLocalizationTarget(std::string _target_name_with_path){
-    current_tool_localization_target_ = _target_name_with_path;
-    return true;
-}
 
 
 /*

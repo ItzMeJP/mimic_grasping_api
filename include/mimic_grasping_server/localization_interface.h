@@ -74,6 +74,7 @@ public:
     bool requestObjPose(Pose &_pose);
 
     bool setObjLocalizationTarget(std::string _target_name_with_path);
+
     bool setToolLocalizationTarget(std::string _target_name_with_path);
 
 
