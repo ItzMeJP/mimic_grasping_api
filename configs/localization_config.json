@@ -3,8 +3,8 @@
 	{
 		"executor_command" : "obj_localization_ros_init.sh",
 		"terminator_command" : "obj_localization_ros_close.sh",
-		"configuration_file" : "plugin_object_localization_ros.json",
-		"plugin_name" : "libobject_localization_ros"
+		"configuration_file" : "plugin_phoxi_cam_object_localization_ros.json",
+		"plugin_name" : "libphoxi_cam_object_localization_ros"
 	},
 	"tool_localization" :
 	{

@@ -8,27 +8,10 @@ candidate_0:
   parent_frame_id: camera_link
   position:
     x: 1.00152
-    y: 0.000161535
-    z: -1.42983e-05
+    y: 0.0001617
+    z: -1.43277e-05
   orientation:
-    x: -0.00114671
+    x: -0.00114679
     y: -0.706906
-    z: -0.00185886
-    w: 0.707304
-candidate_1:
-  method: 
-    type: 3
-  gripper:
-    type: 4
-    parameters: []
-    DOFs: []
-  parent_frame_id: camera_link
-  position:
-    x: 1.00152
-    y: 0.000161655
-    z: -1.41726e-05
-  orientation:
-    x: -0.00114675
-    y: -0.706906
-    z: -0.00185887
+    z: -0.00185892
     w: 0.707304
