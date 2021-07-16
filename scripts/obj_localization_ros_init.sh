@@ -1,2 +1,2 @@
 #!/bin/bash
-roslaunch mimic_grasping run.launch namespace:=object_localization
+roslaunch mimic_grasping_ros_interface_package run.launch namespace:=object_localization use_publisher:=true
