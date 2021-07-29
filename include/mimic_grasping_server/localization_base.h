@@ -9,7 +9,7 @@
 #define MIMIC_GRASPING_SERVER_LOCALIZATION_BASE_H
 
 #include "plugin_system_management/factory.h"
-#include <mimic_grasping_server/pose.h>
+#include <ht_manipulation/pose.h>
 #include <iostream>
 #include <unistd.h>
 

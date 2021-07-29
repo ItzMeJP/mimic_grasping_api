@@ -1,7 +1,6 @@
 {
 	"ros_namespace" : "object_localization",
 	"action_name" : "object_localization/ObjectRecognitionSkill",
-	"subs_topic_name" : "object_localization/localization_pose",
 	"wait_for_server_timeout_in_seconds" : 4,
 	"wait_for_result_timeout_in_seconds" : 45
 }
