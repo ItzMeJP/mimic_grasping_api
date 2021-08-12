@@ -10,7 +10,7 @@
 	{
 		"executor_command" : "tool_localization_ros_init.sh",
 		"terminator_command" : "tool_localization_ros_close.sh",
-		"configuration_file" : "",
-		"plugin_name" : "libfoo"
+		"configuration_file" : "plugin_tool_localization_6dmimic.json",
+		"plugin_name" : "lib6d_mimic_interface"
 	}
 }

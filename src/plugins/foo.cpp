@@ -2,7 +2,7 @@
 // Created by joaopedro on 02/07/21.
 //
 
-#include "plugins/foo.h"
+#include "foo.h"
 
 Foo::Foo(){
 

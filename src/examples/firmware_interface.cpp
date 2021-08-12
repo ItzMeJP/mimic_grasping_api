@@ -1,7 +1,7 @@
 //
 // Created by joaopedro on 20/05/21.
 //
-#include "mimic_grasping_server/mimic_grasping_server.h"
+#include "mimic_grasping_server.h"
 
 using namespace mimic_grasping;
 

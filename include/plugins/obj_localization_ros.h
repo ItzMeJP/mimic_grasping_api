@@ -5,7 +5,7 @@
 #ifndef MIMIC_GRASPING_SERVER_OBJ_LOCALIZATION_ROS_H
 #define MIMIC_GRASPING_SERVER_OBJ_LOCALIZATION_ROS_H
 
-#include <mimic_grasping_server/localization_base.h>
+#include <mimic_grasping_api/localization_base.h>
 
 #include <fcntl.h> // fcntl function
 #include <unistd.h> //read function

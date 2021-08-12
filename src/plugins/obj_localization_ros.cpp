@@ -2,7 +2,7 @@
 // Created by joaopedro on 07/07/21.
 //
 
-#include "plugins/obj_localization_ros.h"
+#include "obj_localization_ros.h"
 
 ObjLocalizationROS::ObjLocalizationROS() {
 
