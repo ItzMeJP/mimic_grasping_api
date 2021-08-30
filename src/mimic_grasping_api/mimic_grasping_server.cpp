@@ -9,6 +9,8 @@ namespace mimic_grasping {
 
     }
 
+
+
     /*
     void MimicGraspingServer::start() {
 
@@ -93,8 +95,16 @@ namespace mimic_grasping {
 
         }
 
-        saveDataset(root_folder_path_+"/outputs/dataset_test.yaml",EXPORT_EXTENSION::YAML); // TODO: REMOVE: just to test
-        saveDataset(root_folder_path_+"/outputs/dataset_test.json",EXPORT_EXTENSION::JSON); // TODO: REMOVE: just to test
+        int gripper_type_label;
+        if(getGripperType() == GRIPPER_TYPE::SINGLE_SUCTION_CUP)
+            gripper_type_label = GRIPPER_ID::SCHMALZ_SINGLE_RECT_X_SUCTION;
+        else if(getGripperType()  == GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER)
+            gripper_type_label = GRIPPER_ID::FESTO_2F_HGPC_16_A;
+
+        saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", root_folder_path_+"/outputs/grasping_poses.yaml",EXPORT_EXTENSION::YAML); // TODO: REMOVE: just to test
+        saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", root_folder_path_+"/outputs/grasping_poses.json",EXPORT_EXTENSION::JSON); // TODO: REMOVE: just to test
+        saveDataset(obj_pose_arr_, "object_pose_", root_folder_path_+"/outputs/object_poses.yaml",EXPORT_EXTENSION::YAML); // TODO: REMOVE: just to test
+        saveDataset(obj_pose_arr_, "object_pose_", root_folder_path_+"/outputs/object_poses.json",EXPORT_EXTENSION::JSON); // TODO: REMOVE: just to test
 
     }
 
@@ -139,10 +149,16 @@ namespace mimic_grasping {
             return false;
         }
 
-        if(//!initToolLocalization() || // TODO: include the tool localization
-           !initObjLocalization() ){
+        if(!initObjLocalization()  || !initToolLocalization() ){
             output_string_ = getLocalizationOutputSTR();
             return false;
+        }
+
+        if(one_shoot_estimation_ == true)
+        {
+            output_string_ = "ONE_SHOOT method active.";
+            std::cout << output_string_ << std::endl;
+            requestObjectLocalization();
         }
 
         return true;
@@ -161,32 +177,97 @@ namespace mimic_grasping {
         output_string_ = current_msg_;
         std::cout << output_string_ << std::endl;
 
-        if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING)
+        if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && !one_shoot_estimation_)
         {
             output_string_ = "Save pose request received.";
             std::cout << output_string_ << std::endl;
-            setObjLocalizationTarget(root_folder_path_+"/models/single_side_bracket.ply");
-            if(setObjLocalizationTarget(current_obj_localization_target_) && requestObjPose(current_obj_pose_)) {
-                std::cout << "" << current_obj_pose_.getName() << std::endl;
-                obj_pose_arr_.push_back(current_obj_pose_);
-                std::cout << "Dataset size" << obj_pose_arr_.size() << std::endl; //TODO: continue here
 
+            if(requestObjectLocalization()) {
+                std::cout << "" << current_obj_pose_.getName() << std::endl;
+                //obj_pose_arr_.push_back(current_obj_pose_);
+                std::cout << "Object data size" << obj_pose_arr_.size() << std::endl;
+            }
+
+            else{
+                sendErrorMsg();
+                return false;
+            }
+
+            if(requestToolLocalization()) {
+                std::cout << "" << current_tool_pose_.getName() << std::endl;
+                //tool_pose_arr_.push_back(current_tool_pose_);
+                std::cout << "Tool data size " << tool_pose_arr_.size() << std::endl;
                 sendSuccessMsg();
             }
 
-            else
+            else{
+                obj_pose_arr_.pop_back();
                 sendErrorMsg();
+                return false;
+            }
         }
-        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING){
-            output_string_ = "Remove last save pose request received.";
+        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && one_shoot_estimation_)
+        {
+            output_string_ = "Save pose request received. ONE_SHOOT method.";
+            std::cout << output_string_ << std::endl;
+
+            if(requestToolLocalization()) {
+                std::cout << "" << current_tool_pose_.getName() << std::endl;
+                //tool_pose_arr_.push_back(current_tool_pose_);
+                std::cout << "Tool data size " << tool_pose_arr_.size() << std::endl;
+                sendSuccessMsg();
+            }
+
+            else{
+                sendErrorMsg();
+                return false;
+            }
+
+        }
+        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && !one_shoot_estimation_){
+            output_string_ = "Remove last saved pose request received.";
             std::cout << output_string_ << std::endl;
             obj_pose_arr_.erase(obj_pose_arr_.end()); // because of the firmware state machine, this condition only happen after a success stock
-            std::cout << "Dataset size" << obj_pose_arr_.size() << std::endl; //TODO: continue here
+            tool_pose_arr_.erase(tool_pose_arr_.end());
+            std::cout << "New object dataset size: " << obj_pose_arr_.size() << std::endl;
+            std::cout << "New tool dataset size: " << tool_pose_arr_.size() << std::endl;
+
             sendSuccessMsg();
-            //TODO
+        }
+        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && one_shoot_estimation_){
+            output_string_ = "Remove last save pose request received. ONE_SHOOT method.";
+            std::cout << output_string_ << std::endl;
+            tool_pose_arr_.erase(tool_pose_arr_.end());
+            std::cout << "New object dataset size [ONE_SHOOT mode ON]: " << obj_pose_arr_.size() << std::endl;
+            std::cout << "New tool dataset size: " << tool_pose_arr_.size() << std::endl;
+
+            sendSuccessMsg();
         }
 
         return true;
+    }
+
+    bool MimicGraspingServer::requestObjectLocalization(){
+
+        setObjLocalizationTarget(root_folder_path_+"/models/single_side_bracket.ply");
+        if(requestObjPose(current_obj_pose_)) {
+            std::cout << "" << current_obj_pose_.getName() << std::endl;
+            obj_pose_arr_.push_back(current_obj_pose_);
+            return true;
+        }
+        else
+            return false;
+    }
+    bool MimicGraspingServer::requestToolLocalization(){
+
+        setToolLocalizationTarget("candidate_");
+        if(requestToolPose(current_tool_pose_)) {
+            //std::cout << "" << current_tool_pose_.getName() << std::endl;
+            tool_pose_arr_.push_back(current_tool_pose_);
+            return true;
+        }
+        else
+            return false;
     }
 
     int MimicGraspingServer::getCurrentStateCode(){
@@ -196,118 +277,6 @@ namespace mimic_grasping {
     void MimicGraspingServer::stop(){
         stop_ = true;
     }
-
-    bool MimicGraspingServer::saveDataset(std::string _path, int _type){
-        if(_type == EXPORT_EXTENSION::JSON)
-            return exportJSONDataset(_path);
-        else
-            return exportYAMLDataset(_path);
-    }
-
-    bool MimicGraspingServer::exportJSONDataset(std::string _path) {
-
-
-        int gripper_type_label;
-        if(current_gripper_type_==GRIPPER_TYPE::SINGLE_SUCTION_CUP)
-            gripper_type_label = GRIPPER_ID::SCHMALZ_SINGLE_RECT_X_SUCTION;
-        else if(current_gripper_type_==GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER)
-            gripper_type_label = GRIPPER_ID::FESTO_2F_HGPC_16_A;
-
-        std::string name_tag;
-
-        for (size_t i = 0; i < obj_pose_arr_.size() ; ++i) { // TODO: REMOVE: just to test
-
-            name_tag = "candidate_" + std::to_string(i);
-            json_pose_arr_[name_tag]["method"] = SYNTHESIS_METHOD::MIMIC_GRASPING;
-            json_pose_arr_[name_tag]["gripper"] = gripper_type_label;
-            json_pose_arr_[name_tag]["position"]["x"] = obj_pose_arr_.at(i).getPosition().x();
-            json_pose_arr_[name_tag]["position"]["y"] = obj_pose_arr_.at(i).getPosition().y();
-            json_pose_arr_[name_tag]["position"]["z"] = obj_pose_arr_.at(i).getPosition().z();
-            json_pose_arr_[name_tag]["orientation"]["x"] = obj_pose_arr_.at(i).getQuaternionOrientation().x();
-            json_pose_arr_[name_tag]["orientation"]["y"] = obj_pose_arr_.at(i).getQuaternionOrientation().y();
-            json_pose_arr_[name_tag]["orientation"]["z"] = obj_pose_arr_.at(i).getQuaternionOrientation().z();
-            json_pose_arr_[name_tag]["orientation"]["w"] = obj_pose_arr_.at(i).getQuaternionOrientation().w();
-
-        }
-        std::ofstream outfile(_path);
-        outfile << json_pose_arr_ << std::endl;
-        outfile.close();
-        return true;
-    }
-
-    bool MimicGraspingServer::exportYAMLDataset(std::string _path) {
-
-        std::ofstream file;
-
-        std::stringstream toFile, dof_ss, parameters_ss;
-
-        std::vector<Pose> g;
-        //g = tool_pose_arr_; // TODO: REMOVE change to this ...
-        g = obj_pose_arr_; // TODO: REMOVE  Just debug
-
-        for (size_t i = 0; i < g.size(); ++i) {
-
-            dof_ss.str(""); //clear it
-            dof_ss << "[]";
-
-            // TODO: future work... There is no DOF in this situation
-            /*
-              for (size_t j = 0; j < g.candidates.at(i).gripper_data.dof.size(); ++j) {
-                if(j == (g.candidates.at(i).gripper_data.dof.size()-1))
-                    dof_ss << g.candidates.at(i).gripper_data.dof.at(j) << "]" ;
-                else
-                    dof_ss << g.candidates.at(i).gripper_data.dof.at(j) << ", " ;
-            }
-            */
-
-
-            parameters_ss.str(""); //clear it
-            parameters_ss << "[]";
-
-            // TODO: future work... There is no Additional parameters in this situation since the pneumatic grippers only support ON-OFF
-            /*
-            for (size_t j = 0; j < g.candidates.at(i).gripper_data.parameters.size(); ++j) {
-                if(j == (g.candidates.at(i).gripper_data.parameters.size()-1))
-                    parameters_ss << g.candidates.at(i).gripper_data.parameters.at(j) << "]" ;
-                else
-                    parameters_ss << g.candidates.at(i).gripper_data.parameters.at(j) << ", " ;
-            }
-            */
-
-            int gripper_type_label;
-            if(current_gripper_type_==GRIPPER_TYPE::SINGLE_SUCTION_CUP)
-                gripper_type_label = GRIPPER_ID::SCHMALZ_SINGLE_RECT_X_SUCTION;
-            else if(current_gripper_type_==GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER)
-                gripper_type_label = GRIPPER_ID::FESTO_2F_HGPC_16_A;
-
-
-            toFile << "candidate_" << std::to_string(i) << ":\n" <<
-                   "  method: " << "\n" <<
-                   "    type: " << SYNTHESIS_METHOD::MIMIC_GRASPING << "\n" <<
-                   "  gripper:" << "\n" <<
-                   "    type: " <<  gripper_type_label << "\n" <<
-                   "    parameters: " << parameters_ss.str() << "\n" <<
-                   "    DOFs: " << dof_ss.str() << "\n" <<
-                   "  parent_frame_id: " << g.at(i).getParentName() << "\n" <<
-                   "  position:" << "\n" <<
-                   "    x: " << g.at(i).getPosition().x() << "\n" <<
-                   "    y: " << g.at(i).getPosition().y() << "\n" <<
-                   "    z: " << g.at(i).getPosition().z() << "\n" <<
-                   "  orientation:" << "\n" <<
-                   "    x: " << g.at(i).getQuaternionOrientation().x() << "\n" <<
-                   "    y: " << g.at(i).getQuaternionOrientation().y() << "\n" <<
-                   "    z: " << g.at(i).getQuaternionOrientation().z() << "\n" <<
-                   "    w: " << g.at(i).getQuaternionOrientation().w() << "\n";
-
-        }
-
-        file.open(_path);
-        file << toFile.str();
-        file.close();
-        return true;
-
-    }
-
 
     std::string MimicGraspingServer::getOutputSTR(){
         return output_string_;

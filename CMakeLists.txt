@@ -17,7 +17,7 @@ set(PLUGINS_DIR_FOLDER ${CURRENT_DIR}/plugins)
 
 set(CMAKE_CXX_STANDARD 17)
 set(SUBDIR_LIBS_PATH libs)
-set(BUILD_PLUGINS True)
+set(BUILD_PLUGINS False)
 
 #set(EXPORT_PATH_USED_INTO_SUBDIRS #defining a shared CMAKE var.
 #        include
@@ -66,6 +66,7 @@ add_library(${PROJECT_NAME} SHARED #Shared is to export it latter
         src/${PROJECT_NAME}/mimic_grasping_server.cpp
         src/${PROJECT_NAME}/tool_firmware_interface.cpp
         src/${PROJECT_NAME}/localization_interface.cpp
+        src/${PROJECT_NAME}/dataset_manipulator.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}
@@ -89,7 +90,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
         #PUBLIC_HEADER "include/mimic_grasping_server/mimic_grasping_server.h"
         #PRIVATE_HEADER "include/mimic_grasping_server/tool_firmware_interface.h"
-        PUBLIC_HEADER "include/${PROJECT_NAME}/mimic_grasping_server.h;include/${PROJECT_NAME}/localization_base.h;include/${PROJECT_NAME}/tool_firmware_interface.h;include/${PROJECT_NAME}/localization_interface.h"
+        PUBLIC_HEADER "include/${PROJECT_NAME}/mimic_grasping_server.h;include/${PROJECT_NAME}/localization_base.h;include/${PROJECT_NAME}/dataset_manipulator.h;include/${PROJECT_NAME}/tool_firmware_interface.h;include/${PROJECT_NAME}/localization_interface.h"
         )
 
 configure_file(install_configurations/${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)

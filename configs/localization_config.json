@@ -3,14 +3,15 @@
 	{
 		"executor_command" : "obj_localization_ros_init.sh",
 		"terminator_command" : "obj_localization_ros_close.sh",
-		"configuration_file" : "plugin_phoxi_cam_object_localization_ros.json",
-		"plugin_name" : "libphoxi_cam_object_localization_ros"
+		"configuration_file" : "plugin_object_localization_ros.json",
+		"plugin_name" : "libobject_localization_ros",
+		"one_shoot_estimation" : true
 	},
 	"tool_localization" :
 	{
-		"executor_command" : "tool_localization_ros_init.sh",
-		"terminator_command" : "tool_localization_ros_close.sh",
+		"executor_command" : "tool_localization_6dmimic_init.sh",
+		"terminator_command" : "tool_localization_6dmimic_close.sh",
 		"configuration_file" : "plugin_tool_localization_6dmimic.json",
-		"plugin_name" : "lib6d_mimic_interface"
+		"plugin_name" : "libinterface_6dmimic"
 	}
 }

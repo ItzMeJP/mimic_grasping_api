@@ -26,6 +26,7 @@
 #define JSON_EX_CMD_TAG "executor_command"
 #define JSON_TERM_CMD_TAG "terminator_command"
 #define JSON_SPEC_CONFIG_FILE_TAG "configuration_file"
+#define JSON_TOOL_ONESHOOT_TAG "one_shoot_estimation"
 #define JSON_PL_FOLDER_PTH "folder_path"
 
 #endif // JSON_TAGS_DEFINE_H
@@ -51,6 +52,7 @@ public:
         OBJ,
     };
 
+
     bool saveLocalizationConfigFile(std::string _file);
 
     bool loadLocalizationConfigFile(std::string _file);
@@ -73,10 +75,13 @@ public:
 
     bool requestObjPose(Pose &_pose);
 
+    bool requestToolPose(Pose &_pose);
+
     bool setObjLocalizationTarget(std::string _target_name_with_path);
 
     bool setToolLocalizationTarget(std::string _target_name_with_path);
 
+    bool one_shoot_estimation_;
 
 protected:
     Json::Value localization_interface_config_data_;

@@ -55,6 +55,8 @@ bool LocalizationInterface::loadLocalizationConfigFile(std::string _file) {
     obj_localization_data_.executor = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG].asString();
     obj_localization_data_.terminator = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TERM_CMD_TAG].asString();
     obj_localization_data_.specific_configuration_file = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG].asString();
+    one_shoot_estimation_ =  localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TOOL_ONESHOOT_TAG].asBool();
+
 
     return true;
 }
@@ -98,7 +100,7 @@ bool LocalizationInterface::initLocalization(std::shared_ptr<LocalizationBase>& 
         class_index = 0;
 
     if(plugin_index < 0){
-        output_string_ = "Cannot init the object localization. There is no plugin \""+ _data.plugin_name +"\" into the loaded plugin list.";
+        output_string_ = "Cannot init the localization. There is no plugin \""+ _data.plugin_name +"\" into the loaded plugin list.";
         return false;
     }
 
@@ -106,7 +108,7 @@ bool LocalizationInterface::initLocalization(std::shared_ptr<LocalizationBase>& 
     _loc_instance = CreateInstanceAs<LocalizationBase>(plugin_index,class_index); //it is supposed to have only one class
 
     if(_loc_instance == nullptr){
-        output_string_ = "Cannot instantiate the object localization for " + std::string(GetPluginFactoryInfo(plugin_index)->GetClassName(class_index)) + " class.";
+        output_string_ = "Cannot instantiate the localization for " + std::string(GetPluginFactoryInfo(plugin_index)->GetClassName(class_index)) + " class.";
         return false;
     }
 
@@ -148,6 +150,9 @@ bool LocalizationInterface::requestObjPose(Pose& _pose){
     return obj_localization_obj_->requestData(_pose);
 }
 
+bool LocalizationInterface::requestToolPose(Pose &_pose){
+    return tool_localization_obj_->requestData(_pose);
+}
 
 
 /*
@@ -189,13 +194,13 @@ bool LocalizationInterface::localization_spinner_sleep(int usec){
         return false;
     }
 
-    /* TODO: added tool localization
+
     tool_localization_obj_->spin(int(usec*0.5));
     if(tool_localization_obj_->getStatus() == LocalizationBase::ERROR){
         output_string_ = tool_localization_obj_->getOutputString();
         return false;
     }
-    */
+
     return true;
 }
 
