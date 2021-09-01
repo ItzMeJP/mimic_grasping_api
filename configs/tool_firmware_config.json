@@ -1,6 +1,6 @@
 {
   "serial": {
-    "port": "/dev/ttyACM0",
+    "port": "/dev/mimic_tool",
     "baud_rate": 115200
   },
   "tool": {

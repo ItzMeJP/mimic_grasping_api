@@ -7,6 +7,7 @@ namespace mimic_grasping {
 
     MimicGraspingServer::~MimicGraspingServer(){
 
+
     }
 
 
@@ -75,25 +76,16 @@ namespace mimic_grasping {
         if(!load() || !init())
             return;
 
-        // TODO: run and test localizations modules
+        int aux;
         while(!stop_) {
-            spin();
-            if(!firmware_spinner_sleep(2000)){ // the serial reader is slow...
-                output_string_ = getToolFirmwareOutputSTR();
-                while(stopObjLocalization()!=true){};
-
-                while(stopToolLocalization()!=true){}; // TODO: check problem....
-
-                break;
-            }
-            if(!localization_spinner_sleep(300)){
-                output_string_ = getLocalizationOutputSTR();
-                while(stopToolCommunication()!=true);
-                break;
-            }
-
-
+            if(!spin())
+                return;
+            std::cout << "Continue?[0|1]" << std::endl;
+            std::cin >> aux;
+            stop_=(aux==0?true:false);
         }
+
+        closeInterfaces();
 
         int gripper_type_label;
         if(getGripperType() == GRIPPER_TYPE::SINGLE_SUCTION_CUP)
@@ -149,7 +141,7 @@ namespace mimic_grasping {
             return false;
         }
 
-        if(!initObjLocalization()  || !initToolLocalization() ){
+        if(!initObjLocalization() || !initToolLocalization() ){
             output_string_ = getLocalizationOutputSTR();
             return false;
         }
@@ -170,6 +162,33 @@ namespace mimic_grasping {
     }
 
     bool MimicGraspingServer::spin(){
+
+        if(!firmware_spinner_sleep(2000)){ // the serial reader is slow...
+            output_string_ = getToolFirmwareOutputSTR();
+            while(stopToolLocalization()!=true){}; // TODO: double free error... the interruption does not the code continue
+            while(stopObjLocalization()!=true){};
+            //closeInterfaces();
+            std::cout<< "continuei 0" << std::endl;
+            return false;
+        }
+
+        if(!object_localization_spinner_sleep(150)){
+            output_string_ = getLocalizationOutputSTR();
+            while(stopToolCommunication()!=true){}
+            while(stopToolLocalization()!=true){};
+
+           //closeInterfaces();
+            return false;
+        }
+
+        if(!tool_localization_spinner_sleep(150)){
+            output_string_ = getLocalizationOutputSTR();
+            while(stopToolCommunication()!=true){};
+            while(stopObjLocalization()!=true){};
+
+            //closeInterfaces();
+            return false;
+        }
 
         current_msg_ = received_msg_;
         convertMsgToCode(current_msg_,current_code_);
@@ -247,6 +266,25 @@ namespace mimic_grasping {
         return true;
     }
 
+    bool MimicGraspingServer::closeInterfaces(){
+
+        std::cout << "Closing interfaces..." << std::endl;
+        std::cout << "Closing Object Localization..." << std::endl;
+        std::cout << "Closing Tool Localization..." << std::endl;
+        while(stopToolLocalization()!=true){}; // TODO: cant kill it...
+        while(stopObjLocalization()!=true){};
+        sleep(1);
+        std::cout << "Closing Tool Communication..." << std::endl;
+        while(stopToolCommunication()!=true){}
+
+
+
+
+        std::cout << "fechou tudo" << std::endl;
+        return true; //TODO: treat possible errors
+    };
+
+
     bool MimicGraspingServer::requestObjectLocalization(){
 
         setObjLocalizationTarget(root_folder_path_+"/models/single_side_bracket.ply");
@@ -258,6 +296,7 @@ namespace mimic_grasping {
         else
             return false;
     }
+
     bool MimicGraspingServer::requestToolLocalization(){
 
         setToolLocalizationTarget("candidate_");

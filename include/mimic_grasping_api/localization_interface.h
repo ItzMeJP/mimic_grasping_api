@@ -69,7 +69,9 @@ public:
 
     bool stopToolLocalization();
 
-    bool localization_spinner_sleep(int usec);
+    bool object_localization_spinner_sleep(int usec);
+
+    bool tool_localization_spinner_sleep(int usec);
 
     std::string getLocalizationInterfaceOutputSTR();
 

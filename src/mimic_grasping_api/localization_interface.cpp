@@ -186,16 +186,20 @@ std::string LocalizationInterface::getLocalizationInterfaceOutputSTR(){
     return output_string_;
 }
 
-bool LocalizationInterface::localization_spinner_sleep(int usec){
+bool LocalizationInterface::object_localization_spinner_sleep(int usec){
 
-    obj_localization_obj_->spin(int(usec*0.5));
+    obj_localization_obj_->spin(int(usec));
     if(obj_localization_obj_->getStatus() == LocalizationBase::ERROR){
         output_string_ = obj_localization_obj_->getOutputString();
         return false;
     }
 
+    return true;
+}
 
-    tool_localization_obj_->spin(int(usec*0.5));
+bool LocalizationInterface::tool_localization_spinner_sleep(int usec){
+
+    tool_localization_obj_->spin(int(usec));
     if(tool_localization_obj_->getStatus() == LocalizationBase::ERROR){
         output_string_ = tool_localization_obj_->getOutputString();
         return false;

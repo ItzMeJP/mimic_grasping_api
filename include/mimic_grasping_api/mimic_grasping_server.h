@@ -24,6 +24,7 @@ namespace mimic_grasping{
         bool init();
         bool spin();
         void stop();
+        bool closeInterfaces();
         void clearDataset();
 
         std::string getOutputSTR();
@@ -52,8 +53,6 @@ namespace mimic_grasping{
              current_tool_pose_;
         std::vector<Pose> obj_pose_arr_,
                           tool_pose_arr_;
-
-
 
 
 
