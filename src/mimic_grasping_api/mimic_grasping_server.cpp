@@ -71,33 +71,20 @@ namespace mimic_grasping {
 
     }*/
 
-    void MimicGraspingServer::start() {
+    bool MimicGraspingServer::start() {
 
         if(!load() || !init())
-            return;
+            return false;
 
-        int aux;
         while(!stop_) {
             if(!spin())
-                return;
-            std::cout << "Continue?[0|1]" << std::endl;
-            std::cin >> aux;
-            stop_=(aux==0?true:false);
-        }
+                return false;
+             }
 
-        closeInterfaces();
+        if(!closeInterfaces())
+            return false;
 
-        int gripper_type_label;
-        if(getGripperType() == GRIPPER_TYPE::SINGLE_SUCTION_CUP)
-            gripper_type_label = GRIPPER_ID::SCHMALZ_SINGLE_RECT_X_SUCTION;
-        else if(getGripperType()  == GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER)
-            gripper_type_label = GRIPPER_ID::FESTO_2F_HGPC_16_A;
-
-        saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", root_folder_path_+"/outputs/grasping_poses.yaml",EXPORT_EXTENSION::YAML); // TODO: REMOVE: just to test
-        saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", root_folder_path_+"/outputs/grasping_poses.json",EXPORT_EXTENSION::JSON); // TODO: REMOVE: just to test
-        saveDataset(obj_pose_arr_, "object_pose_", root_folder_path_+"/outputs/object_poses.yaml",EXPORT_EXTENSION::YAML); // TODO: REMOVE: just to test
-        saveDataset(obj_pose_arr_, "object_pose_", root_folder_path_+"/outputs/object_poses.json",EXPORT_EXTENSION::JSON); // TODO: REMOVE: just to test
-
+        return true;
     }
 
     bool MimicGraspingServer::load(){
@@ -149,9 +136,27 @@ namespace mimic_grasping {
         if(one_shoot_estimation_ == true)
         {
             output_string_ = "ONE_SHOOT method active.";
-            std::cout << output_string_ << std::endl;
+            DEBUG_MSG (output_string_);
             requestObjectLocalization();
         }
+
+        return true;
+    }
+
+    bool MimicGraspingServer::exportDatasets() {
+        int gripper_type_label;
+        if(getGripperType() == GRIPPER_TYPE::SINGLE_SUCTION_CUP)
+            gripper_type_label = GRIPPER_ID::SCHMALZ_SINGLE_RECT_X_SUCTION;
+        else if(getGripperType()  == GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER)
+            gripper_type_label = GRIPPER_ID::FESTO_2F_HGPC_16_A;
+
+        if(
+                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", root_folder_path_+"/outputs/grasping_poses.yaml",EXPORT_EXTENSION::YAML) ||
+                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", root_folder_path_+"/outputs/grasping_poses.json",EXPORT_EXTENSION::JSON) ||
+                !saveDataset(obj_pose_arr_, "object_pose_", root_folder_path_+"/outputs/object_poses.yaml",EXPORT_EXTENSION::YAML) ||
+                !saveDataset(obj_pose_arr_, "object_pose_", root_folder_path_+"/outputs/object_poses.json",EXPORT_EXTENSION::JSON)
+                )
+            return false;
 
         return true;
     }
@@ -165,10 +170,9 @@ namespace mimic_grasping {
 
         if(!firmware_spinner_sleep(2000)){ // the serial reader is slow...
             output_string_ = getToolFirmwareOutputSTR();
-            while(stopToolLocalization()!=true){}; // TODO: double free error... the interruption does not the code continue
+            while(stopToolLocalization()!=true){};
             while(stopObjLocalization()!=true){};
-            //closeInterfaces();
-            std::cout<< "continuei 0" << std::endl;
+            output_string_  =  "Closing interfaces since firmware communication is lost." ;
             return false;
         }
 
@@ -176,8 +180,7 @@ namespace mimic_grasping {
             output_string_ = getLocalizationOutputSTR();
             while(stopToolCommunication()!=true){}
             while(stopToolLocalization()!=true){};
-
-           //closeInterfaces();
+            output_string_  = "Closing interfaces since object localization communication is lost." ;
             return false;
         }
 
@@ -185,8 +188,7 @@ namespace mimic_grasping {
             output_string_ = getLocalizationOutputSTR();
             while(stopToolCommunication()!=true){};
             while(stopObjLocalization()!=true){};
-
-            //closeInterfaces();
+            output_string_  = "Closing interfaces since tool localization communication is lost." ;
             return false;
         }
 
@@ -194,12 +196,12 @@ namespace mimic_grasping {
         convertMsgToCode(current_msg_,current_code_);
 
         output_string_ = current_msg_;
-        std::cout << output_string_ << std::endl;
+        DEBUG_MSG( output_string_ );
 
         if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && !one_shoot_estimation_)
         {
             output_string_ = "Save pose request received.";
-            std::cout << output_string_ << std::endl;
+            DEBUG_MSG ( output_string_ );
 
             if(requestObjectLocalization()) {
                 std::cout << "" << current_obj_pose_.getName() << std::endl;
@@ -213,9 +215,9 @@ namespace mimic_grasping {
             }
 
             if(requestToolLocalization()) {
-                std::cout << "" << current_tool_pose_.getName() << std::endl;
+                DEBUG_MSG( "" << current_tool_pose_.getName() );
                 //tool_pose_arr_.push_back(current_tool_pose_);
-                std::cout << "Tool data size " << tool_pose_arr_.size() << std::endl;
+                DEBUG_MSG( "Tool data size " << tool_pose_arr_.size() );
                 sendSuccessMsg();
             }
 
@@ -231,9 +233,9 @@ namespace mimic_grasping {
             std::cout << output_string_ << std::endl;
 
             if(requestToolLocalization()) {
-                std::cout << "" << current_tool_pose_.getName() << std::endl;
+                DEBUG_MSG( "" << current_tool_pose_.getName() );
                 //tool_pose_arr_.push_back(current_tool_pose_);
-                std::cout << "Tool data size " << tool_pose_arr_.size() << std::endl;
+                DEBUG_MSG( "Tool data size " << tool_pose_arr_.size() );
                 sendSuccessMsg();
             }
 
@@ -245,20 +247,20 @@ namespace mimic_grasping {
         }
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && !one_shoot_estimation_){
             output_string_ = "Remove last saved pose request received.";
-            std::cout << output_string_ << std::endl;
+            DEBUG_MSG( output_string_ );
             obj_pose_arr_.erase(obj_pose_arr_.end()); // because of the firmware state machine, this condition only happen after a success stock
             tool_pose_arr_.erase(tool_pose_arr_.end());
-            std::cout << "New object dataset size: " << obj_pose_arr_.size() << std::endl;
-            std::cout << "New tool dataset size: " << tool_pose_arr_.size() << std::endl;
+            DEBUG_MSG( "New object dataset size: " << obj_pose_arr_.size() );
+            DEBUG_MSG( "New tool dataset size: " << tool_pose_arr_.size() );
 
             sendSuccessMsg();
         }
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && one_shoot_estimation_){
             output_string_ = "Remove last save pose request received. ONE_SHOOT method.";
-            std::cout << output_string_ << std::endl;
+            DEBUG_MSG( output_string_ );
             tool_pose_arr_.erase(tool_pose_arr_.end());
-            std::cout << "New object dataset size [ONE_SHOOT mode ON]: " << obj_pose_arr_.size() << std::endl;
-            std::cout << "New tool dataset size: " << tool_pose_arr_.size() << std::endl;
+            DEBUG_MSG( "New object dataset size [ONE_SHOOT mode ON]: " << obj_pose_arr_.size() );
+            DEBUG_MSG( "New tool dataset size: " << tool_pose_arr_.size() );
 
             sendSuccessMsg();
         }
@@ -268,19 +270,15 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::closeInterfaces(){
 
-        std::cout << "Closing interfaces..." << std::endl;
-        std::cout << "Closing Object Localization..." << std::endl;
-        std::cout << "Closing Tool Localization..." << std::endl;
-        while(stopToolLocalization()!=true){}; // TODO: cant kill it...
+        DEBUG_MSG( "Closing interfaces...");
+        DEBUG_MSG( "Closing Tool Localization...");
+        while(stopToolLocalization()!=true){};
+        DEBUG_MSG( "Closing Object Localization...");
         while(stopObjLocalization()!=true){};
         sleep(1);
-        std::cout << "Closing Tool Communication..." << std::endl;
+        DEBUG_MSG(  "Closing Tool Communication..." );
         while(stopToolCommunication()!=true){}
 
-
-
-
-        std::cout << "fechou tudo" << std::endl;
         return true; //TODO: treat possible errors
     };
 
@@ -289,7 +287,7 @@ namespace mimic_grasping {
 
         setObjLocalizationTarget(root_folder_path_+"/models/single_side_bracket.ply");
         if(requestObjPose(current_obj_pose_)) {
-            std::cout << "" << current_obj_pose_.getName() << std::endl;
+            DEBUG_MSG( "" << current_obj_pose_.getName() );
             obj_pose_arr_.push_back(current_obj_pose_);
             return true;
         }

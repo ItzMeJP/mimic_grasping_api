@@ -1,3 +1,4 @@
+
 #ifndef MIMIC_GRASPING_SERVER_MIMIC_GRASPING_SERVER_H
 #define MIMIC_GRASPING_SERVER_MIMIC_GRASPING_SERVER_H
 
@@ -10,6 +11,13 @@
 #include "localization_interface.h"
 #include "dataset_manipulator.h"
 
+#define MSG_PREFIX "<MimicGraspingAPI> "
+
+#ifndef NDEBUG
+#define DEBUG_MSG(str) do { std::cout << "\033[;33m" << MSG_PREFIX << str << "\033[0m"<< std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
 
 namespace mimic_grasping{
 
@@ -19,13 +27,14 @@ namespace mimic_grasping{
         MimicGraspingServer();
         ~MimicGraspingServer();
 
-        void start();
+        bool start();
         bool load();
         bool init();
         bool spin();
         void stop();
         bool closeInterfaces();
         void clearDataset();
+        bool exportDatasets();
 
         std::string getOutputSTR();
         int getCurrentStateCode();

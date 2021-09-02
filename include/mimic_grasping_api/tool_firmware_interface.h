@@ -1,6 +1,14 @@
 //
 // Created by joaopedro on 09/06/21.
 //
+#define MSG_PREFIX "<MimicGraspingAPI> "
+
+#ifndef NDEBUG
+#define DEBUG_MSG(str) do { std::cout << "\033[;33m" << MSG_PREFIX << str << "\033[0m"<< std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
+
 #ifndef MIMIC_GRASPING_SERVER_TOOL_FIRMWARE_INTERFACE_H
 #define MIMIC_GRASPING_SERVER_TOOL_FIRMWARE_INTERFACE_H
 

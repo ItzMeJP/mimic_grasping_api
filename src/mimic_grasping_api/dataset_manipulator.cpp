@@ -4,6 +4,7 @@
 
 #include "dataset_manipulator.h"
 
+//TODO: check possible save errors and retunr the output_string...
 DatasetManipulator::DatasetManipulator() {
 
 }

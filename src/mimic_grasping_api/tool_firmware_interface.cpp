@@ -144,7 +144,7 @@ namespace mimic_grasping {
                 //boost::this_thread::sleep(boost::posix_time::milliseconds(500)); //interruption with sleep
             }
             catch (boost::thread_interrupted &) {
-                std::cout << "Tool firmware thread is stopped" << std::endl;
+                DEBUG_MSG( "Tool firmware thread is stopped" );
                 return;
             }
         }
