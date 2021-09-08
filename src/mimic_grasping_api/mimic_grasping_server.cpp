@@ -5,11 +5,18 @@ namespace mimic_grasping {
     MimicGraspingServer::MimicGraspingServer(){
     }
 
+    MimicGraspingServer::MimicGraspingServer(std::string _profile){
+        setProfile(_profile);
+    }
+
     MimicGraspingServer::~MimicGraspingServer(){
 
 
     }
 
+    void MimicGraspingServer::setProfile(std::string _profile){
+        profile_ = _profile;
+    }
 
 
     /*
@@ -84,6 +91,11 @@ namespace mimic_grasping {
         if(!closeInterfaces())
             return false;
 
+        if(!applyTransformation(obj_pose_arr_,tool_pose_arr_,tool_pose_wrt_obj_frame_arr_)) {
+            output_string_ = getDatasetManipulatorOutputSTR();
+            return false;
+        }
+
         return true;
     }
 
@@ -100,13 +112,24 @@ namespace mimic_grasping {
 
         root_folder_path_ = std::string(env_root_folder_path);
 
-        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_dir_ + tool_firmware_file_ )) {
+        if(profile_.empty()){
+            std::cout << "Profile empty. Setting DEFAULT" << std::endl;
+            profile_ = "default";
+        }
+
+        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_dir_ + "/" + profile_ + tool_firmware_file_ )) {
             output_string_ = getToolFirmwareOutputSTR();
             return false;
         }
-        if(!loadLocalizationConfigFile(root_folder_path_ + config_folder_dir_ + localization_file_)
+
+        if(!loadTransformationMatrix(root_folder_path_ + config_folder_dir_ + "/" + profile_ + matrix_file_)){
+            output_string_ = getDatasetManipulatorOutputSTR();
+            return false;
+        }
+
+        if(!loadLocalizationConfigFile(root_folder_path_ + config_folder_dir_ + "/" + profile_ + localization_file_)
         || !setLocalizationScriptsFolderPath(root_folder_path_ + scripts_folder_dir_ )
-        || !setLocalizationConfigsFolderPath(root_folder_path_ + config_folder_dir_)){
+        || !setLocalizationConfigsFolderPath(root_folder_path_ + config_folder_dir_ + "/" + profile_)){
             output_string_ = getLocalizationOutputSTR();
         }
 
@@ -144,19 +167,42 @@ namespace mimic_grasping {
     }
 
     bool MimicGraspingServer::exportDatasets() {
+
+        struct stat info;
+
+        std::string path_name = root_folder_path_+"/outputs/"+ profile_;
+        char* char_arr = &path_name[0];
+
+        if( stat( char_arr, &info ) != 0 ) {
+            DEBUG_MSG("Cannot access " << char_arr << ". Creating it to export dataset.");
+            std::filesystem::create_directory(path_name);
+        }
+        /*
+        else if( info.st_mode & S_IFDIR )  // S_ISDIR() doesn't exist on my windows
+            printf( "%s is a directory\n", char_arr );
+        else
+            printf( "%s is no directory\n", char_arr );
+        */
+
         int gripper_type_label;
         if(getGripperType() == GRIPPER_TYPE::SINGLE_SUCTION_CUP)
             gripper_type_label = GRIPPER_ID::SCHMALZ_SINGLE_RECT_X_SUCTION;
         else if(getGripperType()  == GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER)
             gripper_type_label = GRIPPER_ID::FESTO_2F_HGPC_16_A;
 
+
         if(
-                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", root_folder_path_+"/outputs/grasping_poses.yaml",EXPORT_EXTENSION::YAML) ||
-                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", root_folder_path_+"/outputs/grasping_poses.json",EXPORT_EXTENSION::JSON) ||
-                !saveDataset(obj_pose_arr_, "object_pose_", root_folder_path_+"/outputs/object_poses.yaml",EXPORT_EXTENSION::YAML) ||
-                !saveDataset(obj_pose_arr_, "object_pose_", root_folder_path_+"/outputs/object_poses.json",EXPORT_EXTENSION::JSON)
-                )
+                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", path_name +"/raw_grasping_poses.yaml",EXPORT_EXTENSION::YAML) ||
+                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", path_name +"/raw_grasping_poses.json",EXPORT_EXTENSION::JSON) ||
+                !saveDataset(tool_pose_wrt_obj_frame_arr_, gripper_type_label, "candidate_", path_name +"/grasping_poses.yaml",EXPORT_EXTENSION::YAML) ||
+                !saveDataset(tool_pose_wrt_obj_frame_arr_, gripper_type_label, "candidate_", path_name +"/grasping_poses.json",EXPORT_EXTENSION::JSON) ||
+                !saveDataset(obj_pose_arr_, "object_pose_", path_name +"/object_poses.yaml",EXPORT_EXTENSION::YAML) ||
+                !saveDataset(obj_pose_arr_, "object_pose_", path_name +"/object_poses.json",EXPORT_EXTENSION::JSON)
+                ){
+
+            output_string_ = getDatasetManipulatorOutputSTR();
             return false;
+        }
 
         return true;
     }

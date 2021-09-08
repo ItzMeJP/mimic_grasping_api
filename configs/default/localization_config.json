@@ -5,7 +5,7 @@
 		"terminator_command" : "obj_localization_ros_close.sh",
 		"configuration_file" : "plugin_object_localization_ros.json",
 		"plugin_name" : "libobject_localization_ros",
-		"one_shoot_estimation" : false
+		"one_shoot_estimation" : true
 	},
 	"tool_localization" :
 	{

@@ -4,7 +4,7 @@
 
 #include "dataset_manipulator.h"
 
-//TODO: check possible save errors and retunr the output_string...
+//TODO: check possible save errors and return the output_string...
 DatasetManipulator::DatasetManipulator() {
 
 }
@@ -12,6 +12,87 @@ DatasetManipulator::DatasetManipulator() {
 DatasetManipulator::~DatasetManipulator() {
 
 }
+
+std::string DatasetManipulator::getDatasetManipulatorOutputSTR(){
+    return output_string_;
+}
+
+bool DatasetManipulator::loadTransformationMatrix(std::string _file_with_path) {
+
+    std::ifstream config_file(_file_with_path, std::ifstream::binary);
+    if (config_file) {
+        try {
+            config_file >> json_matrix_;
+        } catch (const std::exception &e) {
+            output_string_ = e.what();
+            return false;
+        }
+    } else {
+        output_string_ = "Matrix file not found. Current path: \" + _file";
+        return false;
+    }
+
+    transformation_matrix_ << json_matrix_["matrix"][0][0].asDouble(), json_matrix_["matrix"][0][1].asDouble(), json_matrix_["matrix"][0][2].asDouble(), json_matrix_["matrix"][0][3].asDouble(),
+                              json_matrix_["matrix"][1][0].asDouble(), json_matrix_["matrix"][1][1].asDouble(), json_matrix_["matrix"][1][2].asDouble(), json_matrix_["matrix"][1][3].asDouble(),
+                              json_matrix_["matrix"][2][0].asDouble(), json_matrix_["matrix"][2][1].asDouble(), json_matrix_["matrix"][2][2].asDouble(), json_matrix_["matrix"][2][3].asDouble(),
+                              json_matrix_["matrix"][3][0].asDouble(), json_matrix_["matrix"][3][1].asDouble(), json_matrix_["matrix"][3][2].asDouble(), json_matrix_["matrix"][3][3].asDouble();
+
+    DEBUG_MSG("Loaded transformation matrix: \n" << transformation_matrix_);
+
+    return true;
+}
+
+bool DatasetManipulator::applyTransformation(std::vector<Pose> _obj_poses,
+                                             std::vector<Pose> _tool_poses,
+                                             std::vector<Pose> &_tool_poses_wrt_obj_ref){
+
+    std::vector<Transform> obj_poses_wrt_tool_ref;
+    Pose aux_pose;
+
+    _tool_poses_wrt_obj_ref.clear();
+    obj_poses_wrt_tool_ref.clear();
+
+    if(_obj_poses.empty()){
+        output_string_ = "Object poses dataset is empty.";
+    }
+
+    if(_tool_poses.empty()){
+        output_string_ = "Tool poses dataset is empty.";
+    }
+
+    Transform T_obj_ref_to_tool_ref(_obj_poses.at(0).getParentName(), _tool_poses.at(0).getParentName(), transformation_matrix_);
+
+    for (int i = 0; i < _obj_poses.size(); ++i) {
+
+        if(!T_obj_ref_to_tool_ref.apply(_obj_poses.at(i),aux_pose)){
+            output_string_ = "Error in transformation.";
+            return false;
+        }
+
+        Transform aux_transform(aux_pose);
+        obj_poses_wrt_tool_ref.push_back(aux_transform);
+    }
+
+    if(_obj_poses.size()!=1 && _obj_poses.size()!=_tool_poses.size()){
+        output_string_ = "Tool and Object dataset have different sizes for the chosen shoot_estimation method.";
+        return false;
+    }
+
+    for (int i = 0; i < _tool_poses.size(); ++i) {
+
+        Transform t = obj_poses_wrt_tool_ref.size()==1?obj_poses_wrt_tool_ref.at(0):obj_poses_wrt_tool_ref.at(i); //TODO: the datasets should have the same size if the one_shoot_estimation is unset
+        if(!t.apply_inverse(_tool_poses.at(i),aux_pose)){
+            output_string_ = "Error in transformation.";
+            return false;
+        }
+        _tool_poses_wrt_obj_ref.push_back(aux_pose);
+
+    }
+
+    return true;
+}
+
+
 
 bool DatasetManipulator::saveDataset(std::vector<Pose> _dataset,
                                      int _gripper_type,

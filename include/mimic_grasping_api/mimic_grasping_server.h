@@ -5,6 +5,8 @@
 #include <iostream>
 #include <thread>
 #include <boost/thread.hpp>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include <simple_serial/simple_serial.h>
 #include "tool_firmware_interface.h"
@@ -25,7 +27,10 @@ namespace mimic_grasping{
 
     public:
         MimicGraspingServer();
+        MimicGraspingServer(std::string _profile);
         ~MimicGraspingServer();
+
+        void setProfile(std::string _profile);
 
         bool start();
         bool load();
@@ -47,7 +52,9 @@ namespace mimic_grasping{
                     scripts_folder_dir_ = "/scripts",
                     tool_firmware_file_ = "/tool_firmware_config.json",
                     localization_file_ = "/localization_config.json",
-                    current_msg_ = "";
+                    matrix_file_ = "/calib_matrix.json",
+                    current_msg_ = "",
+                    profile_ ;
 
         int current_code_;
         bool stop_ = false;
@@ -61,7 +68,8 @@ namespace mimic_grasping{
         Pose current_obj_pose_,
              current_tool_pose_;
         std::vector<Pose> obj_pose_arr_,
-                          tool_pose_arr_;
+                          tool_pose_arr_,
+                          tool_pose_wrt_obj_frame_arr_;
 
 
 

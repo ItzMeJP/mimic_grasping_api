@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <transform_manipulation/pose.h>
+#include <transform_manipulation/transform.h>
 #include <jsoncpp/json/value.h>
 #include <jsoncpp/json/json.h>
 #include <fstream>
@@ -48,9 +49,21 @@ public:
                      std::string _file_name_with_path,
                      int _type);
 
+    std::string getDatasetManipulatorOutputSTR();
+    bool loadTransformationMatrix(std::string _file_with_path);
+    bool applyTransformation(std::vector<Pose> _obj_poses,
+                             std::vector<Pose> _tool_poses,
+                             std::vector<Pose> &_tool_poses_wrt_obj);
+
+protected:
+    Json::Value json_matrix_;
+    Eigen::Matrix4d transformation_matrix_;
+
+
 private:
 
     Json::Value json_pose_arr_;
+    std::string output_string_;
 
     bool exportJSONDataset(std::vector<Pose> _dataset,
                            int gripper_type_,

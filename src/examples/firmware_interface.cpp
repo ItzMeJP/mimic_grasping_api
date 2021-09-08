@@ -13,9 +13,16 @@ void readCommandCallback(){
     s.stop();
 
 }
-int main(){
+int main(int argc, char *argv[ ] ){
+
+    if(argc == 1)
+        s.setProfile("default");
+    else{
+        s.setProfile(argv[1]);
+    }
+
     std::cout << "\n----------------------------------------------------------" << std::endl;
-    std::cout << "------- Starting API. Press ENTER to interrupt.-----------" << std::endl;
+    std::cout << "------ Starting API. Press ENTER twice to interrupt.------" << std::endl;
     std::cout << "----------------------------------------------------------\n" << std::endl;
     sleep(2);
 
@@ -30,7 +37,7 @@ int main(){
 
     char aux;
     std::cout << "------- SAVE dataset? [y/n].-----------" << std::endl;
-    std::cin>> aux;
+    std::cin >> aux;
 
     if(aux == 'y')
     {
@@ -41,7 +48,6 @@ int main(){
     {
         std::cout << "No dataset was saved." << std::endl;
     }
-
 
     return 0;
 }

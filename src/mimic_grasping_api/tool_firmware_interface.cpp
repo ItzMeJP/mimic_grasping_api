@@ -27,7 +27,7 @@ namespace mimic_grasping {
                 return false;
             }
         } else {
-            output_string_ = "Firmware configuration file not found.";
+            output_string_ = "Firmware configuration file not found. Current path: " + _file;
             return false;
         }
 

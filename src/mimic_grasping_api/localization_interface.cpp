@@ -42,7 +42,7 @@ bool LocalizationInterface::loadLocalizationConfigFile(std::string _file) {
             return false;
         }
     } else {
-        output_string_ = "Localization configuration file not found.";
+        output_string_ = "Localization configuration file not found. Current path: " + _file;
         return false;
     }
 
@@ -56,7 +56,6 @@ bool LocalizationInterface::loadLocalizationConfigFile(std::string _file) {
     obj_localization_data_.terminator = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TERM_CMD_TAG].asString();
     obj_localization_data_.specific_configuration_file = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG].asString();
     one_shoot_estimation_ =  localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TOOL_ONESHOOT_TAG].asBool();
-
 
     return true;
 }
