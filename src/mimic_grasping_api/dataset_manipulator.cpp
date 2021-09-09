@@ -4,7 +4,6 @@
 
 #include "dataset_manipulator.h"
 
-//TODO: check possible save errors and return the output_string...
 DatasetManipulator::DatasetManipulator() {
 
 }
@@ -37,7 +36,7 @@ bool DatasetManipulator::loadTransformationMatrix(std::string _file_with_path) {
                               json_matrix_["matrix"][2][0].asDouble(), json_matrix_["matrix"][2][1].asDouble(), json_matrix_["matrix"][2][2].asDouble(), json_matrix_["matrix"][2][3].asDouble(),
                               json_matrix_["matrix"][3][0].asDouble(), json_matrix_["matrix"][3][1].asDouble(), json_matrix_["matrix"][3][2].asDouble(), json_matrix_["matrix"][3][3].asDouble();
 
-    DEBUG_MSG("Loaded transformation matrix: \n" << transformation_matrix_);
+    DEBUG_MSG("Loaded transformation matrix: \n" << transformation_matrix_ << "\n");
 
     return true;
 }
@@ -54,15 +53,17 @@ bool DatasetManipulator::applyTransformation(std::vector<Pose> _obj_poses,
 
     if(_obj_poses.empty()){
         output_string_ = "Object poses dataset is empty.";
+        return false;
     }
 
     if(_tool_poses.empty()){
         output_string_ = "Tool poses dataset is empty.";
+        return false;
     }
 
     Transform T_obj_ref_to_tool_ref(_obj_poses.at(0).getParentName(), _tool_poses.at(0).getParentName(), transformation_matrix_);
 
-    for (int i = 0; i < _obj_poses.size(); ++i) {
+    for (size_t i = 0; i < _obj_poses.size(); ++i) {
 
         if(!T_obj_ref_to_tool_ref.apply(_obj_poses.at(i),aux_pose)){
             output_string_ = "Error in transformation.";
@@ -78,7 +79,7 @@ bool DatasetManipulator::applyTransformation(std::vector<Pose> _obj_poses,
         return false;
     }
 
-    for (int i = 0; i < _tool_poses.size(); ++i) {
+    for (size_t i = 0; i < _tool_poses.size(); ++i) {
 
         Transform t = obj_poses_wrt_tool_ref.size()==1?obj_poses_wrt_tool_ref.at(0):obj_poses_wrt_tool_ref.at(i); //TODO: the datasets should have the same size if the one_shoot_estimation is unset
         if(!t.apply_inverse(_tool_poses.at(i),aux_pose)){
@@ -125,6 +126,11 @@ bool DatasetManipulator::exportJSONDataset(std::vector<Pose> _dataset, int _grip
     std::string name_tag;
     json_pose_arr_.clear();
 
+    if(_dataset.empty()){
+        output_string_ = "Cannot export an empty dataset.";
+        return false;
+    }
+
     for (size_t i = 0; i < _dataset.size() ; ++i) {
 
         name_tag = _prefix + std::to_string(i);
@@ -150,6 +156,12 @@ bool DatasetManipulator::exportYAMLDataset(std::vector<Pose> _dataset, int _grip
 
     std::ofstream file;
     std::stringstream toFile, dof_ss, parameters_ss;
+
+
+    if(_dataset.empty()){
+        output_string_ = "Cannot export an empty dataset.";
+        return false;
+    }
 
     for (size_t i = 0; i < _dataset.size(); ++i) {
 
@@ -212,6 +224,11 @@ bool DatasetManipulator::exportJSONDataset(std::vector<Pose> _dataset, std::stri
     std::string name_tag;
     json_pose_arr_.clear();
 
+    if(_dataset.empty()){
+        output_string_ = "Cannot export an empty dataset.";
+        return false;
+    }
+
     for (size_t i = 0; i < _dataset.size() ; ++i) { // TODO: REMOVE: just to test
 
         name_tag = _prefix + std::to_string(i);
@@ -235,6 +252,11 @@ bool DatasetManipulator::exportYAMLDataset(std::vector<Pose> _dataset, std::stri
 
     std::ofstream file;
     std::stringstream toFile, dof_ss, parameters_ss;
+
+    if(_dataset.empty()){
+        output_string_ = "Cannot export an empty dataset.";
+        return false;
+    }
 
     for (size_t i = 0; i < _dataset.size(); ++i) {
 

@@ -11,7 +11,7 @@ namespace mimic_grasping {
     }
 
     ToolFirmwareInterface::~ToolFirmwareInterface() {
-        stopToolCommunication();
+        //stopToolCommunication();
     }
 
 

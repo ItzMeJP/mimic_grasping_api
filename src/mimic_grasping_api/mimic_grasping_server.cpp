@@ -18,6 +18,10 @@ namespace mimic_grasping {
         profile_ = _profile;
     }
 
+    std::string MimicGraspingServer::getProfile() {
+        return profile_;
+    }
+
 
     /*
     void MimicGraspingServer::start() {
@@ -88,6 +92,13 @@ namespace mimic_grasping {
                 return false;
              }
 
+        if(!stop())
+            return false;
+
+        return true;
+    }
+
+    bool MimicGraspingServer::stop(){
         if(!closeInterfaces())
             return false;
 
@@ -95,7 +106,6 @@ namespace mimic_grasping {
             output_string_ = getDatasetManipulatorOutputSTR();
             return false;
         }
-
         return true;
     }
 
@@ -205,6 +215,19 @@ namespace mimic_grasping {
         }
 
         return true;
+    }
+
+    std::vector<Pose> MimicGraspingServer::getDataset(int _dataset_type){
+
+        switch (_dataset_type) {
+            case DATASET_TYPE::TOOL_POSES_WRT_SRC:
+                return tool_pose_arr_;
+            case DATASET_TYPE::TOOL_POSES_WRT_OBJ:
+                return tool_pose_wrt_obj_frame_arr_;
+            case DATASET_TYPE::OBJ_POSES_WRT_SRC:
+                return obj_pose_arr_;
+        }
+
     }
 
     void MimicGraspingServer::clearDataset(){
@@ -318,12 +341,15 @@ namespace mimic_grasping {
 
         DEBUG_MSG( "Closing interfaces...");
         DEBUG_MSG( "Closing Tool Localization...");
-        while(stopToolLocalization()!=true){};
+        //while(stopToolLocalization()!=true){};
+        stopToolLocalization();
         DEBUG_MSG( "Closing Object Localization...");
-        while(stopObjLocalization()!=true){};
+        //while(stopObjLocalization()!=true){};
+        stopObjLocalization();
         sleep(1);
         DEBUG_MSG(  "Closing Tool Communication..." );
-        while(stopToolCommunication()!=true){}
+        //while(stopToolCommunication()!=true){}
+        stopToolCommunication();
 
         return true; //TODO: treat possible errors
     };
@@ -357,7 +383,7 @@ namespace mimic_grasping {
         return current_code_;
     }
 
-    void MimicGraspingServer::stop(){
+    void MimicGraspingServer::request_stop(){
         stop_ = true;
     }
 

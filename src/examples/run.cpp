@@ -10,7 +10,7 @@ MimicGraspingServer s;
 void readCommandCallback(){
     std::cin.ignore();
     std::cout << "ENTER pressed. Leaving..." << std::endl;
-    s.stop();
+    s.request_stop();
 
 }
 int main(int argc, char *argv[ ] ){
@@ -36,17 +36,17 @@ int main(int argc, char *argv[ ] ){
         std::cout << "Mimic Grasping API Finished | " << s.getOutputSTR() << std::endl;
 
     char aux;
-    std::cout << "------- SAVE dataset? [y/n].-----------" << std::endl;
+    std::cout << "------- SAVE dataset? [Y/N].-----------" << std::endl;
     std::cin >> aux;
 
-    if(aux == 'y')
+    if(aux == 'y'|| aux == 'Y')
     {
         std::cout << "Exporting the dataset to file..." << std::endl;
         s.exportDatasets();
     }
     else
     {
-        std::cout << "No dataset was saved." << std::endl;
+        std::cout << "None dataset was saved." << std::endl;
     }
 
     return 0;

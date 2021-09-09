@@ -31,18 +31,25 @@ namespace mimic_grasping{
         ~MimicGraspingServer();
 
         void setProfile(std::string _profile);
+        std::string getProfile();
 
         bool start();
+        bool stop();
+
         bool load();
         bool init();
         bool spin();
-        void stop();
+        void request_stop();
         bool closeInterfaces();
         void clearDataset();
+
+        std::vector<Pose> getDataset(int _dataset_type);
         bool exportDatasets();
 
         std::string getOutputSTR();
         int getCurrentStateCode();
+
+
 
     protected:
         char const* env_root_folder_path;

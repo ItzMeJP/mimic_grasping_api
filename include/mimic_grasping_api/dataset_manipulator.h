@@ -38,6 +38,12 @@ public:
         MIMIC_GRASPING,
     };
 
+    enum DATASET_TYPE{
+        TOOL_POSES_WRT_SRC,
+        TOOL_POSES_WRT_OBJ,
+        OBJ_POSES_WRT_SRC
+    };
+
     bool saveDataset(std::vector<Pose> _dataset,
                      std::string _prefix,
                      std::string _file_name_with_path,
@@ -51,13 +57,15 @@ public:
 
     std::string getDatasetManipulatorOutputSTR();
     bool loadTransformationMatrix(std::string _file_with_path);
-    bool applyTransformation(std::vector<Pose> _obj_poses,
-                             std::vector<Pose> _tool_poses,
-                             std::vector<Pose> &_tool_poses_wrt_obj);
+
 
 protected:
     Json::Value json_matrix_;
     Eigen::Matrix4d transformation_matrix_;
+
+    bool applyTransformation(std::vector<Pose> _obj_poses,
+                             std::vector<Pose> _tool_poses,
+                             std::vector<Pose> &_tool_poses_wrt_obj);
 
 
 private:

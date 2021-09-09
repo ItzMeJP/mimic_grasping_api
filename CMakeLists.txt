@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(mimic_grasping_api
-        VERSION 13.07.2021
+        VERSION 08.09.2021
         DESCRIPTION
         "Mimic grasping server API to C++")
 
@@ -166,10 +166,10 @@ endif ()
 ## --------------------------------------------------------  Executables ------------------------------------------------------------
 ## ----------------------------------------------------------------------------------------------------------------------------------
 ## Define an executable
-add_executable(firmware_interface
-        src/examples/firmware_interface.cpp)
+add_executable(run
+        src/examples/run.cpp)
 
 ## Define the executable dependencies
-target_link_libraries(firmware_interface
+target_link_libraries(run
         ${PROJECT_NAME}
         )

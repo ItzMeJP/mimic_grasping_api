@@ -1,17 +1,17 @@
 {
 	"object_localization" :
 	{
+		"one_shoot_estimation" : false,
 		"executor_command" : "obj_localization_ros_init.sh",
 		"terminator_command" : "obj_localization_ros_close.sh",
-		"configuration_file" : "plugin_object_localization_ros.json",
 		"plugin_name" : "libobject_localization_ros",
-		"one_shoot_estimation" : true
+		"configuration_file" : "plugin_object_localization_ros.json"
 	},
 	"tool_localization" :
 	{
 		"executor_command" : "tool_localization_6dmimic_init.sh",
 		"terminator_command" : "tool_localization_6dmimic_close.sh",
-		"configuration_file" : "plugin_tool_localization_6dmimic.json",
-		"plugin_name" : "libinterface_6dmimic"
+		"plugin_name" : "libinterface_6dmimic",
+		"configuration_file" : "plugin_tool_localization_6dmimic.json"
 	}
 }
