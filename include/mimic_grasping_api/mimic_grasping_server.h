@@ -44,6 +44,8 @@ namespace mimic_grasping{
         void clearDataset();
 
         std::vector<Pose> getDataset(int _dataset_type);
+        Pose getDataset(int _dataset_type, int _index);
+
         bool exportDatasets();
 
         std::string getOutputSTR();

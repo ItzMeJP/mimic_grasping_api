@@ -7,10 +7,11 @@
 LocalizationInterface::LocalizationInterface() {};
 
 LocalizationInterface::~LocalizationInterface() {
-    stopObjLocalization();
-    stopToolLocalization();
-    obj_localization_obj_.reset();
-    tool_localization_obj_.reset();
+    //stopObjLocalization();
+    //stopToolLocalization();
+    //obj_localization_obj_.reset();
+    //tool_localization_obj_.reset();
+
 };
 
 bool LocalizationInterface::saveLocalizationConfigFile(std::string _file) {
@@ -111,22 +112,24 @@ bool LocalizationInterface::initLocalization(std::shared_ptr<LocalizationBase>& 
         return false;
     }
 
-    std::string ex_cmd, term_cmd, config_path;
+    std::string ex_cmd ="", term_cmd="", config_path="";
     ex_cmd = isScript(_data.executor)?scripts_folder_path_+"/"+_data.executor:_data.executor;
     term_cmd = isScript(_data.terminator)?scripts_folder_path_+"/"+_data.terminator:_data.terminator;
-    config_path = config_folder_path_ + "/" + _data.specific_configuration_file;
+    config_path =  config_folder_path_ +"/"+ _data.specific_configuration_file;
 
     if(    !_loc_instance->setAppExec(ex_cmd)
            || !_loc_instance->setAppTermination(term_cmd)
-           || !_loc_instance->setAppConfigPath(config_path)
-           || !_loc_instance->loadAppConfiguration()
-           || !_loc_instance->runApp()){
+           || !_loc_instance->setAppConfigPath(config_path)){
 
         output_string_ = _loc_instance->getOutputString();
-
         return false;
-
     }
+
+    if( !_loc_instance->loadAppConfiguration() || !_loc_instance->runApp() ){
+        output_string_ = _loc_instance->getOutputString();
+        return false;
+    }
+
     _loc_instance->spin(1000);
     output_string_ = _loc_instance->getOutputString();
 

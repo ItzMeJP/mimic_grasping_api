@@ -84,28 +84,32 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::start() {
 
-        if(!load() || !init())
+        if(!load() || !init()){
+            stop();
             return false;
+        }
 
         while(!stop_) {
-            if(!spin())
+            if (!spin()) {
+                stop();
                 return false;
-             }
+            }
+        }
 
-        if(!stop())
-            return false;
+        stop();
+
+        if(!applyTransformation(obj_pose_arr_,tool_pose_arr_,tool_pose_wrt_obj_frame_arr_)) {
+            output_string_ = getDatasetManipulatorOutputSTR();
+        }
 
         return true;
     }
 
     bool MimicGraspingServer::stop(){
+        output_string_ = " Closing interfaces...";
         if(!closeInterfaces())
             return false;
 
-        if(!applyTransformation(obj_pose_arr_,tool_pose_arr_,tool_pose_wrt_obj_frame_arr_)) {
-            output_string_ = getDatasetManipulatorOutputSTR();
-            return false;
-        }
         return true;
     }
 
@@ -156,22 +160,36 @@ namespace mimic_grasping {
 
         clearDataset();
 
+        output_string_ = "Initializing tool firmware communication...";
         if(!initToolFirmware()) {
             output_string_ = getToolFirmwareOutputSTR();
             return false;
         }
 
-        if(!initObjLocalization() || !initToolLocalization() ){
+        output_string_ = "Initializing object localization plugin...";
+        if(!initObjLocalization() ){
+            output_string_ = getLocalizationOutputSTR();
+            return false;
+        }
+
+        output_string_ = "Initializing tool localization plugin...";
+        if(!initToolLocalization() ){
             output_string_ = getLocalizationOutputSTR();
             return false;
         }
 
         if(one_shoot_estimation_ == true)
         {
-            output_string_ = "ONE_SHOOT method active.";
+            output_string_ = "ONE_SHOOT method active. Running object localization...";
             DEBUG_MSG (output_string_);
-            requestObjectLocalization();
+            if(!requestObjectLocalization()){
+                output_string_ = "Failed to localize the object.";
+                return false;
+            }
+            output_string_ = "Object detected. Teaching process started.";
         }
+
+        output_string_ = "Initialization has been completed.";
 
         return true;
     }
@@ -226,6 +244,28 @@ namespace mimic_grasping {
                 return tool_pose_wrt_obj_frame_arr_;
             case DATASET_TYPE::OBJ_POSES_WRT_SRC:
                 return obj_pose_arr_;
+            default:
+                assert(false);
+        }
+
+    }
+
+    Pose MimicGraspingServer::getDataset(int _dataset_type, int _index){
+
+        switch (_dataset_type) {
+            case DATASET_TYPE::TOOL_POSES_WRT_SRC:
+                assert(! (_index > tool_pose_arr_.size()));
+                return tool_pose_arr_.at(_index);
+
+            case DATASET_TYPE::TOOL_POSES_WRT_OBJ:
+                assert(! (_index > tool_pose_wrt_obj_frame_arr_.size()));
+                return tool_pose_wrt_obj_frame_arr_.at(_index);
+
+            case DATASET_TYPE::OBJ_POSES_WRT_SRC:
+                assert(! (_index > obj_pose_arr_.size()));
+                return obj_pose_arr_.at(_index);
+            default:
+                assert(false);
         }
 
     }
@@ -269,20 +309,21 @@ namespace mimic_grasping {
 
         if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && !one_shoot_estimation_)
         {
-            output_string_ = "Save pose request received.";
+            output_string_ = "Save pose request received. Running object localization...";
             DEBUG_MSG ( output_string_ );
-
             if(requestObjectLocalization()) {
-                std::cout << "" << current_obj_pose_.getName() << std::endl;
+                DEBUG_MSG( "" << current_obj_pose_.getName() );
                 //obj_pose_arr_.push_back(current_obj_pose_);
-                std::cout << "Object data size" << obj_pose_arr_.size() << std::endl;
+                DEBUG_MSG( "Object data size" << obj_pose_arr_.size() );
             }
 
             else{
                 sendErrorMsg();
+                output_string_ = "Failed to localize the object.";
                 return false;
             }
 
+            output_string_ = "Running tool localization...";
             if(requestToolLocalization()) {
                 DEBUG_MSG( "" << current_tool_pose_.getName() );
                 //tool_pose_arr_.push_back(current_tool_pose_);
@@ -291,16 +332,18 @@ namespace mimic_grasping {
             }
 
             else{
+                output_string_ = "Failed to localize the tool.";
                 obj_pose_arr_.pop_back();
                 sendErrorMsg();
                 return false;
             }
+
+            output_string_ = "Acquisition saved with success.";
+
         }
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && one_shoot_estimation_)
         {
-            output_string_ = "Save pose request received. ONE_SHOOT method.";
-            std::cout << output_string_ << std::endl;
-
+            output_string_ = "Save pose request received. ONE_SHOOT method. Running tool localization...";
             if(requestToolLocalization()) {
                 DEBUG_MSG( "" << current_tool_pose_.getName() );
                 //tool_pose_arr_.push_back(current_tool_pose_);
@@ -309,31 +352,37 @@ namespace mimic_grasping {
             }
 
             else{
+                output_string_ = "Failed to localize the tool.";
                 sendErrorMsg();
                 return false;
             }
+
+            output_string_ = "Acquisition saved with success. Grasping poses dataset size: " + tool_pose_arr_.size();
 
         }
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && !one_shoot_estimation_){
             output_string_ = "Remove last saved pose request received.";
             DEBUG_MSG( output_string_ );
+
             obj_pose_arr_.erase(obj_pose_arr_.end()); // because of the firmware state machine, this condition only happen after a success stock
             tool_pose_arr_.erase(tool_pose_arr_.end());
+
             DEBUG_MSG( "New object dataset size: " << obj_pose_arr_.size() );
             DEBUG_MSG( "New tool dataset size: " << tool_pose_arr_.size() );
-
             sendSuccessMsg();
         }
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && one_shoot_estimation_){
             output_string_ = "Remove last save pose request received. ONE_SHOOT method.";
             DEBUG_MSG( output_string_ );
             tool_pose_arr_.erase(tool_pose_arr_.end());
+
             DEBUG_MSG( "New object dataset size [ONE_SHOOT mode ON]: " << obj_pose_arr_.size() );
             DEBUG_MSG( "New tool dataset size: " << tool_pose_arr_.size() );
 
             sendSuccessMsg();
         }
 
+        output_string_ = "Removed last grasping pose. Grasping poses dataset size: " + tool_pose_arr_.size();
         return true;
     }
 
@@ -341,13 +390,16 @@ namespace mimic_grasping {
 
         DEBUG_MSG( "Closing interfaces...");
         DEBUG_MSG( "Closing Tool Localization...");
+        output_string_ = "Closing Tool Localization...";
         //while(stopToolLocalization()!=true){};
         stopToolLocalization();
         DEBUG_MSG( "Closing Object Localization...");
+        output_string_ = "Closing Object Localization...";
         //while(stopObjLocalization()!=true){};
         stopObjLocalization();
         sleep(1);
         DEBUG_MSG(  "Closing Tool Communication..." );
+        output_string_ = "Closing Tool Communication...";
         //while(stopToolCommunication()!=true){}
         stopToolCommunication();
 
@@ -357,7 +409,7 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::requestObjectLocalization(){
 
-        setObjLocalizationTarget(root_folder_path_+"/models/single_side_bracket.ply");
+        setObjLocalizationTarget(root_folder_path_+"/models/single_side_bracket.ply"); //TODO: set custom object!
         if(requestObjPose(current_obj_pose_)) {
             DEBUG_MSG( "" << current_obj_pose_.getName() );
             obj_pose_arr_.push_back(current_obj_pose_);

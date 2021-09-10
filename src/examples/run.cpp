@@ -7,12 +7,64 @@ using namespace mimic_grasping;
 
 MimicGraspingServer s;
 
+std::string removeRootTimestamp(std::string _str){
+
+    std::string delimiter = ": ", token;
+    if(!(_str.find(delimiter)!= std::string::npos)){ //there is no timestamp
+        return _str;
+    }
+    else{
+        token = _str.substr(_str.find(delimiter)+delimiter.length(), std::string::npos);
+        return token;
+    }
+
+}
+
+bool strsAreEqual(std::string &_new_str, std::string &_old_str ){
+
+    _new_str = removeRootTimestamp(_new_str);
+    _old_str = removeRootTimestamp(_old_str);
+
+    return _new_str == _old_str;
+
+}
+
+void appendTextWithoutRepetition(std::string _qstr){
+
+    std::string new_str;
+    static std::string old_str = "";
+
+    new_str = _qstr;
+    if(!strsAreEqual(new_str,old_str)){
+        old_str = new_str;
+        std::cout<< new_str << std::endl;
+    }
+
+    return;
+}
+
+
 void readCommandCallback(){
     std::cin.ignore();
     std::cout << "ENTER pressed. Leaving..." << std::endl;
     s.request_stop();
 
 }
+
+void printOutputCallback(){
+    for (;;) {
+        try {
+            appendTextWithoutRepetition( s.getOutputSTR());
+            boost::this_thread::interruption_point();
+            boost::this_thread::sleep(boost::posix_time::milliseconds(100)); //interruption with sleep
+        }
+        catch (boost::thread_interrupted &) {
+            return;
+        }
+    }
+}
+
+
 int main(int argc, char *argv[ ] ){
 
     if(argc == 1)
@@ -27,6 +79,8 @@ int main(int argc, char *argv[ ] ){
     sleep(2);
 
     boost::thread stop_thread_reader(readCommandCallback);
+    boost::thread output_thread_printer(printOutputCallback);
+
 
     if(!s.start()){
         std::cerr << "Mimic Grasping API Error | " << s.getOutputSTR() << std::endl;
@@ -42,12 +96,18 @@ int main(int argc, char *argv[ ] ){
     if(aux == 'y'|| aux == 'Y')
     {
         std::cout << "Exporting the dataset to file..." << std::endl;
-        s.exportDatasets();
+        if(!s.exportDatasets())
+        {
+            std::cerr << "Mimic Grasping API Error | " << s.getOutputSTR() << std::endl;
+        }
     }
     else
     {
-        std::cout << "None dataset was saved." << std::endl;
+        std::cout << "None dataset were saved." << std::endl;
     }
 
+
+    output_thread_printer.interrupt();
+    output_thread_printer.join();
     return 0;
 }

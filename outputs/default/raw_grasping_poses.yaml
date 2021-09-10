@@ -15,20 +15,3 @@ candidate_0:
     y: 0
     z: 1
     w: 4.63268e-05
-candidate_1:
-  method: 
-    type: 3
-  gripper:
-    type: 4
-    parameters: []
-    DOFs: []
-  parent_frame_id: camera_link
-  position:
-    x: 0
-    y: 0
-    z: 10
-  orientation:
-    x: 0
-    y: 0
-    z: 1
-    w: 4.63268e-05
