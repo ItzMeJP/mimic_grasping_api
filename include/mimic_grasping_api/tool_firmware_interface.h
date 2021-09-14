@@ -37,6 +37,7 @@ namespace mimic_grasping{
         bool startToolCommunication(std::string &_output_str);
         std::string getToolFirmwareOutputSTR();
         bool setGripperType(int _gripper);
+        bool setGripperType();
         int getGripperType();
         bool resetFirmware();
         std::string getCurrentMsg();
@@ -45,7 +46,7 @@ namespace mimic_grasping{
         bool sendCustomMSG(std::string _in);
         bool saveFirmwareInterfaceConfigFile(std::string _file);
         bool loadFirmwareInterfaceConfigFile(std::string _file);
-        bool initToolFirmware();
+        bool initToolFirmware(bool _auto_start);
         bool convertMsgToCode(std::string _msg, int &_code);
         bool firmware_spinner_sleep(int _usec);
         int getBaudRate();

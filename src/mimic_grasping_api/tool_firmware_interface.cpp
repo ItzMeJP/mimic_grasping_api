@@ -38,11 +38,15 @@ namespace mimic_grasping {
         return true;
     }
 
-    bool ToolFirmwareInterface::initToolFirmware() {
+    bool ToolFirmwareInterface::initToolFirmware(bool _auto_start) {
 
-        if (!startToolCommunication(output_string_) ||
-            !setGripperType(current_gripper_type_))
+        if(!startToolCommunication(output_string_)) // only start the serial communication
             return false;
+
+        if(_auto_start) { // also enable the firmware state machine to running mode.
+            if (!setGripperType(current_gripper_type_))
+                return false;
+        }
 
         return true;
     }
@@ -173,6 +177,11 @@ namespace mimic_grasping {
             return false;
         }
         return true;
+    }
+
+    //autoamtic send the current gripper configured
+    bool ToolFirmwareInterface::setGripperType(){
+        return setGripperType(current_gripper_type_);
     }
 
     bool ToolFirmwareInterface::setGripperType(int _gripper) {

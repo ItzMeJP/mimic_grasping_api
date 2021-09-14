@@ -10,8 +10,6 @@ namespace mimic_grasping {
     }
 
     MimicGraspingServer::~MimicGraspingServer(){
-
-
     }
 
     void MimicGraspingServer::setProfile(std::string _profile){
@@ -84,7 +82,12 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::start() {
 
-        if(!load() || !init()){
+        if(!load()){
+            stop();
+            return false;
+        }
+
+        if(!init()){
             stop();
             return false;
         }
@@ -119,7 +122,8 @@ namespace mimic_grasping {
 
         env_root_folder_path =  getenv("MIMIC_GRASPING_SERVER_ROOT");
         if(env_root_folder_path == NULL) {
-            output_string_ = "The environment variable $MIMIC_GRASPING_SERVER_ROOT is not defined.";
+            //output_string_ = "The environment variable $MIMIC_GRASPING_SERVER_ROOT is not defined.";
+            error_string_ = "The environment variable $MIMIC_GRASPING_SERVER_ROOT is not defined.";
             return false;
         }
         stop_ = false;
@@ -127,28 +131,32 @@ namespace mimic_grasping {
         root_folder_path_ = std::string(env_root_folder_path);
 
         if(profile_.empty()){
-            std::cout << "Profile empty. Setting DEFAULT" << std::endl;
+            output_string_ ="Profile empty. Setting DEFAULT";
             profile_ = "default";
         }
 
         if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_dir_ + "/" + profile_ + tool_firmware_file_ )) {
-            output_string_ = getToolFirmwareOutputSTR();
+            //output_string_ = getToolFirmwareOutputSTR();
+            error_string_ = getToolFirmwareOutputSTR();
             return false;
         }
 
         if(!loadTransformationMatrix(root_folder_path_ + config_folder_dir_ + "/" + profile_ + matrix_file_)){
-            output_string_ = getDatasetManipulatorOutputSTR();
+            //output_string_ = getDatasetManipulatorOutputSTR();
+            error_string_ = getDatasetManipulatorOutputSTR();
             return false;
         }
 
         if(!loadLocalizationConfigFile(root_folder_path_ + config_folder_dir_ + "/" + profile_ + localization_file_)
         || !setLocalizationScriptsFolderPath(root_folder_path_ + scripts_folder_dir_ )
         || !setLocalizationConfigsFolderPath(root_folder_path_ + config_folder_dir_ + "/" + profile_)){
-            output_string_ = getLocalizationOutputSTR();
+            //output_string_ = getLocalizationOutputSTR();
+            error_string_ = getLocalizationOutputSTR();
         }
 
         if(!loadDynamicPlugins(root_folder_path_ + plugins_folder_dir_ +"/",true)){ // TODO: load config file for plugin
-            output_string_ = getPluginManagementOutputMsg();
+            //output_string_ = getPluginManagementOutputMsg();
+            error_string_ = getPluginManagementOutputMsg();
             return false;
         }
 
@@ -159,37 +167,51 @@ namespace mimic_grasping {
     bool MimicGraspingServer::init(){
 
         clearDataset();
+        last_current_code_ = -999;
 
         output_string_ = "Initializing tool firmware communication...";
-        if(!initToolFirmware()) {
-            output_string_ = getToolFirmwareOutputSTR();
+        if(!initToolFirmware(false)) {
+            //output_string_ = getToolFirmwareOutputSTR();
+            output_string_ += "\n-- Failed to initialize tool firmware communication.";
+            error_string_ = getToolFirmwareOutputSTR();
             return false;
         }
 
         output_string_ = "Initializing object localization plugin...";
         if(!initObjLocalization() ){
-            output_string_ = getLocalizationOutputSTR();
+            //output_string_ = getLocalizationOutputSTR();
+            output_string_ += "\n-- Failed to initialize object localization.";
+            error_string_ = getLocalizationOutputSTR();
             return false;
         }
 
         output_string_ = "Initializing tool localization plugin...";
         if(!initToolLocalization() ){
-            output_string_ = getLocalizationOutputSTR();
+            //output_string_ = getLocalizationOutputSTR();
+            output_string_ += "\n-- Failed to initialize tool localization.";
+            error_string_ = getLocalizationOutputSTR();
             return false;
         }
 
-        if(one_shoot_estimation_ == true)
-        {
+        if(one_shoot_estimation_) {
             output_string_ = "ONE_SHOOT method active. Running object localization...";
             DEBUG_MSG (output_string_);
-            if(!requestObjectLocalization()){
-                output_string_ = "Failed to localize the object.";
+            if (!requestObjectLocalization()) {
+                //output_string_ = "Failed to localize the object.";
+                error_string_ = "Failed to localize the object.";
                 return false;
             }
-            output_string_ = "Object detected. Teaching process started.";
+            output_string_ = "\nObject detected.";
+
         }
 
-        output_string_ = "Initialization has been completed.";
+        if (!setGripperType()) { //set the running mode in firmware state machine
+            //output_string_ = getToolFirmwareOutputSTR();
+            error_string_ = getToolFirmwareOutputSTR();
+            return false;
+        }
+
+        output_string_ = "Initialization has been completed. Teaching process started.";
 
         return true;
     }
@@ -228,7 +250,8 @@ namespace mimic_grasping {
                 !saveDataset(obj_pose_arr_, "object_pose_", path_name +"/object_poses.json",EXPORT_EXTENSION::JSON)
                 ){
 
-            output_string_ = getDatasetManipulatorOutputSTR();
+            //output_string_ = getDatasetManipulatorOutputSTR();
+            error_string_ = getDatasetManipulatorOutputSTR();
             return false;
         }
 
@@ -277,8 +300,9 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::spin(){
 
-        if(!firmware_spinner_sleep(2000)){ // the serial reader is slow...
-            output_string_ = getToolFirmwareOutputSTR();
+        if(!firmware_spinner_sleep(500)){ // the serial reader is slow...
+            //output_string_ = getToolFirmwareOutputSTR();
+            error_string_ = getToolFirmwareOutputSTR();
             while(stopToolLocalization()!=true){};
             while(stopObjLocalization()!=true){};
             output_string_  =  "Closing interfaces since firmware communication is lost." ;
@@ -286,7 +310,8 @@ namespace mimic_grasping {
         }
 
         if(!object_localization_spinner_sleep(150)){
-            output_string_ = getLocalizationOutputSTR();
+            //output_string_ = getLocalizationOutputSTR();
+            error_string_ = getLocalizationOutputSTR();
             while(stopToolCommunication()!=true){}
             while(stopToolLocalization()!=true){};
             output_string_  = "Closing interfaces since object localization communication is lost." ;
@@ -294,18 +319,24 @@ namespace mimic_grasping {
         }
 
         if(!tool_localization_spinner_sleep(150)){
-            output_string_ = getLocalizationOutputSTR();
+            //output_string_ = getLocalizationOutputSTR();
+            error_string_ = getLocalizationOutputSTR();
             while(stopToolCommunication()!=true){};
             while(stopObjLocalization()!=true){};
             output_string_  = "Closing interfaces since tool localization communication is lost." ;
             return false;
         }
 
+        output_string_ = "";
         current_msg_ = received_msg_;
         convertMsgToCode(current_msg_,current_code_);
 
-        output_string_ = current_msg_;
-        DEBUG_MSG( output_string_ );
+        if(current_code_ == last_current_code_){
+            return true;
+        }
+        last_current_code_ = current_code_;
+
+        DEBUG_MSG( current_msg_ );
 
         if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && !one_shoot_estimation_)
         {
@@ -320,7 +351,7 @@ namespace mimic_grasping {
             else{
                 sendErrorMsg();
                 output_string_ = "Failed to localize the object.";
-                return false;
+                //return false;
             }
 
             output_string_ = "Running tool localization...";
@@ -335,7 +366,7 @@ namespace mimic_grasping {
                 output_string_ = "Failed to localize the tool.";
                 obj_pose_arr_.pop_back();
                 sendErrorMsg();
-                return false;
+                //return false;
             }
 
             output_string_ = "Acquisition saved with success.";
@@ -343,7 +374,7 @@ namespace mimic_grasping {
         }
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && one_shoot_estimation_)
         {
-            output_string_ = "Save pose request received. ONE_SHOOT method. Running tool localization...";
+            output_string_ = "Save pose request received. Running tool localization...";
             if(requestToolLocalization()) {
                 DEBUG_MSG( "" << current_tool_pose_.getName() );
                 //tool_pose_arr_.push_back(current_tool_pose_);
@@ -354,7 +385,7 @@ namespace mimic_grasping {
             else{
                 output_string_ = "Failed to localize the tool.";
                 sendErrorMsg();
-                return false;
+                //return false;
             }
 
             output_string_ = "Acquisition saved with success. Grasping poses dataset size: " + tool_pose_arr_.size();
@@ -370,9 +401,11 @@ namespace mimic_grasping {
             DEBUG_MSG( "New object dataset size: " << obj_pose_arr_.size() );
             DEBUG_MSG( "New tool dataset size: " << tool_pose_arr_.size() );
             sendSuccessMsg();
+            output_string_ = "Removed last grasping pose. Grasping poses dataset size: " + tool_pose_arr_.size();
+
         }
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && one_shoot_estimation_){
-            output_string_ = "Remove last save pose request received. ONE_SHOOT method.";
+            output_string_ = "Remove last save pose request received.";
             DEBUG_MSG( output_string_ );
             tool_pose_arr_.erase(tool_pose_arr_.end());
 
@@ -380,9 +413,10 @@ namespace mimic_grasping {
             DEBUG_MSG( "New tool dataset size: " << tool_pose_arr_.size() );
 
             sendSuccessMsg();
-        }
+            output_string_ = "Removed last grasping pose. Grasping poses dataset size: " + tool_pose_arr_.size();
 
-        output_string_ = "Removed last grasping pose. Grasping poses dataset size: " + tool_pose_arr_.size();
+        }
+        output_string_ += output_string_.compare("")==0?current_msg_:"\n" + current_msg_;
         return true;
     }
 
@@ -402,6 +436,8 @@ namespace mimic_grasping {
         output_string_ = "Closing Tool Communication...";
         //while(stopToolCommunication()!=true){}
         stopToolCommunication();
+
+        clearPluginInstances(); // TODO: verify possible errors...
 
         return true; //TODO: treat possible errors
     };
@@ -442,6 +478,11 @@ namespace mimic_grasping {
     std::string MimicGraspingServer::getOutputSTR(){
         return output_string_;
     }
+
+    std::string MimicGraspingServer::getErrorStr(){
+        return error_string_;
+    }
+
 
 
 }//end namespace

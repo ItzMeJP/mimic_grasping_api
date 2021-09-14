@@ -85,6 +85,9 @@ public:
 
     bool one_shoot_estimation_;
 
+    void clearPluginInstances();
+
+
 protected:
     Json::Value localization_interface_config_data_;
 

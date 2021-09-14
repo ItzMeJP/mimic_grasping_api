@@ -94,6 +94,14 @@ bool LocalizationInterface::initObjLocalization() {
     return (initLocalization(obj_localization_obj_,obj_localization_data_));
 }
 
+void LocalizationInterface::clearPluginInstances() {
+
+    obj_localization_obj_.reset();
+    tool_localization_obj_.reset();
+    ClearPluginList();
+}
+
+
 bool LocalizationInterface::initLocalization(std::shared_ptr<LocalizationBase>& _loc_instance, LocalizationData _data){
 
     int plugin_index = (getIndexOfPlugin(_data.plugin_name)),

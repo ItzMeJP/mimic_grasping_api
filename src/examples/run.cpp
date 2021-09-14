@@ -56,7 +56,7 @@ void printOutputCallback(){
         try {
             appendTextWithoutRepetition( s.getOutputSTR());
             boost::this_thread::interruption_point();
-            boost::this_thread::sleep(boost::posix_time::milliseconds(100)); //interruption with sleep
+            boost::this_thread::sleep(boost::posix_time::milliseconds(50)); //interruption with sleep
         }
         catch (boost::thread_interrupted &) {
             return;
@@ -83,7 +83,7 @@ int main(int argc, char *argv[ ] ){
 
 
     if(!s.start()){
-        std::cerr << "Mimic Grasping API Error | " << s.getOutputSTR() << std::endl;
+        std::cerr << "Mimic Grasping API Error | " << s.getErrorStr() << std::endl;
         return 0;
     }
     else
@@ -98,7 +98,7 @@ int main(int argc, char *argv[ ] ){
         std::cout << "Exporting the dataset to file..." << std::endl;
         if(!s.exportDatasets())
         {
-            std::cerr << "Mimic Grasping API Error | " << s.getOutputSTR() << std::endl;
+            std::cerr << "Mimic Grasping API Error | " << s.getErrorStr() << std::endl;
         }
     }
     else
@@ -107,6 +107,34 @@ int main(int argc, char *argv[ ] ){
     }
 
 
+
+
+// JUST to test
+
+
+
+    if(!s.start()){
+        std::cerr << "Mimic Grasping API Error | " << s.getErrorStr() << std::endl;
+        return 0;
+    }
+    else
+        std::cout << "Mimic Grasping API Finished | " << s.getOutputSTR() << std::endl;
+
+    std::cout << "------- SAVE dataset? [Y/N].-----------" << std::endl;
+    std::cin >> aux;
+
+    if(aux == 'y'|| aux == 'Y')
+    {
+        std::cout << "Exporting the dataset to file..." << std::endl;
+        if(!s.exportDatasets())
+        {
+            std::cerr << "Mimic Grasping API Error | " << s.getErrorStr() << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "None dataset were saved." << std::endl;
+    }
     output_thread_printer.interrupt();
     output_thread_printer.join();
     return 0;

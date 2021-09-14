@@ -49,9 +49,9 @@ namespace mimic_grasping{
         bool exportDatasets();
 
         std::string getOutputSTR();
+        std::string getErrorStr();
+
         int getCurrentStateCode();
-
-
 
     protected:
         char const* env_root_folder_path;
@@ -65,7 +65,7 @@ namespace mimic_grasping{
                     current_msg_ = "",
                     profile_ ;
 
-        int current_code_;
+        int current_code_, last_current_code_;
         bool stop_ = false;
         bool requestToolLocalization();
         bool requestObjectLocalization();
@@ -73,7 +73,7 @@ namespace mimic_grasping{
 
 
     private:
-        std::string output_string_;
+        std::string output_string_, error_string_;
         Pose current_obj_pose_,
              current_tool_pose_;
         std::vector<Pose> obj_pose_arr_,
