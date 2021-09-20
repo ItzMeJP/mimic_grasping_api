@@ -5,7 +5,7 @@
 
 using namespace mimic_grasping;
 
-MimicGraspingServer s;
+std::shared_ptr<MimicGraspingServer> s = std::make_shared<MimicGraspingServer>() ;
 
 std::string removeRootTimestamp(std::string _str){
 
@@ -47,16 +47,16 @@ void appendTextWithoutRepetition(std::string _qstr){
 void readCommandCallback(){
     std::cin.ignore();
     std::cout << "ENTER pressed. Leaving..." << std::endl;
-    s.request_stop();
+    s->request_stop();
 
 }
 
 void printOutputCallback(){
     for (;;) {
         try {
-            appendTextWithoutRepetition( s.getOutputSTR());
+            appendTextWithoutRepetition( s->getOutputSTR());
             boost::this_thread::interruption_point();
-            boost::this_thread::sleep(boost::posix_time::milliseconds(50)); //interruption with sleep
+            boost::this_thread::sleep(boost::posix_time::milliseconds(5)); //interruption with sleep
         }
         catch (boost::thread_interrupted &) {
             return;
@@ -68,9 +68,9 @@ void printOutputCallback(){
 int main(int argc, char *argv[ ] ){
 
     if(argc == 1)
-        s.setProfile("default");
+        s->setProfile("default");
     else{
-        s.setProfile(argv[1]);
+        s->setProfile(argv[1]);
     }
 
     std::cout << "\n----------------------------------------------------------" << std::endl;
@@ -82,12 +82,12 @@ int main(int argc, char *argv[ ] ){
     boost::thread output_thread_printer(printOutputCallback);
 
 
-    if(!s.start()){
-        std::cerr << "Mimic Grasping API Error | " << s.getErrorStr() << std::endl;
+    if(!s->start()){
+        std::cerr << "Mimic Grasping API Error | " << s->getErrorStr() << std::endl;
         return 0;
     }
     else
-        std::cout << "Mimic Grasping API Finished | " << s.getOutputSTR() << std::endl;
+        std::cout << "Mimic Grasping API Finished | " << s->getOutputSTR() << std::endl;
 
     char aux;
     std::cout << "------- SAVE dataset? [Y/N].-----------" << std::endl;
@@ -96,15 +96,45 @@ int main(int argc, char *argv[ ] ){
     if(aux == 'y'|| aux == 'Y')
     {
         std::cout << "Exporting the dataset to file..." << std::endl;
-        if(!s.exportDatasets())
+        if(!s->exportDatasets())
         {
-            std::cerr << "Mimic Grasping API Error | " << s.getErrorStr() << std::endl;
+            std::cerr << "Mimic Grasping API Error | " << s->getErrorStr() << std::endl;
         }
     }
     else
     {
         std::cout << "None dataset were saved." << std::endl;
     }
+
+    //The issue bellow is related to ROS plugins... The Action service is not able to be called twice...
+
+    s.reset(new MimicGraspingServer());
+
+
+    if(!s->start()){
+        std::cerr << "Mimic Grasping API Error | " << s->getErrorStr() << std::endl;
+        return 0;
+    }
+    else
+        std::cout << "Mimic Grasping API Finished | " << s->getOutputSTR() << std::endl;
+
+
+    std::cout << "------- SAVE dataset? [Y/N].-----------" << std::endl;
+    std::cin >> aux;
+
+    if(aux == 'y'|| aux == 'Y')
+    {
+        std::cout << "Exporting the dataset to file..." << std::endl;
+        if(!s->exportDatasets())
+        {
+            std::cerr << "Mimic Grasping API Error | " << s->getErrorStr() << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "None dataset were saved." << std::endl;
+    }
+
 
 
 
@@ -113,28 +143,14 @@ int main(int argc, char *argv[ ] ){
 
 
 
-    if(!s.start()){
-        std::cerr << "Mimic Grasping API Error | " << s.getErrorStr() << std::endl;
-        return 0;
-    }
-    else
-        std::cout << "Mimic Grasping API Finished | " << s.getOutputSTR() << std::endl;
 
-    std::cout << "------- SAVE dataset? [Y/N].-----------" << std::endl;
-    std::cin >> aux;
 
-    if(aux == 'y'|| aux == 'Y')
-    {
-        std::cout << "Exporting the dataset to file..." << std::endl;
-        if(!s.exportDatasets())
-        {
-            std::cerr << "Mimic Grasping API Error | " << s.getErrorStr() << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "None dataset were saved." << std::endl;
-    }
+
+
+
+
+
+
     output_thread_printer.interrupt();
     output_thread_printer.join();
     return 0;

@@ -4,8 +4,8 @@ sleep 0.2
 echo "Killing Rviz"
 pkill rviz
 sleep 0.2
-echo "Killing Rosout"
-pkill rosout
-sleep 0.2
-echo "Killing Rosmaster"
-pkill rosmaster&
+#echo "Killing Rosout"
+#pkill rosout
+#sleep 0.2
+#echo "Killing Rosmaster"
+#pkill rosmaster
