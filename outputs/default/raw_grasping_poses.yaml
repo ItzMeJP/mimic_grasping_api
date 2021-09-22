@@ -5,13 +5,13 @@ candidate_0:
     type: 4
     parameters: []
     DOFs: []
-  parent_frame_id: camera_link
+  parent_frame_id: stereo_link
   position:
-    x: 0
-    y: 0
-    z: 10
+    x: 1
+    y: 0.05
+    z: 0
   orientation:
     x: 0
-    y: 0
-    z: 1
-    w: 4.63268e-05
+    y: -0.706825
+    z: 0
+    w: 0.707388

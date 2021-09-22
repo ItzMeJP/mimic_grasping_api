@@ -45,6 +45,7 @@ namespace mimic_grasping{
 
         std::vector<Pose> getDataset(int _dataset_type);
         Pose getDataset(int _dataset_type, int _index);
+        std::string getOutputExportPath();
 
         bool exportDatasets();
 
@@ -73,7 +74,7 @@ namespace mimic_grasping{
 
 
     private:
-        std::string output_string_, error_string_;
+        std::string output_string_, error_string_, output_export_path_;
         Pose current_obj_pose_,
              current_tool_pose_;
         std::vector<Pose> obj_pose_arr_,

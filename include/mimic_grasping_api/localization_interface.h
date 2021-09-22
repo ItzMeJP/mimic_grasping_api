@@ -31,80 +31,82 @@
 
 #endif // JSON_TAGS_DEFINE_H
 
+namespace mimic_grasping {
+    class LocalizationInterface : public PluginSystemManagement {
+    public:
 
-class LocalizationInterface : public PluginSystemManagement {
-public:
+        LocalizationInterface();
 
-    LocalizationInterface();
+        ~LocalizationInterface();
 
-    ~LocalizationInterface();
+        struct LocalizationData {
+            std::string plugin_name,
+                    specific_configuration_file,
+                    executor,
+                    terminator;
+        } obj_localization_data_,
+                tool_localization_data_;
 
-    struct LocalizationData {
-        std::string plugin_name,
-                specific_configuration_file,
-                executor,
-                terminator;
-    } obj_localization_data_,
-      tool_localization_data_;
+        enum LOCALIZATION_TYPE {
+            TOOL,
+            OBJ,
+        };
 
-    enum LOCALIZATION_TYPE{
-        TOOL,
-        OBJ,
+
+        bool saveLocalizationConfigFile(std::string _file);
+
+        bool loadLocalizationConfigFile(std::string _file);
+
+        bool setLocalizationScriptsFolderPath(std::string _path);
+
+        bool setLocalizationConfigsFolderPath(std::string _path);
+
+        bool initToolLocalization();
+
+        bool initObjLocalization();
+
+        bool stopObjLocalization();
+
+        bool stopToolLocalization();
+
+        bool object_localization_spinner_sleep(int usec);
+
+        bool tool_localization_spinner_sleep(int usec);
+
+        std::string getLocalizationInterfaceOutputSTR();
+
+        bool requestObjPose(Pose &_pose);
+
+        bool requestToolPose(Pose &_pose);
+
+        bool setObjLocalizationTarget(std::string _target_name_with_path);
+
+        bool setToolLocalizationTarget(std::string _target_name_with_path);
+
+        bool one_shoot_estimation_;
+
+        void clearPluginInstances();
+
+
+    protected:
+        Json::Value localization_interface_config_data_;
+
+        std::string getLocalizationOutputSTR(),
+                current_obj_localization_target_ = "",
+                current_tool_localization_target_ = "";
+
+    private:
+        std::string output_string_,
+                scripts_folder_path_,
+                config_folder_path_;
+        std::shared_ptr<LocalizationBase> obj_localization_obj_,
+                tool_localization_obj_;
+
+        bool isScript(std::string _s);
+
+        bool initLocalization(std::shared_ptr<LocalizationBase> &_loc_instance, LocalizationData _data);
+
     };
-
-
-    bool saveLocalizationConfigFile(std::string _file);
-
-    bool loadLocalizationConfigFile(std::string _file);
-
-    bool setLocalizationScriptsFolderPath(std::string _path);
-
-    bool setLocalizationConfigsFolderPath(std::string _path);
-
-    bool initToolLocalization();
-
-    bool initObjLocalization();
-
-    bool stopObjLocalization();
-
-    bool stopToolLocalization();
-
-    bool object_localization_spinner_sleep(int usec);
-
-    bool tool_localization_spinner_sleep(int usec);
-
-    std::string getLocalizationInterfaceOutputSTR();
-
-    bool requestObjPose(Pose &_pose);
-
-    bool requestToolPose(Pose &_pose);
-
-    bool setObjLocalizationTarget(std::string _target_name_with_path);
-
-    bool setToolLocalizationTarget(std::string _target_name_with_path);
-
-    bool one_shoot_estimation_;
-
-    void clearPluginInstances();
-
-
-protected:
-    Json::Value localization_interface_config_data_;
-
-    std::string getLocalizationOutputSTR(),
-            current_obj_localization_target_ = "",
-            current_tool_localization_target_ = "";
-
-private:
-    std::string output_string_,
-            scripts_folder_path_,
-            config_folder_path_;
-    std::shared_ptr<LocalizationBase> obj_localization_obj_,
-                    tool_localization_obj_;
-    bool isScript(std::string _s);
-    bool initLocalization(std::shared_ptr<LocalizationBase>& _loc_instance, LocalizationData _data);
-
-};
-
+}
 
 #endif //MIMIC_GRASPING_SERVER_PLUGINS_INTERFACE_H

@@ -101,9 +101,11 @@ namespace mimic_grasping {
 
         stop();
 
+/*
         if(!applyTransformation(obj_pose_arr_,tool_pose_arr_,tool_pose_wrt_obj_frame_arr_)) {
             output_string_ = getDatasetManipulatorOutputSTR();
         }
+*/
 
         return true;
     }
@@ -135,6 +137,8 @@ namespace mimic_grasping {
             output_string_ ="Profile empty. Setting DEFAULT";
             profile_ = "default";
         }
+
+        output_export_path_ = root_folder_path_+"/outputs/"+ profile_;
 
         if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_dir_ + "/" + profile_ + tool_firmware_file_ )) {
             //output_string_ = getToolFirmwareOutputSTR();
@@ -228,14 +232,19 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::exportDatasets() {
 
-        struct stat info;
 
-        std::string path_name = root_folder_path_+"/outputs/"+ profile_;
-        char* char_arr = &path_name[0];
+        if(output_export_path_.empty()){
+            error_string_ = "Output path is not defined. The system should, at least, be loaded to perfom the exporting.";
+            DEBUG_MSG(error_string_);
+            return false;
+        }
+
+        struct stat info;
+        char* char_arr = &output_export_path_[0];
 
         if( stat( char_arr, &info ) != 0 ) {
             DEBUG_MSG("Cannot access " << char_arr << ". Creating it to export dataset.");
-            std::filesystem::create_directory(path_name);
+            std::filesystem::create_directory(output_export_path_);
         }
         /*
         else if( info.st_mode & S_IFDIR )  // S_ISDIR() doesn't exist on my windows
@@ -252,12 +261,12 @@ namespace mimic_grasping {
 
 
         if(
-                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", path_name +"/raw_grasping_poses.yaml",EXPORT_EXTENSION::YAML) ||
-                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", path_name +"/raw_grasping_poses.json",EXPORT_EXTENSION::JSON) ||
-                !saveDataset(tool_pose_wrt_obj_frame_arr_, gripper_type_label, "candidate_", path_name +"/grasping_poses.yaml",EXPORT_EXTENSION::YAML) ||
-                !saveDataset(tool_pose_wrt_obj_frame_arr_, gripper_type_label, "candidate_", path_name +"/grasping_poses.json",EXPORT_EXTENSION::JSON) ||
-                !saveDataset(obj_pose_arr_, "object_pose_", path_name +"/object_poses.yaml",EXPORT_EXTENSION::YAML) ||
-                !saveDataset(obj_pose_arr_, "object_pose_", path_name +"/object_poses.json",EXPORT_EXTENSION::JSON)
+                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", output_export_path_ +"/raw_grasping_poses.yaml",EXPORT_EXTENSION::YAML) ||
+                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", output_export_path_ +"/raw_grasping_poses.json",EXPORT_EXTENSION::JSON) ||
+                !saveDataset(tool_pose_wrt_obj_frame_arr_, gripper_type_label, "candidate_", output_export_path_ +"/grasping_poses.yaml",EXPORT_EXTENSION::YAML) ||
+                !saveDataset(tool_pose_wrt_obj_frame_arr_, gripper_type_label, "candidate_", output_export_path_ +"/grasping_poses.json",EXPORT_EXTENSION::JSON) ||
+                !saveDataset(obj_pose_arr_, "object_pose_", output_export_path_ +"/object_poses.yaml",EXPORT_EXTENSION::YAML) ||
+                !saveDataset(obj_pose_arr_, "object_pose_", output_export_path_ +"/object_poses.json",EXPORT_EXTENSION::JSON)
                 ){
 
             //output_string_ = getDatasetManipulatorOutputSTR();
@@ -267,6 +276,10 @@ namespace mimic_grasping {
         }
 
         return true;
+    }
+
+    std::string MimicGraspingServer::getOutputExportPath() {
+        return output_export_path_;
     }
 
     std::vector<Pose> MimicGraspingServer::getDataset(int _dataset_type){
@@ -286,20 +299,36 @@ namespace mimic_grasping {
 
     Pose MimicGraspingServer::getDataset(int _dataset_type, int _index){
 
-        switch (_dataset_type) {
-            case DATASET_TYPE::TOOL_POSES_WRT_SRC:
-                assert(! (_index > tool_pose_arr_.size()));
-                return tool_pose_arr_.at(_index);
+        if(_index >= 0){
+            switch (_dataset_type) {
+                case DATASET_TYPE::TOOL_POSES_WRT_SRC:
+                    assert(! (_index > tool_pose_arr_.size()));
+                    return tool_pose_arr_.at(_index);
 
-            case DATASET_TYPE::TOOL_POSES_WRT_OBJ:
-                assert(! (_index > tool_pose_wrt_obj_frame_arr_.size()));
-                return tool_pose_wrt_obj_frame_arr_.at(_index);
+                case DATASET_TYPE::TOOL_POSES_WRT_OBJ:
+                    assert(! (_index > tool_pose_wrt_obj_frame_arr_.size()));
+                    return tool_pose_wrt_obj_frame_arr_.at(_index);
 
-            case DATASET_TYPE::OBJ_POSES_WRT_SRC:
-                assert(! (_index > obj_pose_arr_.size()));
-                return obj_pose_arr_.at(_index);
-            default:
-                assert(false);
+                case DATASET_TYPE::OBJ_POSES_WRT_SRC:
+                    assert(! (_index > obj_pose_arr_.size()));
+                    return obj_pose_arr_.at(_index);
+                default:
+                    assert(false);
+            }
+        }
+        else{
+            switch (_dataset_type) {
+                case DATASET_TYPE::TOOL_POSES_WRT_SRC:
+                    return tool_pose_arr_.at(tool_pose_arr_.size()-1);
+
+                case DATASET_TYPE::TOOL_POSES_WRT_OBJ:
+                    return tool_pose_wrt_obj_frame_arr_.at(tool_pose_wrt_obj_frame_arr_.size()-1);
+
+                case DATASET_TYPE::OBJ_POSES_WRT_SRC:
+                    return obj_pose_arr_.at(obj_pose_arr_.size()-1);
+                default:
+                    assert(false);
+            }
         }
 
     }
@@ -307,6 +336,7 @@ namespace mimic_grasping {
     void MimicGraspingServer::clearDataset(){
         obj_pose_arr_.clear();
         tool_pose_arr_.clear();
+        tool_pose_wrt_obj_frame_arr_.clear();
     }
 
     bool MimicGraspingServer::spin(){
@@ -359,7 +389,7 @@ namespace mimic_grasping {
             if(requestObjectLocalization()) {
                 DEBUG_MSG( "" << current_obj_pose_.getName() );
                 //obj_pose_arr_.push_back(current_obj_pose_);
-                DEBUG_MSG( "Object data size" << obj_pose_arr_.size() );
+                DEBUG_MSG( "Object data size " << obj_pose_arr_.size() );
             }
 
             else{
@@ -411,6 +441,7 @@ namespace mimic_grasping {
 
             obj_pose_arr_.erase(obj_pose_arr_.end()); // because of the firmware state machine, this condition only happen after a success stock
             tool_pose_arr_.erase(tool_pose_arr_.end());
+            tool_pose_wrt_obj_frame_arr_.erase(tool_pose_wrt_obj_frame_arr_.end());
 
             DEBUG_MSG( "New object dataset size: " << obj_pose_arr_.size() );
             DEBUG_MSG( "New tool dataset size: " << tool_pose_arr_.size() );
@@ -422,6 +453,7 @@ namespace mimic_grasping {
             output_string_ = "Remove last save pose request received.";
             DEBUG_MSG( output_string_ );
             tool_pose_arr_.erase(tool_pose_arr_.end());
+            tool_pose_wrt_obj_frame_arr_.erase(tool_pose_wrt_obj_frame_arr_.end());
 
             DEBUG_MSG( "New object dataset size [ONE_SHOOT mode ON]: " << obj_pose_arr_.size() );
             DEBUG_MSG( "New tool dataset size: " << tool_pose_arr_.size() );
@@ -439,17 +471,19 @@ namespace mimic_grasping {
         DEBUG_MSG( "Closing interfaces...");
         DEBUG_MSG( "Closing Tool Localization...");
         output_string_ = "Closing Tool Localization...";
-        //while(stopToolLocalization()!=true){};
-        stopToolLocalization();
+        while(stopToolLocalization()!=true){};
+        //stopToolLocalization();
+        sleep(1);
         DEBUG_MSG( "Closing Object Localization...");
         output_string_ = "Closing Object Localization...";
-        //while(stopObjLocalization()!=true){};
-        stopObjLocalization();
+        while(stopObjLocalization()!=true){};
+        //stopObjLocalization();
         sleep(1);
         DEBUG_MSG(  "Closing Tool Communication..." );
         output_string_ = "Closing Tool Communication...";
-        //while(stopToolCommunication()!=true){}
-        stopToolCommunication();
+        while(stopToolCommunication()!=true){}
+        //stopToolCommunication();
+        sleep(1);
 
         clearPluginInstances(); // TODO: verify possible errors...
 
@@ -475,6 +509,14 @@ namespace mimic_grasping {
         if(requestToolPose(current_tool_pose_)) {
             //std::cout << "" << current_tool_pose_.getName() << std::endl;
             tool_pose_arr_.push_back(current_tool_pose_);
+
+            Pose aux;
+            if(!applyTransformation(obj_pose_arr_.back(),tool_pose_arr_.back(),aux)) {
+                output_string_ = getDatasetManipulatorOutputSTR();
+                return false;
+            }
+            tool_pose_wrt_obj_frame_arr_.push_back(aux);
+
             return true;
         }
         else

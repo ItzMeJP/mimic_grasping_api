@@ -107,7 +107,7 @@ int main(int argc, char *argv[ ] ){
     }
 
     //The issue bellow is related to ROS plugins... The Action service is not able to be called twice...
-
+/*
     s.reset(new MimicGraspingServer());
 
 
@@ -135,7 +135,7 @@ int main(int argc, char *argv[ ] ){
         std::cout << "None dataset were saved." << std::endl;
     }
 
-
+*/
 
 
 
