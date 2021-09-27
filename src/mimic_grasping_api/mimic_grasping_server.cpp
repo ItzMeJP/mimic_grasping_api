@@ -10,6 +10,7 @@ namespace mimic_grasping {
     }
 
     MimicGraspingServer::~MimicGraspingServer(){
+        //stop();
     }
 
     void MimicGraspingServer::setProfile(std::string _profile){
@@ -93,13 +94,16 @@ namespace mimic_grasping {
         }
 
         while(!stop_) {
+            running_ = true;
             if (!spin()) {
                 stop();
+                running_ = false;
                 return false;
             }
         }
 
         stop();
+        running_ = false;
 
 /*
         if(!applyTransformation(obj_pose_arr_,tool_pose_arr_,tool_pose_wrt_obj_frame_arr_)) {
@@ -111,9 +115,18 @@ namespace mimic_grasping {
     }
 
     bool MimicGraspingServer::stop(){
-        output_string_ = " Closing interfaces...";
+        output_string_ = "Detaching mimic_grasping api...";
+        DEBUG_MSG( output_string_);
+
         if(!closeInterfaces())
             return false;
+
+        if(plugin_list_is_loaded_) {
+            clearPluginInstances(); // TODO: verify possible errors...
+            plugin_list_is_loaded_ = false;
+        }
+
+        clearDataset();
 
         return true;
     }
@@ -166,8 +179,10 @@ namespace mimic_grasping {
             //output_string_ = getPluginManagementOutputMsg();
             error_string_ = getPluginManagementOutputMsg();
             DEBUG_MSG(error_string_);
+            plugin_list_is_loaded_ = false;
             return false;
         }
+        plugin_list_is_loaded_ = true;
 
         output_string_ = "Loading process has been completed.";
         return true;
@@ -182,10 +197,11 @@ namespace mimic_grasping {
         if(!initToolFirmware(false)) {
             //output_string_ = getToolFirmwareOutputSTR();
             output_string_ += "\n-- Failed to initialize tool firmware communication.";
-            error_string_ = getToolFirmwareOutputSTR();
+            error_string_ = "Failed to initialize tool firmware communication. " + getToolFirmwareOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
+        initialized_firmware_communication_ = true;
 
         output_string_ = "Initializing object localization plugin...";
         if(!initObjLocalization() ){
@@ -195,6 +211,7 @@ namespace mimic_grasping {
             DEBUG_MSG(error_string_);
             return false;
         }
+        initialized_obj_localization_ = true;
 
         output_string_ = "Initializing tool localization plugin...";
         if(!initToolLocalization() ){
@@ -204,6 +221,7 @@ namespace mimic_grasping {
             DEBUG_MSG(error_string_);
             return false;
         }
+        initialized_tool_localization_ = true;
 
         if(one_shoot_estimation_) {
             output_string_ = "ONE_SHOOT method active. Running object localization...";
@@ -345,9 +363,9 @@ namespace mimic_grasping {
         if(!firmware_spinner_sleep(500)){ // the serial reader is slow...
             //output_string_ = getToolFirmwareOutputSTR();
             error_string_ = getToolFirmwareOutputSTR();
+            initialized_firmware_communication_ = false;
             DEBUG_MSG(error_string_);
-            while(stopToolLocalization()!=true){};
-            while(stopObjLocalization()!=true){};
+            stop();
             output_string_  =  "Closing interfaces since firmware communication is lost." ;
             return false;
         }
@@ -356,8 +374,8 @@ namespace mimic_grasping {
             //output_string_ = getLocalizationOutputSTR();
             error_string_ = getLocalizationOutputSTR();
             DEBUG_MSG(error_string_);
-            while(stopToolCommunication()!=true){}
-            while(stopToolLocalization()!=true){};
+            initialized_obj_localization_ = false;
+            stop();
             output_string_  = "Closing interfaces since object localization communication is lost." ;
             return false;
         }
@@ -366,8 +384,8 @@ namespace mimic_grasping {
             //output_string_ = getLocalizationOutputSTR();
             error_string_ = getLocalizationOutputSTR();
             DEBUG_MSG(error_string_);
-            while(stopToolCommunication()!=true){};
-            while(stopObjLocalization()!=true){};
+            initialized_tool_localization_ = false;
+            stop();
             output_string_  = "Closing interfaces since tool localization communication is lost." ;
             return false;
         }
@@ -468,24 +486,32 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::closeInterfaces(){
 
-        DEBUG_MSG( "Closing interfaces...");
-        DEBUG_MSG( "Closing Tool Localization...");
-        output_string_ = "Closing Tool Localization...";
-        while(stopToolLocalization()!=true){};
-        //stopToolLocalization();
-        sleep(1);
-        DEBUG_MSG( "Closing Object Localization...");
-        output_string_ = "Closing Object Localization...";
-        while(stopObjLocalization()!=true){};
-        //stopObjLocalization();
-        sleep(1);
-        DEBUG_MSG(  "Closing Tool Communication..." );
-        output_string_ = "Closing Tool Communication...";
-        while(stopToolCommunication()!=true){}
-        //stopToolCommunication();
-        sleep(1);
+        if(initialized_tool_localization_){
+            DEBUG_MSG( "Closing Tool Localization...");
+            output_string_ = "Closing Tool Localization...";
+            //while(stopToolLocalization()!=true){};
+            stopToolLocalization();
+            initialized_tool_localization_ = false;
+        }
+        //sleep(1);
 
-        clearPluginInstances(); // TODO: verify possible errors...
+        if(initialized_obj_localization_) {
+            DEBUG_MSG( "Closing Object Localization...");
+            output_string_ = "Closing Object Localization...";
+            //while (stopObjLocalization() != true) {};
+            stopObjLocalization();
+            initialized_obj_localization_ = false;
+        }
+        //sleep(1);
+
+        if(initialized_firmware_communication_) {
+            DEBUG_MSG(  "Closing Tool Communication..." );
+            output_string_ = "Closing Tool Communication...";
+            //while (stopToolCommunication() != true) {}
+            stopToolCommunication();
+            initialized_firmware_communication_ = false;
+        }
+        //sleep(1);
 
         return true; //TODO: treat possible errors
     };
@@ -529,6 +555,8 @@ namespace mimic_grasping {
 
     void MimicGraspingServer::request_stop(){
         stop_ = true;
+        DEBUG_MSG("Stop request received.");
+        while(running_){};
     }
 
     std::string MimicGraspingServer::getOutputSTR(){

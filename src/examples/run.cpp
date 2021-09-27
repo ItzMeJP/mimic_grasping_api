@@ -45,8 +45,14 @@ void appendTextWithoutRepetition(std::string _qstr){
 
 
 void readCommandCallback(){
-    std::cin.ignore();
-    std::cout << "ENTER pressed. Leaving..." << std::endl;
+    int aux;
+    for(;;) {
+        std::cin >> aux;
+        if (aux == 0) {
+            std::cout << "\"0\" pressed. Leaving..." << std::endl;
+            break;
+        }
+    }
     s->request_stop();
 
 }
@@ -69,17 +75,18 @@ int main(int argc, char *argv[ ] ){
 
     if(argc == 1)
         s->setProfile("default");
+
     else{
         s->setProfile(argv[1]);
     }
 
     std::cout << "\n----------------------------------------------------------" << std::endl;
-    std::cout << "------ Starting API. Press ENTER twice to interrupt.------" << std::endl;
+    std::cout << "------ Starting API. Press \"0+enter\" to interrupt.------" << std::endl;
     std::cout << "----------------------------------------------------------\n" << std::endl;
     sleep(2);
 
-    boost::thread stop_thread_reader(readCommandCallback);
     boost::thread output_thread_printer(printOutputCallback);
+    std::shared_ptr<boost::thread> stop_thread_reader = std::make_shared<boost::thread>(readCommandCallback);
 
 
     if(!s->start()){
@@ -107,9 +114,11 @@ int main(int argc, char *argv[ ] ){
     }
 
     //The issue bellow is related to ROS plugins... The Action service is not able to be called twice...
-/*
-    s.reset(new MimicGraspingServer());
 
+    stop_thread_reader->join();
+
+    s.reset(new MimicGraspingServer());
+    stop_thread_reader.reset( new boost::thread(readCommandCallback) );
 
     if(!s->start()){
         std::cerr << "Mimic Grasping API Error | " << s->getErrorStr() << std::endl;
@@ -135,23 +144,11 @@ int main(int argc, char *argv[ ] ){
         std::cout << "None dataset were saved." << std::endl;
     }
 
-*/
 
-
-
-// JUST to test
-
-
-
-
-
-
-
-
-
-
+    stop_thread_reader->join();
 
     output_thread_printer.interrupt();
     output_thread_printer.join();
+
     return 0;
 }

@@ -12,6 +12,9 @@ namespace mimic_grasping {
 
     ToolFirmwareInterface::~ToolFirmwareInterface() {
         //stopToolCommunication();
+        //serial_.reset();
+        //serial_thread_reader_.reset();
+
     }
 
 

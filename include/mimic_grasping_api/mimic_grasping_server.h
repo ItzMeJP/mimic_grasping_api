@@ -81,6 +81,8 @@ namespace mimic_grasping{
                           tool_pose_arr_,
                           tool_pose_wrt_obj_frame_arr_;
 
+        bool initialized_firmware_communication_ = false, initialized_obj_localization_ = false, initialized_tool_localization_ = false, plugin_list_is_loaded_ = false, running_ = false;
+
 
 
     }; // end class

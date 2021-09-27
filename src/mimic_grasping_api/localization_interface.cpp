@@ -12,7 +12,7 @@ namespace mimic_grasping {
         //stopToolLocalization();
         //obj_localization_obj_.reset();
         //tool_localization_obj_.reset();
-
+        //clearPluginInstances();
     };
 
     bool LocalizationInterface::saveLocalizationConfigFile(std::string _file) {
@@ -96,7 +96,6 @@ namespace mimic_grasping {
     }
 
     void LocalizationInterface::clearPluginInstances() {
-
         obj_localization_obj_.reset();
         tool_localization_obj_.reset();
         ClearPluginList();

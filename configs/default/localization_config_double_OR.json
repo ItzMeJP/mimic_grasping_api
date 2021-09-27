@@ -1,0 +1,17 @@
+{
+	"object_localization" :
+	{
+		"one_shoot_estimation" : false,
+		"executor_command" : "obj_localization_ros_init.sh",
+		"terminator_command" : "obj_localization_ros_close.sh",
+		"plugin_name" : "libobject_localization_ros",
+		"configuration_file" : "plugin_object_localization_ros.json"
+	},
+	"tool_localization" :
+	{
+		"executor_command" : "obj_localization_ros_2_init.sh",
+		"terminator_command" : "obj_localization_ros_close.sh",
+		"plugin_name" : "libobject_localization_ros",
+		"configuration_file" : "plugin_object_localization_ros_2.json"
+	}
+}
