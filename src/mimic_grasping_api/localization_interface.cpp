@@ -215,6 +215,10 @@ std::string LocalizationInterface::execIt(const char *cmd, float _startup_delay_
             output_string_ = obj_localization_obj_->getOutputString();
             return false;
         }
+        /*else if (obj_localization_obj_->getStatus() == LocalizationBase::ABORTED) {
+            output_string_ = obj_localization_obj_->getOutputString();
+        }
+         */
 
         return true;
     }

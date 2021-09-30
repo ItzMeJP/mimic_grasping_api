@@ -400,6 +400,7 @@ namespace mimic_grasping {
 
         if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && !one_shoot_estimation_)
         {
+            bool break_it = false; //TODO: change this control variable by using the LocalizationBase::ABORTED from LocalizationBase class.
             output_string_ = "Save pose request received. Running object localization...";
             DEBUG_MSG ( output_string_ );
             if(requestObjectLocalization()) {
@@ -411,26 +412,26 @@ namespace mimic_grasping {
             else{
                 sendErrorMsg();
                 output_string_ = "Failed to localize the object.";
-                //return false;
+                break_it = true;
             }
 
-            output_string_ = "Running tool localization...";
-            if(requestToolLocalization()) {
-                DEBUG_MSG( "" << current_tool_pose_.getName() );
-                //tool_pose_arr_.push_back(current_tool_pose_);
-                DEBUG_MSG( "Tool data size " << tool_pose_arr_.size() );
-                sendSuccessMsg();
+            if(!break_it) {
+                output_string_ = "Running tool localization...";
+                if (requestToolLocalization()) {
+                    DEBUG_MSG("" << current_tool_pose_.getName());
+                    //tool_pose_arr_.push_back(current_tool_pose_);
+                    DEBUG_MSG("Tool data size " << tool_pose_arr_.size());
+                    sendSuccessMsg();
+                } else {
+                    output_string_ = "Failed to localize the tool.";
+                    obj_pose_arr_.pop_back();
+                    sendErrorMsg();
+                    //return false;
+                }
+
+                output_string_ +=
+                        "Acquisition saved with success. Grasping poses dataset size: " + tool_pose_arr_.size();
             }
-
-            else{
-                output_string_ = "Failed to localize the tool.";
-                obj_pose_arr_.pop_back();
-                sendErrorMsg();
-                //return false;
-            }
-
-            output_string_ += "Acquisition saved with success. Grasping poses dataset size: " + tool_pose_arr_.size();
-
         }
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && one_shoot_estimation_)
         {
