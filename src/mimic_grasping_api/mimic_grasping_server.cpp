@@ -126,8 +126,6 @@ namespace mimic_grasping {
             plugin_list_is_loaded_ = false;
         }
 
-        clearDataset();
-
         return true;
     }
 
@@ -152,17 +150,18 @@ namespace mimic_grasping {
         }
 
         output_export_path_ = root_folder_path_+"/outputs/"+ profile_;
+        DEBUG_MSG("Current output export file defined: " << getOutputExportPath());
 
         if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_dir_ + "/" + profile_ + tool_firmware_file_ )) {
             //output_string_ = getToolFirmwareOutputSTR();
-            error_string_ = getToolFirmwareOutputSTR();
+            error_string_ = "Tool firmware error: " + getToolFirmwareOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
 
         if(!loadTransformationMatrix(root_folder_path_ + config_folder_dir_ + "/" + profile_ + matrix_file_)){
             //output_string_ = getDatasetManipulatorOutputSTR();
-            error_string_ = getDatasetManipulatorOutputSTR();
+            error_string_ = "Dataset manipulator error: " + getDatasetManipulatorOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
@@ -171,13 +170,14 @@ namespace mimic_grasping {
         || !setLocalizationScriptsFolderPath(root_folder_path_ + scripts_folder_dir_ )
         || !setLocalizationConfigsFolderPath(root_folder_path_ + config_folder_dir_ + "/" + profile_)){
             //output_string_ = getLocalizationOutputSTR();
-            error_string_ = getLocalizationOutputSTR();
+            error_string_ = "Localization error: " + getLocalizationOutputSTR();
             DEBUG_MSG(error_string_);
+            return false;
         }
 
         if(!loadDynamicPlugins(root_folder_path_ + plugins_folder_dir_ +"/",true)){ // TODO: load config file for plugin
             //output_string_ = getPluginManagementOutputMsg();
-            error_string_ = getPluginManagementOutputMsg();
+            error_string_ = "Plugin management error: " + getPluginManagementOutputMsg();
             DEBUG_MSG(error_string_);
             plugin_list_is_loaded_ = false;
             return false;
@@ -207,7 +207,7 @@ namespace mimic_grasping {
         if(!initObjLocalization() ){
             //output_string_ = getLocalizationOutputSTR();
             output_string_ += "\n-- Failed to initialize object localization.";
-            error_string_ = getLocalizationOutputSTR();
+            error_string_ = "Failed to initialize object localization. " + getLocalizationOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
@@ -217,7 +217,7 @@ namespace mimic_grasping {
         if(!initToolLocalization() ){
             //output_string_ = getLocalizationOutputSTR();
             output_string_ += "\n-- Failed to initialize tool localization.";
-            error_string_ = getLocalizationOutputSTR();
+            error_string_ = "Failed to initialize tool localization. " + getLocalizationOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
@@ -238,7 +238,7 @@ namespace mimic_grasping {
 
         if (!setGripperType()) { //set the running mode in firmware state machine
             //output_string_ = getToolFirmwareOutputSTR();
-            error_string_ = getToolFirmwareOutputSTR();
+            error_string_ = "Tool firmware error: " + getToolFirmwareOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
@@ -250,9 +250,10 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::exportDatasets() {
 
+        DEBUG_MSG("Current output export file defined: " << getOutputExportPath());
 
-        if(output_export_path_.empty()){
-            error_string_ = "Output path is not defined. The system should, at least, be loaded to perfom the exporting.";
+        if(getOutputExportPath().empty()){
+            error_string_ = "Output path is not defined. The system should be, at least, loaded to export the dataset.";
             DEBUG_MSG(error_string_);
             return false;
         }
@@ -288,7 +289,7 @@ namespace mimic_grasping {
                 ){
 
             //output_string_ = getDatasetManipulatorOutputSTR();
-            error_string_ = getDatasetManipulatorOutputSTR();
+            error_string_ = "Dataset manipulator error: " + getDatasetManipulatorOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
@@ -361,8 +362,7 @@ namespace mimic_grasping {
 
 
         if(!firmware_spinner_sleep(500)){ // the serial reader is slow...
-            //output_string_ = getToolFirmwareOutputSTR();
-            error_string_ = getToolFirmwareOutputSTR();
+            error_string_ = "Tool firmware spin error: " + getToolFirmwareOutputSTR();
             initialized_firmware_communication_ = false;
             DEBUG_MSG(error_string_);
             stop();
@@ -371,8 +371,7 @@ namespace mimic_grasping {
         }
 
         if(!object_localization_spinner_sleep(150)){
-            //output_string_ = getLocalizationOutputSTR();
-            error_string_ = getLocalizationOutputSTR();
+            error_string_ = "Object localization spin error: " + getLocalizationOutputSTR();
             DEBUG_MSG(error_string_);
             initialized_obj_localization_ = false;
             stop();
@@ -381,8 +380,7 @@ namespace mimic_grasping {
         }
 
         if(!tool_localization_spinner_sleep(150)){
-            //output_string_ = getLocalizationOutputSTR();
-            error_string_ = getLocalizationOutputSTR();
+            error_string_ = "Tool localization spin error: " + getLocalizationOutputSTR();
             DEBUG_MSG(error_string_);
             initialized_tool_localization_ = false;
             stop();
@@ -519,7 +517,6 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::requestObjectLocalization(){
 
-        setObjLocalizationTarget(root_folder_path_+"/models/single_side_bracket.ply"); //TODO: set custom object!
         if(requestObjPose(current_obj_pose_)) {
             DEBUG_MSG( "" << current_obj_pose_.getName() );
             obj_pose_arr_.push_back(current_obj_pose_);
@@ -531,7 +528,6 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::requestToolLocalization(){
 
-        setToolLocalizationTarget("candidate_");
         if(requestToolPose(current_tool_pose_)) {
             //std::cout << "" << current_tool_pose_.getName() << std::endl;
             tool_pose_arr_.push_back(current_tool_pose_);
@@ -565,6 +561,14 @@ namespace mimic_grasping {
 
     std::string MimicGraspingServer::getErrorStr(){
         return error_string_;
+    }
+
+    int MimicGraspingServer::datasetSize(){
+        return tool_pose_wrt_obj_frame_arr_.size();
+    }
+
+    bool MimicGraspingServer::isDatasetEmpty(){
+        return tool_pose_wrt_obj_frame_arr_.size()==0?true:false;
     }
 
 

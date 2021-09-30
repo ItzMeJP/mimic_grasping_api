@@ -81,7 +81,11 @@ namespace mimic_grasping {
 
         bool setObjLocalizationTarget(std::string _target_name_with_path);
 
+        std::string  getObjLocalizationTarget();
+
         bool setToolLocalizationTarget(std::string _target_name_with_path);
+
+        std::string getToolLocalizationTarget();
 
         bool one_shoot_estimation_;
 

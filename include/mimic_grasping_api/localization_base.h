@@ -34,6 +34,7 @@ public:
     virtual bool runApp() = 0;
     virtual bool stopApp() = 0;
     virtual bool setTargetName(std::string _name) = 0;
+    virtual std::string getTargetName() = 0;
     virtual bool requestData(Pose &_result) = 0;
     virtual int getStatus() = 0;
     virtual std::string getOutputString() = 0;

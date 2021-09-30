@@ -23,7 +23,7 @@
 
 namespace mimic_grasping{
 
-    class MimicGraspingServer: public ToolFirmwareInterface, LocalizationInterface, DatasetManipulator{
+    class MimicGraspingServer: public ToolFirmwareInterface, public LocalizationInterface, public DatasetManipulator{
 
     public:
         MimicGraspingServer();
@@ -48,11 +48,14 @@ namespace mimic_grasping{
         std::string getOutputExportPath();
 
         bool exportDatasets();
+        bool isDatasetEmpty();
+        int datasetSize();
 
         std::string getOutputSTR();
         std::string getErrorStr();
 
         int getCurrentStateCode();
+
 
     protected:
         char const* env_root_folder_path;

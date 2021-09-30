@@ -86,6 +86,14 @@ namespace mimic_grasping {
         return true;
     }
 
+    std::string LocalizationInterface::getObjLocalizationTarget() {
+        return obj_localization_obj_->getTargetName();
+    }
+
+    std::string LocalizationInterface::getToolLocalizationTarget() {
+        return tool_localization_obj_->getTargetName();
+    }
+
     bool LocalizationInterface::initToolLocalization() {
         return (initLocalization(tool_localization_obj_, tool_localization_data_));
     }

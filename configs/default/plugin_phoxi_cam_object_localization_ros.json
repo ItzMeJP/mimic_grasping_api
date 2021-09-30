@@ -3,6 +3,7 @@
 	{
 		"ros_namespace" : "object_localization",
 		"action_name" : "object_localization/ObjectRecognitionSkill",
+		"target" : "/home/joaopedro/clion_ws/mimic_grasping_api/models/single_side_bracket.ply",
 		"wait_for_server_timeout_in_seconds" : 4,
 		"wait_for_result_timeout_in_seconds" : 45
 	},

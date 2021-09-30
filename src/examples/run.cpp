@@ -88,7 +88,6 @@ int main(int argc, char *argv[ ] ){
     boost::thread output_thread_printer(printOutputCallback);
     std::shared_ptr<boost::thread> stop_thread_reader = std::make_shared<boost::thread>(readCommandCallback);
 
-
     if(!s->start()){
         std::cerr << "Mimic Grasping API Error | " << s->getErrorStr() << std::endl;
         return 0;
@@ -113,8 +112,7 @@ int main(int argc, char *argv[ ] ){
         std::cout << "None dataset were saved." << std::endl;
     }
 
-    //The issue bellow is related to ROS plugins... The Action service is not able to be called twice...
-
+    /*
     stop_thread_reader->join();
 
     s.reset(new MimicGraspingServer());
@@ -144,7 +142,7 @@ int main(int argc, char *argv[ ] ){
         std::cout << "None dataset were saved." << std::endl;
     }
 
-
+*/
     stop_thread_reader->join();
 
     output_thread_printer.interrupt();

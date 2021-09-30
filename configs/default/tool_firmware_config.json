@@ -1,6 +1,6 @@
 {
   "serial": {
-    "port": "/dev/ttyUSB1",
+    "port": "/dev/prototype_mimic_tool",
     "baud_rate": 115200
   },
   "tool": {
