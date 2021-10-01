@@ -234,6 +234,14 @@ std::string LocalizationInterface::execIt(const char *cmd, float _startup_delay_
         return true;
     }
 
+    LocalizationInterface::LocalizationData LocalizationInterface::getObjLocLoadedConfig(){
+        return obj_localization_data_;
+    }
+
+    LocalizationInterface::LocalizationData LocalizationInterface::getToolLocLoadedConfig(){
+        return tool_localization_data_;
+    }
+
     bool LocalizationInterface::isScript(std::string _s) {
 
         std::string script_extension = ".sh";

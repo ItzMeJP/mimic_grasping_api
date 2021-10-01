@@ -87,6 +87,10 @@ namespace mimic_grasping {
 
         std::string getToolLocalizationTarget();
 
+        LocalizationData getObjLocLoadedConfig();
+
+        LocalizationData getToolLocLoadedConfig();
+
         bool one_shoot_estimation_;
 
         void clearPluginInstances();

@@ -1,9 +1,9 @@
 {
-	"candidate_0" : 
+	"candidate_0" :
 	{
 		"gripper" : 4,
 		"method" : 3,
-		"orientation" : 
+		"orientation" :
 		{
 			"w" : 0.99999760796868598,
 			"x" : 0.0021250755736149547,
@@ -11,7 +11,7 @@
 			"z" : 0.00050441682778043831
 		},
 		"parent_frame_id" : "single_side_bracket_frame_id",
-		"position" : 
+		"position" :
 		{
 			"x" : -3.6808886823932042e-05,
 			"y" : 0.049831428178116699,
