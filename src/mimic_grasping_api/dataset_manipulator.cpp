@@ -42,6 +42,22 @@ namespace mimic_grasping {
         return true;
     }
 
+    bool DatasetManipulator::saveTransformationMatrix(std::string _file_with_path){
+
+        Json::Value jm;
+
+        jm["matrix"][0][0] = 1; jm["matrix"][0][1] = 0; jm["matrix"][0][2] = 0; jm["matrix"][0][3] = 0;
+        jm["matrix"][0][0] = 0; jm["matrix"][0][1] = 1; jm["matrix"][0][2] = 0; jm["matrix"][0][3] = 0;
+        jm["matrix"][0][0] = 0; jm["matrix"][0][1] = 0; jm["matrix"][0][2] = 1; jm["matrix"][0][3] = 0;
+        jm["matrix"][0][0] = 0; jm["matrix"][0][1] = 0; jm["matrix"][0][2] = 0; jm["matrix"][0][3] = 1;
+
+        std::ofstream outfile(_file_with_path);
+        outfile << jm << std::endl;
+        outfile.close();
+
+        return true;
+    }
+
     bool DatasetManipulator::applyTransformation(Pose _obj_pose,
                              Pose _tool_pose,
                              Pose &_tool_pose_wrt_obj){

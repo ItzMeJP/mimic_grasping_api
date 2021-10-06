@@ -36,8 +36,10 @@ namespace mimic_grasping{
         bool start();
         bool stop();
 
+        bool setup();
         bool load();
         bool init();
+
         bool spin();
         void request_stop();
         bool closeInterfaces();
@@ -46,6 +48,12 @@ namespace mimic_grasping{
         std::vector<Pose> getDataset(int _dataset_type);
         Pose getDataset(int _dataset_type, int _index);
         std::string getOutputExportPath();
+        std::string getPluginsFolderPath();
+        std::string getConfigFolderPath();
+        std::string getScriptFolderPath();
+
+        bool generateProfileDirectoryTemplate();
+
 
         bool exportDatasets();
         bool isDatasetEmpty();
@@ -77,7 +85,7 @@ namespace mimic_grasping{
 
 
     private:
-        std::string output_string_, error_string_, output_export_path_;
+        std::string output_string_, error_string_, output_export_path_, plugins_folder_path_, script_folder_path_, config_folder_path_;
         Pose current_obj_pose_,
              current_tool_pose_;
         std::vector<Pose> obj_pose_arr_,

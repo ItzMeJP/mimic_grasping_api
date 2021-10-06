@@ -83,7 +83,7 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::start() {
 
-        if(!load()){
+        if(!setup() || !load()){
             stop();
             return false;
         }
@@ -129,9 +129,7 @@ namespace mimic_grasping {
         return true;
     }
 
-    bool MimicGraspingServer::load(){
-
-        output_string_ = "Null";
+    bool MimicGraspingServer::setup(){
 
         env_root_folder_path =  getenv("MIMIC_GRASPING_SERVER_ROOT");
         if(env_root_folder_path == NULL) {
@@ -150,32 +148,48 @@ namespace mimic_grasping {
         }
 
         output_export_path_ = root_folder_path_+"/outputs/"+ profile_;
-        DEBUG_MSG("Current output export file defined: " << getOutputExportPath());
+        config_folder_path_ = root_folder_path_ + config_folder_dir_ + "/" + profile_;
+        script_folder_path_ = root_folder_path_ + scripts_folder_dir_;
+        plugins_folder_path_ = root_folder_path_ + plugins_folder_dir_;
 
-        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_dir_ + "/" + profile_ + tool_firmware_file_ )) {
+        if(!std::filesystem::exists(config_folder_path_)){
+            output_string_ ="Profile \"" + profile_ + "\" does not exist.";
+            DEBUG_MSG(output_string_);
+            generateProfileDirectoryTemplate();
+        }
+
+//        DEBUG_MSG("Current output export file defined: " << getOutputExportPath());
+        output_string_ = "Setup process has been completed.";
+
+        return true;
+
+    }
+    bool MimicGraspingServer::load(){
+
+        if(!loadFirmwareInterfaceConfigFile( config_folder_path_ + tool_firmware_file_ )) {
             //output_string_ = getToolFirmwareOutputSTR();
             error_string_ = "Tool firmware error: " + getToolFirmwareOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
 
-        if(!loadTransformationMatrix(root_folder_path_ + config_folder_dir_ + "/" + profile_ + matrix_file_)){
+        if(!loadTransformationMatrix(config_folder_path_ + matrix_file_)){
             //output_string_ = getDatasetManipulatorOutputSTR();
             error_string_ = "Dataset manipulator error: " + getDatasetManipulatorOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
 
-        if(!loadLocalizationConfigFile(root_folder_path_ + config_folder_dir_ + "/" + profile_ + localization_file_)
-        || !setLocalizationScriptsFolderPath(root_folder_path_ + scripts_folder_dir_ )
-        || !setLocalizationConfigsFolderPath(root_folder_path_ + config_folder_dir_ + "/" + profile_)){
+        if(!loadLocalizationConfigFile(config_folder_path_ + localization_file_)
+        || !setLocalizationScriptsFolderPath( script_folder_path_ )
+        || !setLocalizationConfigsFolderPath(config_folder_path_)){
             //output_string_ = getLocalizationOutputSTR();
             error_string_ = "Localization error: " + getLocalizationOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
 
-        if(!loadDynamicPlugins(root_folder_path_ + plugins_folder_dir_ +"/",true)){ // TODO: load config file for plugin
+        if(!loadDynamicPlugins( plugins_folder_path_+"/",true)){ // TODO: load config file for plugin
             //output_string_ = getPluginManagementOutputMsg();
             error_string_ = "Plugin management error: " + getPluginManagementOutputMsg();
             DEBUG_MSG(error_string_);
@@ -299,6 +313,16 @@ namespace mimic_grasping {
 
     std::string MimicGraspingServer::getOutputExportPath() {
         return output_export_path_;
+    }
+
+    std::string MimicGraspingServer::getPluginsFolderPath(){
+        return plugins_folder_path_;
+    }
+    std::string MimicGraspingServer::getConfigFolderPath(){
+        return config_folder_path_;
+    }
+    std::string MimicGraspingServer::getScriptFolderPath(){
+        return script_folder_path_;
     }
 
     std::vector<Pose> MimicGraspingServer::getDataset(int _dataset_type){
@@ -570,6 +594,16 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::isDatasetEmpty(){
         return tool_pose_wrt_obj_frame_arr_.size()==0?true:false;
+    }
+
+    bool MimicGraspingServer::generateProfileDirectoryTemplate(){
+        output_string_ = "Creating a template profile directory...";
+        DEBUG_MSG(output_string_);
+        mkdir(config_folder_path_.c_str(),0777);
+        saveFirmwareInterfaceConfigFile(config_folder_path_  + tool_firmware_file_);
+        saveLocalizationConfigFile(config_folder_path_  + localization_file_);
+        saveTransformationMatrix(config_folder_path_ + matrix_file_);
+        return true;
     }
 
 

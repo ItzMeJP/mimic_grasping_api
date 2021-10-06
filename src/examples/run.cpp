@@ -144,7 +144,6 @@ int main(int argc, char *argv[ ] ){
 
 */
     stop_thread_reader->join();
-
     output_thread_printer.interrupt();
     output_thread_printer.join();
 

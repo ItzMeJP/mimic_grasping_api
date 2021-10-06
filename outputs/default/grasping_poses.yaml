@@ -7,11 +7,11 @@ candidate_0:
     DOFs: []
   parent_frame_id: single_side_bracket_frame_id
   position:
-    x: -3.68089e-05
-    y: 0.0498314
-    z: 0.00173336
+    x: -3.68756e-05
+    y: 0.0498315
+    z: 0.00173294
   orientation:
-    x: 0.00212508
-    y: 0.000116937
-    z: 0.000504417
+    x: 0.00212503
+    y: 0.000116393
+    z: 0.000504433
     w: 0.999998

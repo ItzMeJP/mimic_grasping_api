@@ -60,7 +60,7 @@ namespace mimic_grasping {
         std::string getDatasetManipulatorOutputSTR();
 
         bool loadTransformationMatrix(std::string _file_with_path);
-
+        bool saveTransformationMatrix(std::string _file_with_path);
 
     protected:
         Json::Value json_matrix_;
