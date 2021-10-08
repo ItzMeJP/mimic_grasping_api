@@ -17,13 +17,16 @@ namespace mimic_grasping {
 
     bool LocalizationInterface::saveLocalizationConfigFile(std::string _file) {
 
-        localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_PL_NAME_TAG] = tool_localization_data_.plugin_name;
-        localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG] = tool_localization_data_.executor;
-        localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_TERM_CMD_TAG] = tool_localization_data_.terminator;
-
-        localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG] = obj_localization_data_.plugin_name;
+        localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_OBJ_ONESHOOT_TAG] = obj_localization_data_.one_shoot_estimation_;
         localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG] = obj_localization_data_.executor;
         localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TERM_CMD_TAG] = obj_localization_data_.terminator;
+        localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG] = obj_localization_data_.plugin_name;
+        localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG] = obj_localization_data_.specific_configuration_file;
+
+        localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG] = tool_localization_data_.executor;
+        localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_TERM_CMD_TAG] = tool_localization_data_.terminator;
+        localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_PL_NAME_TAG] = tool_localization_data_.plugin_name;
+        localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG] = tool_localization_data_.specific_configuration_file;
 
         std::ofstream outfile(_file);
         outfile << localization_interface_config_data_ << std::endl;
@@ -48,16 +51,20 @@ namespace mimic_grasping {
             return false;
         }
 
-        tool_localization_data_.plugin_name = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_PL_NAME_TAG].asString();
-        tool_localization_data_.executor = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG].asString();
-        tool_localization_data_.terminator = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_TERM_CMD_TAG].asString();
-        tool_localization_data_.specific_configuration_file = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG].asString();
+        ToolLocalizationData aux_tool_data;
+        aux_tool_data.plugin_name = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_PL_NAME_TAG].asString();
+        aux_tool_data.executor = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG].asString();
+        aux_tool_data.terminator = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_TERM_CMD_TAG].asString();
+        aux_tool_data.specific_configuration_file = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG].asString();
+        setToolLocConfig(aux_tool_data);
 
-        obj_localization_data_.plugin_name = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG].asString();
-        obj_localization_data_.executor = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG].asString();
-        obj_localization_data_.terminator = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TERM_CMD_TAG].asString();
-        obj_localization_data_.specific_configuration_file = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG].asString();
-        one_shoot_estimation_ = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TOOL_ONESHOOT_TAG].asBool();
+        ObjLocalizationData aux_obj_data;
+        aux_obj_data.plugin_name = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG].asString();
+        aux_obj_data.executor = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG].asString();
+        aux_obj_data.terminator = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TERM_CMD_TAG].asString();
+        aux_obj_data.specific_configuration_file = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG].asString();
+        aux_obj_data.one_shoot_estimation_ = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_OBJ_ONESHOOT_TAG].asBool();
+        setObjLocConfig(aux_obj_data);
 
         return true;
     }
@@ -234,12 +241,25 @@ std::string LocalizationInterface::execIt(const char *cmd, float _startup_delay_
         return true;
     }
 
-    LocalizationInterface::LocalizationData LocalizationInterface::getObjLocLoadedConfig(){
+    LocalizationInterface::ObjLocalizationData LocalizationInterface::getObjLocLoadedConfig(){
         return obj_localization_data_;
     }
 
-    LocalizationInterface::LocalizationData LocalizationInterface::getToolLocLoadedConfig(){
+    LocalizationInterface::ToolLocalizationData LocalizationInterface::getToolLocLoadedConfig(){
         return tool_localization_data_;
+    }
+
+    void LocalizationInterface::setObjLocConfig(ObjLocalizationData _in){
+        _in.plugin_name = isDynamicLib(_in.plugin_name)? removeDLExtension(_in.plugin_name ) : _in.plugin_name;
+        std::cout << "nome "<< isDynamicLib(_in.plugin_name) << "---" << removeDLExtension(_in.plugin_name ) << "---- "<< _in.plugin_name <<std::endl;
+        obj_localization_data_ = _in;
+    }
+
+    void LocalizationInterface::setToolLocConfig(ToolLocalizationData _in){
+        _in.plugin_name = isDynamicLib(_in.plugin_name)? removeDLExtension(_in.plugin_name ) : _in.plugin_name;
+        std::cout << "nome "<< isDynamicLib(_in.plugin_name) << "---" << removeDLExtension(_in.plugin_name ) << "---- "<< _in.plugin_name <<std::endl;
+
+        tool_localization_data_ = _in;
     }
 
     bool LocalizationInterface::isScript(std::string _s) {
@@ -250,5 +270,33 @@ std::string LocalizationInterface::execIt(const char *cmd, float _startup_delay_
             return true;
 
         return false;
+    }
+
+    bool LocalizationInterface::isDynamicLib(std::string _s){
+        std::string script_extension = ".so";
+
+        if (_s.find(script_extension) != std::string::npos)
+            return true;
+
+        return false;
+    }
+
+    std::string LocalizationInterface::removeDLExtension(std::string _s){
+        std::string delimiter = ".so", token;
+        if(!isDynamicLib(_s)){
+            output_string_ = "The input string " + _s + " does not have a .so extension";
+            return _s;
+        }
+
+        token = _s.substr(0,_s.find(delimiter));
+        std::cout << "input string " << _s << std::endl;
+
+        std::cout << "token " << token<< std::endl;
+
+        return token;
+    }
+
+    bool LocalizationInterface::isOneShoot(){
+        return obj_localization_data_.one_shoot_estimation_;
     }
 }

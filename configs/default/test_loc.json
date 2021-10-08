@@ -1,0 +1,17 @@
+{
+	"object_localization" : 
+	{
+		"configuration_file" : "plugin_object_localization_ros_2.json",
+		"executor_command" : "obj_localization_ros_2_init.sh",
+		"one_shoot_estimation" : true,
+		"plugin_name" : "libphoxi_cam_object_localization_ros",
+		"terminator_command" : "obj_localization_ros_2_init.sh"
+	},
+	"tool_localization" : 
+	{
+		"configuration_file" : "plugin_object_localization_ros_2.json",
+		"executor_command" : "obj_localization_ros_2_init.sh",
+		"plugin_name" : "libphoxi_cam_object_localization_ros",
+		"terminator_command" : "obj_localization_ros_2_init.sh"
+	}
+}

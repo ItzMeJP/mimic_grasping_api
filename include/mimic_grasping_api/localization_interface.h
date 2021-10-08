@@ -26,7 +26,7 @@
 #define JSON_EX_CMD_TAG "executor_command"
 #define JSON_TERM_CMD_TAG "terminator_command"
 #define JSON_SPEC_CONFIG_FILE_TAG "configuration_file"
-#define JSON_TOOL_ONESHOOT_TAG "one_shoot_estimation"
+#define JSON_OBJ_ONESHOOT_TAG "one_shoot_estimation"
 #define JSON_PL_FOLDER_PTH "folder_path"
 
 #endif // JSON_TAGS_DEFINE_H
@@ -44,8 +44,13 @@ namespace mimic_grasping {
                     specific_configuration_file,
                     executor,
                     terminator;
-        } obj_localization_data_,
-                tool_localization_data_;
+        } ;
+
+        struct ObjLocalizationData : LocalizationData{
+            bool one_shoot_estimation_;
+        } obj_localization_data_;
+
+        struct ToolLocalizationData : LocalizationData{} tool_localization_data_;
 
         enum LOCALIZATION_TYPE {
             TOOL,
@@ -87,11 +92,15 @@ namespace mimic_grasping {
 
         std::string getToolLocalizationTarget();
 
-        LocalizationData getObjLocLoadedConfig();
+        ObjLocalizationData getObjLocLoadedConfig();
 
-        LocalizationData getToolLocLoadedConfig();
+        ToolLocalizationData getToolLocLoadedConfig();
 
-        bool one_shoot_estimation_;
+        void setObjLocConfig(ObjLocalizationData _in);
+
+        void setToolLocConfig(ToolLocalizationData _in);
+
+        bool isOneShoot();
 
         void clearPluginInstances();
 
@@ -110,7 +119,13 @@ namespace mimic_grasping {
         std::shared_ptr<LocalizationBase> obj_localization_obj_,
                 tool_localization_obj_;
 
+        //bool one_shoot_estimation_;
+
         bool isScript(std::string _s);
+
+        bool isDynamicLib(std::string _s);
+
+        std::string removeDLExtension(std::string _s);
 
         bool initLocalization(std::shared_ptr<LocalizationBase> &_loc_instance, LocalizationData _data);
 

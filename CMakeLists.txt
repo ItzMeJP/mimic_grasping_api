@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(mimic_grasping_api
-        VERSION 06.10.2021
+        VERSION 08.10.2021
         DESCRIPTION
         "Mimic grasping server API to C++")
 

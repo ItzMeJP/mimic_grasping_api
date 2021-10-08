@@ -201,9 +201,13 @@ namespace mimic_grasping {
             return false;
         }
         output_string_ = "Gripper initialized.";
-        current_gripper_type_ = _gripper;
+        updateCurrentGripperType(current_gripper_type_);
         //std::cout << output_string_ << std::endl;
         return true;
+    }
+
+    void ToolFirmwareInterface::updateCurrentGripperType(int _gripper){
+        current_gripper_type_ = _gripper;
     }
 
     bool ToolFirmwareInterface::sendCustomMSG(std::string _in) {

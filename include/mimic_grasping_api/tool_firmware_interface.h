@@ -53,6 +53,7 @@ namespace mimic_grasping{
         std::string getPort();
         bool isFirmwareCommunicationInitialized();
         bool stopToolCommunication();
+        void updateCurrentGripperType(int _gripper);
 
         enum MSG_TYPE
         {

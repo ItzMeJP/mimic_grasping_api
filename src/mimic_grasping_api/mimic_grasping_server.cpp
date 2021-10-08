@@ -237,7 +237,7 @@ namespace mimic_grasping {
         }
         initialized_tool_localization_ = true;
 
-        if(one_shoot_estimation_) {
+        if(isOneShoot()) {
             output_string_ = "ONE_SHOOT method active. Running object localization...";
             DEBUG_MSG (output_string_);
             if (!requestObjectLocalization()) {
@@ -422,7 +422,7 @@ namespace mimic_grasping {
 
         DEBUG_MSG( current_msg_ );
 
-        if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && !one_shoot_estimation_)
+        if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && !isOneShoot())
         {
             bool break_it = false; //TODO: change this control variable by using the LocalizationBase::ABORTED from LocalizationBase class.
             output_string_ = "Save pose request received. Running object localization...";
@@ -457,7 +457,7 @@ namespace mimic_grasping {
                         "Acquisition saved with success. Grasping poses dataset size: " + tool_pose_arr_.size();
             }
         }
-        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && one_shoot_estimation_)
+        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && isOneShoot())
         {
             output_string_ = "Save pose request received. Running tool localization...";
             if(requestToolLocalization()) {
@@ -476,7 +476,7 @@ namespace mimic_grasping {
             output_string_ += "Acquisition saved with success. Grasping poses dataset size: " + tool_pose_arr_.size();
 
         }
-        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && !one_shoot_estimation_){
+        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && !isOneShoot()){
             output_string_ = "Remove last saved pose request received.";
             DEBUG_MSG( output_string_ );
 
@@ -490,7 +490,7 @@ namespace mimic_grasping {
             output_string_ += "Removed last grasping pose. Grasping poses dataset size: " + tool_pose_arr_.size();
 
         }
-        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && one_shoot_estimation_){
+        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && isOneShoot()){
             output_string_ = "Remove last save pose request received.";
             DEBUG_MSG( output_string_ );
             tool_pose_arr_.erase(tool_pose_arr_.end());
