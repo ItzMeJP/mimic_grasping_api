@@ -5,13 +5,30 @@ candidate_0:
     type: 4
     parameters: []
     DOFs: []
-  parent_frame_id: stereo_link
+  parent_frame_id: 6dmimic_base
   position:
-    x: 1
-    y: 0.05
-    z: 0
+    x: -0.0671508
+    y: 1.42669
+    z: 0.379974
   orientation:
-    x: 0
-    y: -0.706825
-    z: 0
-    w: 0.707388
+    x: -0.476785
+    y: 0.315842
+    z: 0.645124
+    w: 0.506691
+candidate_1:
+  method: 
+    type: 3
+  gripper:
+    type: 4
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.0671508
+    y: 1.42669
+    z: 0.379974
+  orientation:
+    x: -0.476785
+    y: 0.315842
+    z: 0.645124
+    w: 0.506691

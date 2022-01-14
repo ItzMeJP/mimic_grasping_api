@@ -78,11 +78,11 @@ namespace mimic_grasping {
         scripts_folder_path_ = _path;
         return true;
     }
-
+/*
     std::string LocalizationInterface::getLocalizationOutputSTR() {
         return output_string_;
     }
-
+*/
     bool LocalizationInterface::setObjLocalizationTarget(std::string _target) {
         obj_localization_obj_->setTargetName(_target);
         return true;
@@ -176,6 +176,7 @@ namespace mimic_grasping {
     }
 
     bool LocalizationInterface::requestObjPose(Pose &_pose) {
+
         return obj_localization_obj_->requestData(_pose);
     }
 

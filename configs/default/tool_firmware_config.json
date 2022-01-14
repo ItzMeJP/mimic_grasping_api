@@ -1,10 +1,11 @@
 {
-  "serial": {
-    "port": "/dev/prototype_mimic_tool",
-    "baud_rate": 115200
-  },
-  "tool": {
-    "type": 100
-}
-  }
+	"serial" : 
+	{
+		"baud_rate" : 115200,
+		"port" : "/dev/mimic_tool"
+	},
+	"tool" : 
+	{
+		"type" : 100
+	}
 }

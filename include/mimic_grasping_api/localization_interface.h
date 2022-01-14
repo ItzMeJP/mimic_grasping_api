@@ -108,8 +108,8 @@ namespace mimic_grasping {
     protected:
         Json::Value localization_interface_config_data_;
 
-        std::string getLocalizationOutputSTR(),
-                current_obj_localization_target_ = "",
+      //  std::string getLocalizationOutputSTR(),
+      std::string current_obj_localization_target_ = "",
                 current_tool_localization_target_ = "";
 
     private:

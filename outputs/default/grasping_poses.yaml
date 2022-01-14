@@ -7,11 +7,28 @@ candidate_0:
     DOFs: []
   parent_frame_id: single_side_bracket_frame_id
   position:
-    x: -3.68756e-05
-    y: 0.0498315
-    z: 0.00173294
+    x: 0.377949
+    y: 1.42236
+    z: 1.07494
   orientation:
-    x: 0.00212503
-    y: 0.000116393
-    z: 0.000504433
-    w: 0.999998
+    x: 0.118804
+    y: 0.579953
+    z: 0.794645
+    w: 0.134462
+candidate_1:
+  method: 
+    type: 3
+  gripper:
+    type: 4
+    parameters: []
+    DOFs: []
+  parent_frame_id: single_side_bracket_frame_id
+  position:
+    x: 0.37795
+    y: 1.42236
+    z: 1.07494
+  orientation:
+    x: 0.118804
+    y: 0.579953
+    z: 0.794645
+    w: 0.134462

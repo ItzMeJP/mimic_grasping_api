@@ -184,7 +184,7 @@ namespace mimic_grasping {
         || !setLocalizationScriptsFolderPath( script_folder_path_ )
         || !setLocalizationConfigsFolderPath(config_folder_path_)){
             //output_string_ = getLocalizationOutputSTR();
-            error_string_ = "Localization error: " + getLocalizationOutputSTR();
+            error_string_ = "Localization error: " + getLocalizationInterfaceOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
@@ -219,9 +219,9 @@ namespace mimic_grasping {
 
         output_string_ = "Initializing object localization plugin...";
         if(!initObjLocalization() ){
-            //output_string_ = getLocalizationOutputSTR();
+            //output_string_ = getLocalizationInterfaceOutputSTR();
             output_string_ += "\n-- Failed to initialize object localization.";
-            error_string_ = "Failed to initialize object localization. " + getLocalizationOutputSTR();
+            error_string_ = "Failed to initialize object localization. " + getLocalizationInterfaceOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
@@ -229,9 +229,9 @@ namespace mimic_grasping {
 
         output_string_ = "Initializing tool localization plugin...";
         if(!initToolLocalization() ){
-            //output_string_ = getLocalizationOutputSTR();
+            //output_string_ = getLocalizationInterfaceOutputSTR();
             output_string_ += "\n-- Failed to initialize tool localization.";
-            error_string_ = "Failed to initialize tool localization. " + getLocalizationOutputSTR();
+            error_string_ = "Failed to initialize tool localization. " + getLocalizationInterfaceOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
@@ -395,7 +395,7 @@ namespace mimic_grasping {
         }
 
         if(!object_localization_spinner_sleep(150)){
-            error_string_ = "Object localization spin error: " + getLocalizationOutputSTR();
+            error_string_ = "Object localization spin error: " + getLocalizationInterfaceOutputSTR();
             DEBUG_MSG(error_string_);
             initialized_obj_localization_ = false;
             stop();
@@ -404,7 +404,7 @@ namespace mimic_grasping {
         }
 
         if(!tool_localization_spinner_sleep(150)){
-            error_string_ = "Tool localization spin error: " + getLocalizationOutputSTR();
+            error_string_ = "Tool localization spin error: " + getLocalizationInterfaceOutputSTR();
             DEBUG_MSG(error_string_);
             initialized_tool_localization_ = false;
             stop();
@@ -469,6 +469,7 @@ namespace mimic_grasping {
 
             else{
                 output_string_ = "Failed to localize the tool.";
+                output_string_ = getLocalizationInterfaceOutputSTR();
                 sendErrorMsg();
                 //return false;
             }
