@@ -10,8 +10,8 @@
 	"tool_localization" :
 	{
 		"configuration_file" : "plugin_tool_localization_6dmimic.json",
-		"executor_command" : "tool_localization_6dmimic_tester_init.sh",
+		"executor_command" : "tool_localization_6dmimic_init.sh",
 		"plugin_name" : "libinterface_6dmimic",
-		"terminator_command" : "tool_localization_6dmimic_tester_close.sh"
+		"terminator_command" : "tool_localization_6dmimic_close.sh"
 	}
 }

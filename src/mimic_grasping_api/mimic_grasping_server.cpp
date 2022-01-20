@@ -544,7 +544,13 @@ namespace mimic_grasping {
     bool MimicGraspingServer::requestObjectLocalization(){
 
         if(requestObjPose(current_obj_pose_)) {
-            DEBUG_MSG( "" << current_obj_pose_.getName() );
+            DEBUG_MSG( "################################################ ");
+            DEBUG_MSG( "Object Name: " << current_obj_pose_.getName() );
+            DEBUG_MSG( "Object Parent Frame: " << current_obj_pose_.getParentName() );
+            DEBUG_MSG( "Object Position [x, y, z][m]: " << "[" << current_obj_pose_.getPosition().x() << ", " << current_obj_pose_.getPosition().y() << ", " << current_obj_pose_.getPosition().z() << "]" );
+            DEBUG_MSG( "Object Orientation [x, y, z, w]: " << "[" << current_obj_pose_.getQuaternionOrientation().x() << ", " << current_obj_pose_.getQuaternionOrientation().y() << ", " << current_obj_pose_.getQuaternionOrientation().z() << ", " << current_obj_pose_.getQuaternionOrientation().w() << "]" );
+            DEBUG_MSG( "Object Orientation Euler Accumulative (Z-Y-X) [roll, pitch, yaw][rad]: " << "[" << current_obj_pose_.getRPYOrientationZYXOrder().x() << ", " << current_obj_pose_.getRPYOrientationZYXOrder().y() << ", " << current_obj_pose_.getRPYOrientationZYXOrder().z() << "]" );
+            DEBUG_MSG( "################################################ ");
             obj_pose_arr_.push_back(current_obj_pose_);
             return true;
         }
@@ -555,7 +561,13 @@ namespace mimic_grasping {
     bool MimicGraspingServer::requestToolLocalization(){
 
         if(requestToolPose(current_tool_pose_)) {
-            //std::cout << "" << current_tool_pose_.getName() << std::endl;
+            DEBUG_MSG( "################################################ ");
+            DEBUG_MSG( "Grasping Name: " << current_tool_pose_.getName() );
+            DEBUG_MSG( "Grasping Parent Frame: " << current_tool_pose_.getParentName() );
+            DEBUG_MSG( "Grasping Position [x, y, z][m]: " << "[" << current_tool_pose_.getPosition().x() << ", " << current_tool_pose_.getPosition().y() << ", " << current_tool_pose_.getPosition().z() << "]" );
+            DEBUG_MSG( "Grasping Orientation [x, y, z, w]: " << "[" << current_tool_pose_.getQuaternionOrientation().x() << ", " << current_tool_pose_.getQuaternionOrientation().y() << ", " << current_tool_pose_.getQuaternionOrientation().z() << ", " << current_tool_pose_.getQuaternionOrientation().w() << "]" );
+            DEBUG_MSG( "Grasping Orientation Euler Accumulative (Z-Y-X) [roll, pitch, yaw][rad]: " << "[" << current_tool_pose_.getRPYOrientationZYXOrder().x() << ", " << current_tool_pose_.getRPYOrientationZYXOrder().y() << ", " << current_tool_pose_.getRPYOrientationZYXOrder().z() << "]" );
+            DEBUG_MSG( "################################################ ");
             tool_pose_arr_.push_back(current_tool_pose_);
 
             Pose aux;
@@ -563,6 +575,14 @@ namespace mimic_grasping {
                 output_string_ = getDatasetManipulatorOutputSTR();
                 return false;
             }
+            DEBUG_MSG( "################################################ ");
+            DEBUG_MSG( "Grasping Name: " << aux.getName() );
+            DEBUG_MSG( "Grasping Parent Frame: " << aux.getParentName() );
+            DEBUG_MSG( "Grasping Position [x, y, z][m]: " << "[" << aux.getPosition().x() << ", " << aux.getPosition().y() << ", " << aux.getPosition().z() << "]" );
+            DEBUG_MSG( "Grasping Orientation [x, y, z, w]: " << "[" << aux.getQuaternionOrientation().x() << ", " << aux.getQuaternionOrientation().y() << ", " << aux.getQuaternionOrientation().z() << ", " << aux.getQuaternionOrientation().w() << "]" );
+            DEBUG_MSG( "Grasping Orientation Euler Accumulative (Z-Y-X) [roll, pitch, yaw][rad]: " << "[" << aux.getRPYOrientationZYXOrder().x() << ", " << aux.getRPYOrientationZYXOrder().y() << ", " << aux.getRPYOrientationZYXOrder().z() << "]" );
+            DEBUG_MSG( "################################################ ");
+            tool_pose_arr_.push_back(current_tool_pose_);
             tool_pose_wrt_obj_frame_arr_.push_back(aux);
 
             return true;
