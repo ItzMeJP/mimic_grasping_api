@@ -2,33 +2,16 @@ candidate_0:
   method: 
     type: 3
   gripper:
-    type: 4
+    type: 5
     parameters: []
     DOFs: []
-  parent_frame_id: single_side_bracket_frame_id
+  parent_frame_id: knee_tube_frame_id
   position:
-    x: 0.377949
-    y: 1.42236
-    z: 1.07494
+    x: -0.0386101
+    y: -0.0450622
+    z: 0.0396827
   orientation:
-    x: 0.118804
-    y: 0.579953
-    z: 0.794645
-    w: 0.134462
-candidate_1:
-  method: 
-    type: 3
-  gripper:
-    type: 4
-    parameters: []
-    DOFs: []
-  parent_frame_id: single_side_bracket_frame_id
-  position:
-    x: 0.37795
-    y: 1.42236
-    z: 1.07494
-  orientation:
-    x: 0.118804
-    y: 0.579953
-    z: 0.794645
-    w: 0.134462
+    x: -0.623079
+    y: 0.75503
+    z: -0.0947019
+    w: 0.180924

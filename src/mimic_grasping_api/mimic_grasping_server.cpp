@@ -246,7 +246,7 @@ namespace mimic_grasping {
                 DEBUG_MSG(error_string_);
                 return false;
             }
-            output_string_ = "\nObject detected.";
+            output_string_ = "Object detected.";
 
         }
 
@@ -582,7 +582,7 @@ namespace mimic_grasping {
             DEBUG_MSG( "Grasping Orientation [x, y, z, w]: " << "[" << aux.getQuaternionOrientation().x() << ", " << aux.getQuaternionOrientation().y() << ", " << aux.getQuaternionOrientation().z() << ", " << aux.getQuaternionOrientation().w() << "]" );
             DEBUG_MSG( "Grasping Orientation Euler Accumulative (Z-Y-X) [roll, pitch, yaw][rad]: " << "[" << aux.getRPYOrientationZYXOrder().x() << ", " << aux.getRPYOrientationZYXOrder().y() << ", " << aux.getRPYOrientationZYXOrder().z() << "]" );
             DEBUG_MSG( "################################################ ");
-            tool_pose_arr_.push_back(current_tool_pose_);
+
             tool_pose_wrt_obj_frame_arr_.push_back(aux);
 
             return true;

@@ -9,7 +9,7 @@ echo "Killing ROS Nodes"
 #  sleep 1
 #  rosnode kill -a
 #done
-rosnode kill -a
+rosnode kill -a&
 echo "Killed ROS nodes"
 sleep 0.2
 echo "Killing Rviz"
