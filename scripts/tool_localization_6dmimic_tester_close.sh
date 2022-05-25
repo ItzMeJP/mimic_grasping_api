@@ -1,5 +1,5 @@
 echo "Killing 6dmimic_server"
-pkill project1
+pkill project1&
 #pgrep --exact "project1"
 #status=$?
 
@@ -9,4 +9,4 @@ pkill project1
 #  echo "Trying to kill. Aux: " + $status
 #  sleep 1
 #done
-echo "Killed"
+#echo "Killed"

@@ -70,7 +70,7 @@ namespace mimic_grasping {
     }
 
     bool LocalizationInterface::setLocalizationConfigsFolderPath(std::string _path) {
-        config_folder_path_ = _path;
+        profile_folder_path_ = _path;
         return true;
     }
 
@@ -142,7 +142,7 @@ namespace mimic_grasping {
         std::string ex_cmd = "", term_cmd = "", config_path = "";
         ex_cmd = isScript(_data.executor) ? scripts_folder_path_ + "/" + _data.executor : _data.executor;
         term_cmd = isScript(_data.terminator) ? scripts_folder_path_ + "/" + _data.terminator : _data.terminator;
-        config_path = config_folder_path_ + "/" + _data.specific_configuration_file;
+        config_path = profile_folder_path_ + "/" + _data.specific_configuration_file;
 
         if (!_loc_instance->setAppExec(ex_cmd)
             || !_loc_instance->setAppTermination(term_cmd)

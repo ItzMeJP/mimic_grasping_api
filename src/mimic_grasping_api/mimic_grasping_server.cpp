@@ -21,6 +21,30 @@ namespace mimic_grasping {
         return profile_;
     }
 
+    bool MimicGraspingServer::buildProfileList(){
+
+        profile_list_.clear();
+        for (const auto & entry : std::filesystem::directory_iterator(profile_folder_path_))
+        {
+            //std::cout << entry.path() << std::endl;
+            profile_list_.push_back(entry.path().filename());
+        }
+
+        return true;
+    }
+
+    bool MimicGraspingServer::getProfileListAt(int _index, std::string &_outputStr){
+        if(profile_list_.empty())
+            buildProfileList();
+        if(profile_list_.empty()){
+            error_string_ = "None profile found at: " + profile_folder_path_;
+            DEBUG_MSG(error_string_);
+            return false;
+        }
+        _outputStr = profile_list_.at(_index);
+        return true;
+    }
+
 
     /*
     void MimicGraspingServer::start() {
@@ -35,7 +59,7 @@ namespace mimic_grasping {
 
         root_folder_path_ = std::string(env_root_folder_path);
 
-        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + tool_firmware_file_ ) ||
+        if(!loadFirmwareInterfaceConfigFile(root_folder_path_ + profile_folder_path_ + tool_firmware_file_ ) ||
            !startToolCommunication(output_string_) ||
            !setGripperType(ToolFirmwareInterface::GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER))
             return;
@@ -75,7 +99,7 @@ namespace mimic_grasping {
                 sendSuccessMsg();
 
             if(command == "save")
-                saveFirmwareInterfaceConfigFile(root_folder_path_ + config_folder_path_ + "/OutputTest.json");
+                saveFirmwareInterfaceConfigFile(root_folder_path_ + profile_folder_path_ + "/OutputTest.json");
 
         }
 
@@ -146,17 +170,23 @@ namespace mimic_grasping {
             output_string_ ="Profile empty. Setting DEFAULT";
             profile_ = "default";
         }
+        else{
+            output_string_ = "Selected Profile: " + profile_;
+        }
 
         output_export_path_ = root_folder_path_+"/outputs/"+ profile_;
-        config_folder_path_ = root_folder_path_ + config_folder_dir_ + "/" + profile_;
+        config_folder_path_ = root_folder_path_ + config_folder_dir_ ;
+        profile_folder_path_ = config_folder_path_+ "/" + profile_;
         script_folder_path_ = root_folder_path_ + scripts_folder_dir_;
         plugins_folder_path_ = root_folder_path_ + plugins_folder_dir_;
 
-        if(!std::filesystem::exists(config_folder_path_)){
+        if(!std::filesystem::exists(profile_folder_path_)){
             output_string_ ="Profile \"" + profile_ + "\" does not exist.";
             DEBUG_MSG(output_string_);
             generateProfileDirectoryTemplate();
         }
+
+        buildProfileList();
 
 //        DEBUG_MSG("Current output export file defined: " << getOutputExportPath());
         output_string_ = "Setup process has been completed.";
@@ -164,25 +194,26 @@ namespace mimic_grasping {
         return true;
 
     }
+
     bool MimicGraspingServer::load(){
 
-        if(!loadFirmwareInterfaceConfigFile( config_folder_path_ + tool_firmware_file_ )) {
+        if(!loadFirmwareInterfaceConfigFile( profile_folder_path_ + tool_firmware_file_ )) {
             //output_string_ = getToolFirmwareOutputSTR();
             error_string_ = "Tool firmware error: " + getToolFirmwareOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
 
-        if(!loadTransformationMatrix(config_folder_path_ + matrix_file_)){
+        if(!loadTransformationMatrix(profile_folder_path_ + matrix_file_)){
             //output_string_ = getDatasetManipulatorOutputSTR();
             error_string_ = "Dataset manipulator error: " + getDatasetManipulatorOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
 
-        if(!loadLocalizationConfigFile(config_folder_path_ + localization_file_)
+        if(!loadLocalizationConfigFile(profile_folder_path_ + localization_file_)
         || !setLocalizationScriptsFolderPath( script_folder_path_ )
-        || !setLocalizationConfigsFolderPath(config_folder_path_)){
+        || !setLocalizationConfigsFolderPath(profile_folder_path_)){
             //output_string_ = getLocalizationOutputSTR();
             error_string_ = "Localization error: " + getLocalizationInterfaceOutputSTR();
             DEBUG_MSG(error_string_);
@@ -288,9 +319,9 @@ namespace mimic_grasping {
 
         int gripper_type_label;
         if(getGripperType() == GRIPPER_TYPE::SINGLE_SUCTION_CUP)
-            gripper_type_label = GRIPPER_ID::SCHMALZ_SINGLE_RECT_X_SUCTION;
+            gripper_type_label = GRIPPER_ID::SCHMALZ_FOAM_SUCTION_CUP_FMSW_N10_76x22;
         else if(getGripperType()  == GRIPPER_TYPE::PARALLEL_PNEUMATIC_TWO_FINGER)
-            gripper_type_label = GRIPPER_ID::FESTO_2F_HGPC_16_A;
+            gripper_type_label = GRIPPER_ID::FESTO_2F_HGPC_16_A_30;
 
 
         if(
@@ -317,6 +348,9 @@ namespace mimic_grasping {
 
     std::string MimicGraspingServer::getPluginsFolderPath(){
         return plugins_folder_path_;
+    }
+    std::string MimicGraspingServer::getProfileFolderPath(){
+        return profile_folder_path_;
     }
     std::string MimicGraspingServer::getConfigFolderPath(){
         return config_folder_path_;
@@ -620,10 +654,10 @@ namespace mimic_grasping {
     bool MimicGraspingServer::generateProfileDirectoryTemplate(){
         output_string_ = "Creating a template profile directory...";
         DEBUG_MSG(output_string_);
-        mkdir(config_folder_path_.c_str(),0777);
-        saveFirmwareInterfaceConfigFile(config_folder_path_  + tool_firmware_file_);
-        saveLocalizationConfigFile(config_folder_path_  + localization_file_);
-        saveTransformationMatrix(config_folder_path_ + matrix_file_);
+        mkdir(profile_folder_path_.c_str(),0777);
+        saveFirmwareInterfaceConfigFile(profile_folder_path_  + tool_firmware_file_);
+        saveLocalizationConfigFile(profile_folder_path_  + localization_file_);
+        saveTransformationMatrix(profile_folder_path_ + matrix_file_);
         return true;
     }
 

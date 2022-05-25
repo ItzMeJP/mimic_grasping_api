@@ -115,7 +115,7 @@ namespace mimic_grasping {
     private:
         std::string output_string_,
                 scripts_folder_path_,
-                config_folder_path_;
+                profile_folder_path_;
         std::shared_ptr<LocalizationBase> obj_localization_obj_,
                 tool_localization_obj_;
 

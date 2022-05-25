@@ -49,8 +49,11 @@ namespace mimic_grasping{
         Pose getDataset(int _dataset_type, int _index);
         std::string getOutputExportPath();
         std::string getPluginsFolderPath();
+        std::string getProfileFolderPath();
         std::string getConfigFolderPath();
+
         std::string getScriptFolderPath();
+        bool getProfileListAt(int _index, std::string &_outputStr);
 
         bool generateProfileDirectoryTemplate();
 
@@ -85,15 +88,16 @@ namespace mimic_grasping{
 
 
     private:
-        std::string output_string_, error_string_, output_export_path_, plugins_folder_path_, script_folder_path_, config_folder_path_;
+        std::string output_string_, error_string_, output_export_path_, plugins_folder_path_, script_folder_path_, profile_folder_path_, config_folder_path_;
         Pose current_obj_pose_,
              current_tool_pose_;
         std::vector<Pose> obj_pose_arr_,
                           tool_pose_arr_,
                           tool_pose_wrt_obj_frame_arr_;
+        std::vector<std::string> profile_list_;
 
         bool initialized_firmware_communication_ = false, initialized_obj_localization_ = false, initialized_tool_localization_ = false, plugin_list_is_loaded_ = false, running_ = false;
-
+        bool buildProfileList();
 
 
     }; // end class

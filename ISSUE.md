@@ -22,3 +22,5 @@ Fazer o profile funcionar na API
 Corrigir problema do load to localization.config
 
 Apenas ONE_SHOOT estimation esta a funcionar
+
+Preciso atualizar o firmware do manípulo para identificar os tipo de gripper com os nomes corretos!

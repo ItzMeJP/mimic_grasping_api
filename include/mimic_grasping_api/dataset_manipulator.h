@@ -29,8 +29,8 @@ namespace mimic_grasping {
             ROBOTIQ_2F_140,      // two adaptive fingers gripper from Robotiq with opening of 140mm
             ROBOTIQ_3F,           // three adaptive fingers gripper from Robotiq
             SUCTION,
-            FESTO_2F_HGPC_16_A,   //Pneumatic parallel 2F gripper from FESTO
-            SCHMALZ_SINGLE_RECT_X_SUCTION,
+            FESTO_2F_HGPC_16_A_30,   //Pneumatic parallel 2F gripper from FESTO with fingers with opening of 30mm
+            SCHMALZ_FOAM_SUCTION_CUP_FMSW_N10_76x22, // Small rectangular foam suction cup from Schmalz
         };
 
         enum SYNTHESIS_METHOD {

@@ -33,7 +33,8 @@ Since the mimic_grasping_api is based on plugin management, the plugins used cou
 
 ## <a name="installation"></a>Installation
 
-Setup all prerequisites. Then:
+Setup all prerequisites. (Current testes with this API was performed using gcc 10.3.0)
+Then:
 ```
 cd /mimic_grasping_server
 mkdir build
