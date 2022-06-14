@@ -1,0 +1,17 @@
+{
+	"object_localization" : 
+	{
+		"configuration_file" : "plugin_phoxi_cam_object_localization_ros.json",
+		"executor_command" : "phoxi_cam_obj_localization_ros_init.sh",
+		"one_shoot_estimation" : true,
+		"plugin_name" : "libphoxi_cam_object_localization_ros",
+		"terminator_command" : "phoxi_cam_obj_localization_ros_close.sh"
+	},
+	"tool_localization" : 
+	{
+		"configuration_file" : "plugin_tool_localization_6dmimic.json",
+		"executor_command" : "tool_localization_6dmimic_init.sh",
+		"plugin_name" : "libinterface_6dmimic",
+		"terminator_command" : "tool_localization_6dmimic_close.sh"
+	}
+}

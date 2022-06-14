@@ -1,0 +1,17 @@
+{
+	"recognition_server" :
+	{
+		"ros_namespace" : "object_recognition",
+		"action_name" : "object_recognition/ObjectRecognitionSkill",
+		"target" : "/home/joaopedro/ros_ws/ws_grasping/src/mimic_grasping_ros_interface_pkg/models/gt01.ply",
+		"wait_for_server_timeout_in_seconds" : 50,
+		"wait_for_result_timeout_in_seconds" : 45
+	},
+	"camera_server" :
+	{
+		"ros_namespace" : "object_recognition",
+		"action_name" : "object_recognition/PhotoneoSkill",
+		"wait_for_server_timeout_in_seconds" : 10,
+		"wait_for_result_timeout_in_seconds" : 45
+	}
+}
