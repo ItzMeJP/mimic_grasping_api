@@ -17,7 +17,7 @@ The Lazarus project to calibrate the system can be found [here](https://gitlab.i
 
 1. Calibrate the **stereo camera** (see section 3.2 in 6dmimic manual [here](/docs/use_case_6dmimic_OR/6DMimic_User_and_Developer_Manual.pdf)).
 
-2. Into ABB Robot, select the [mimic_grasping program](/docs/use_case_6dmimic_OR/abb_irb_1600_programs). Put the robot into p_calib_marker10 pose (**be aware to the trajectory movement avoiding damage into setup**). Get the tool0 (TCP's frame) w.r.t robot base Rotation Matrix and fill the robotStandBy.rot file (placed inside the "/home/mimic/Projects/6DM-IILAB/6DM/Icosahedron3D/mimic_grasping"). Currently this matrix is already setup.
+2. Into ABB Robot, select the [mimic_grasping program](/docs/use_case_6dmimic_OR/abb_irb_1600_programs). Put the robot into p_calib_marker10 pose (**be aware to the trajectory movement avoiding damage into setup**). Get the tool0 (TCP's frame) w.r.t robot base Rotation Matrix and fill the robotStandBy.rot file (placed inside the "/home/mimic/Projects/6DM-IILAB/6DM/Icosahedron3D/mimic_grasping"). Since its need only the rotation, the robot position can be translated avoiding rotation allowing easy calibration. Currently this matrix is already setup.
 
 <p align="center">
   <img src="./robot_at_calib_pose.jpg" width="420">
@@ -46,7 +46,7 @@ Marker LEDs configuration into mimic tool.
  Horizontal calibration pose.
  </p>
 
- - **Defining the tool rotation matrix:** aligns the mimic grasping tool with the robot tool (or with the tcp0 reference frame), see Figure below, then select Tool Tab>Get>Set. The generated matrix is placed at "/home/mimic/Projects/6DM-IILAB/6DM/Icosahedron3D/mimic_grasping/RotMatrixTool.rot". This defines the manual tool's tip rotation matrix w.r.t the tcp0.
+ - **Defining the tool rotation matrix:** aligns the mimic grasping tool probe tool with the robot TCP0 (**verify it**) (more near possible), see Figure below, then select Tool Tab>Get>Set. The generated matrix is placed at "/home/mimic/Projects/6DM-IILAB/6DM/Icosahedron3D/mimic_grasping/RotMatrixTool.rot". This defines the manual tool's tip rotation matrix w.r.t the tcp0.
 
  <p align="center">
    <img src="./tool_calib_pose.jpg" width="420">
@@ -62,4 +62,4 @@ Marker LEDs configuration into mimic tool.
 
 6. All these created files (robotStandBy.rot, tip.pnt, RotMatrixHoriz.rot, RotMatrixTool.rot ) must be placed at 6DMimic icosaedron folder inside 6D Mimic computer (namely "/home/mimic/Projects/6DM-IILAB/6DM/Icosahedron3D/mimic_grasping"). Therefore the system can be correctly load the use-case qualibration.
 
-**obs:** It is possible to load these configuration files into /home/mimic/Projects/6DM-IILAB/6DM/Icosahedron3D/iilab and run the 6Dmimic to check the calibration. Be aware that this could overwrite the older calibration files, be sure to backup them.
+**obs:** The /MimigGrasping/Verify_Calib_With_6DMimic.sh can help verify the calibration using the original 6DMimic procedure.

@@ -7,6 +7,7 @@
 
 #include "plugin_system_management/plugin_system_management.h"
 #include "localization_base.h"
+#include "error_compensation.h"
 
 #include <jsoncpp/json/value.h>
 #include <jsoncpp/json/json.h>
@@ -27,12 +28,16 @@
 #define JSON_TERM_CMD_TAG "terminator_command"
 #define JSON_SPEC_CONFIG_FILE_TAG "configuration_file"
 #define JSON_OBJ_ONESHOOT_TAG "one_shoot_estimation"
+#define JSON_APPLY_CORRECTION_TAG "apply_compensation"
+#define JSON_ERR_CORRECTION_FILE_TAG "error_compensation_file"
+
+
 #define JSON_PL_FOLDER_PTH "folder_path"
 
 #endif // JSON_TAGS_DEFINE_H
 
 namespace mimic_grasping {
-    class LocalizationInterface : public PluginSystemManagement {
+    class LocalizationInterface : public PluginSystemManagement, public ErrorCompensation  {
     public:
 
         LocalizationInterface();
@@ -43,7 +48,9 @@ namespace mimic_grasping {
             std::string plugin_name,
                     specific_configuration_file,
                     executor,
-                    terminator;
+                    terminator,
+                    error_compensation_file;
+            bool apply_error_compensation;
         } ;
 
         struct ObjLocalizationData : LocalizationData{
@@ -101,6 +108,10 @@ namespace mimic_grasping {
         void setToolLocConfig(ToolLocalizationData _in);
 
         bool isOneShoot();
+
+        bool isToolLocCompensated();
+
+        bool isObjLocCompensated();
 
         void clearPluginInstances();
 

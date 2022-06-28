@@ -7,8 +7,10 @@ MODULE MainModule
 	LOCAL PERS robtarget p_calib_marker:=[[-505.87,1375.53,432.56],[0.493544,-0.492667,-0.506267,-0.507334],[1,0,-3,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
 	CONST robtarget p10:=[[-505.87,1375.53,432.56],[0.493544,-0.492666,-0.506266,-0.507335],[1,0,-3,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
 	CONST robtarget p_calib_marker10:=[[0.11,909.30,399.58],[0.500728,-0.499662,0.499327,0.500282],[0,-1,-1,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+	LOCAL CONST jointtarget jposhome:=[[77.5626,5.48013,1.9853,-70.0348,-13.2221,69.1978],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+	CONST robtarget p20:=[[115.52,1244.97,1224.86],[0.471123,-0.87301,-0.0528002,0.114491],[0,-1,0,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
 	PROC main()
-		MoveL p0, v100, z50, photoneo;
+		MoveAbsJ jposhome\NoEOffs, v100, z50, photoneo;
 		MoveL p_calib_marker10, v50, z0, tool0;
 		MoveL p0, v100, z50, photoneo;
 		MoveL p1, v100, z50, photoneo;

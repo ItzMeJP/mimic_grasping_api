@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(mimic_grasping_api
-        VERSION 25.05.2022
+        VERSION 28.06.2022
         DESCRIPTION
         "Mimic grasping server API to C++")
 
@@ -67,6 +67,7 @@ add_library(${PROJECT_NAME} SHARED #Shared is to export it latter
         src/${PROJECT_NAME}/tool_firmware_interface.cpp
         src/${PROJECT_NAME}/localization_interface.cpp
         src/${PROJECT_NAME}/dataset_manipulator.cpp
+        src/${PROJECT_NAME}/error_compensation.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}
@@ -90,7 +91,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
         #PUBLIC_HEADER "include/mimic_grasping_server/mimic_grasping_server.h"
         #PRIVATE_HEADER "include/mimic_grasping_server/tool_firmware_interface.h"
-        PUBLIC_HEADER "include/${PROJECT_NAME}/mimic_grasping_server.h;include/${PROJECT_NAME}/localization_base.h;include/${PROJECT_NAME}/dataset_manipulator.h;include/${PROJECT_NAME}/tool_firmware_interface.h;include/${PROJECT_NAME}/localization_interface.h"
+        PUBLIC_HEADER "include/${PROJECT_NAME}/mimic_grasping_server.h;include/${PROJECT_NAME}/localization_base.h;include/${PROJECT_NAME}/dataset_manipulator.h;include/${PROJECT_NAME}/error_compensation.h;include/${PROJECT_NAME}/tool_firmware_interface.h;include/${PROJECT_NAME}/localization_interface.h"
         )
 
 configure_file(install_configurations/${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)

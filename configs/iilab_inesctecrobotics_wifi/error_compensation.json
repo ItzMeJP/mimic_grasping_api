@@ -1,0 +1,48 @@
+{
+  	"x" :
+	{
+		"type" : "linear_absolute",
+		"description" :{
+          "offset": 1.0
+        }
+	},
+    "y" :
+	{
+		"type" : "linear_relative",
+		"description" :{
+          "percentage": 10
+        }
+	},
+    "z" :
+	{
+		"type" : "exponential",
+		"description" :{
+          "multiplier": -1,
+          "base": 2.71828,
+          "alpha":1
+        }
+	},
+  	"roll" :
+	{
+		"type" : "linear_absolute",
+		"description" :{
+          "offset": 1.0
+        }
+	},
+    "pitch" :
+	{
+		"type" : "linear_relative",
+		"description" :{
+          "percentage": 10
+        }
+	},
+    "yaw" :
+	{
+		"type" : "exponential",
+		"description" :{
+          "multiplier": -1,
+          "base": 2.71828,
+          "alpha":1
+        }
+	}
+}

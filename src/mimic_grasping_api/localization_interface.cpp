@@ -22,11 +22,15 @@ namespace mimic_grasping {
         localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TERM_CMD_TAG] = obj_localization_data_.terminator;
         localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG] = obj_localization_data_.plugin_name;
         localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG] = obj_localization_data_.specific_configuration_file;
+        localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_APPLY_CORRECTION_TAG] = obj_localization_data_.apply_error_compensation;
+        localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_ERR_CORRECTION_FILE_TAG] = obj_localization_data_.error_compensation_file;
 
         localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG] = tool_localization_data_.executor;
         localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_TERM_CMD_TAG] = tool_localization_data_.terminator;
         localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_PL_NAME_TAG] = tool_localization_data_.plugin_name;
         localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG] = tool_localization_data_.specific_configuration_file;
+        localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_APPLY_CORRECTION_TAG] = tool_localization_data_.apply_error_compensation;
+        localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_ERR_CORRECTION_FILE_TAG] = tool_localization_data_.error_compensation_file;
 
         std::ofstream outfile(_file);
         outfile << localization_interface_config_data_ << std::endl;
@@ -56,6 +60,8 @@ namespace mimic_grasping {
         aux_tool_data.executor = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_EX_CMD_TAG].asString();
         aux_tool_data.terminator = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_TERM_CMD_TAG].asString();
         aux_tool_data.specific_configuration_file = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG].asString();
+        aux_tool_data.apply_error_compensation = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_APPLY_CORRECTION_TAG].asBool();
+        aux_tool_data.error_compensation_file = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_ERR_CORRECTION_FILE_TAG].asString();
         setToolLocConfig(aux_tool_data);
 
         ObjLocalizationData aux_obj_data;
@@ -63,7 +69,9 @@ namespace mimic_grasping {
         aux_obj_data.executor = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG].asString();
         aux_obj_data.terminator = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_TERM_CMD_TAG].asString();
         aux_obj_data.specific_configuration_file = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_SPEC_CONFIG_FILE_TAG].asString();
+        aux_obj_data.apply_error_compensation = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_APPLY_CORRECTION_TAG].asBool();
         aux_obj_data.one_shoot_estimation_ = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_OBJ_ONESHOOT_TAG].asBool();
+        aux_obj_data.error_compensation_file = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_ERR_CORRECTION_FILE_TAG].asString();
         setObjLocConfig(aux_obj_data);
 
         return true;
@@ -139,10 +147,11 @@ namespace mimic_grasping {
             return false;
         }
 
-        std::string ex_cmd = "", term_cmd = "", config_path = "";
+        std::string ex_cmd = "", term_cmd = "", config_path = "", error_compensation_path = "";
         ex_cmd = isScript(_data.executor) ? scripts_folder_path_ + "/" + _data.executor : _data.executor;
         term_cmd = isScript(_data.terminator) ? scripts_folder_path_ + "/" + _data.terminator : _data.terminator;
         config_path = profile_folder_path_ + "/" + _data.specific_configuration_file;
+        error_compensation_path = profile_folder_path_ + "/" + _data.error_compensation_file;
 
         if (!_loc_instance->setAppExec(ex_cmd)
             || !_loc_instance->setAppTermination(term_cmd)
@@ -164,6 +173,11 @@ namespace mimic_grasping {
             return false;
         }
 
+        if(loadCompensationFile(error_compensation_path)){
+            output_string_ = "Failed to load error compensation file.";
+            return false;
+        }
+
         return true;
     }
 
@@ -177,11 +191,35 @@ namespace mimic_grasping {
 
     bool LocalizationInterface::requestObjPose(Pose &_pose) {
 
-        return obj_localization_obj_->requestData(_pose);
+        bool aux = obj_localization_obj_->requestData(_pose);
+
+        if(!aux || !obj_localization_data_.apply_error_compensation)
+            return aux;
+
+        else
+        {
+            // The correction is applied every request. This allow runtime error compensations by just modifying the config file
+            std::string error_compensation_path = profile_folder_path_ + "/" + obj_localization_data_.error_compensation_file;
+            std::cout << "Applying correction in object pose. " << std::endl;
+            applyRunTimeLoadCorrection(error_compensation_path,_pose);
+        }
     }
 
     bool LocalizationInterface::requestToolPose(Pose &_pose) {
-        return tool_localization_obj_->requestData(_pose);
+
+        bool aux = tool_localization_obj_->requestData(_pose);
+
+        if(!aux || !tool_localization_data_.apply_error_compensation)
+            return aux;
+
+        else
+        {
+            std::string error_compensation_path = profile_folder_path_ + "/" + tool_localization_data_.error_compensation_file;
+            std::cout << "Applying correction in tool pose. " << std::endl;
+            applyRunTimeLoadCorrection(error_compensation_path,_pose);
+        }
+
+
     }
 
 
@@ -299,5 +337,13 @@ std::string LocalizationInterface::execIt(const char *cmd, float _startup_delay_
 
     bool LocalizationInterface::isOneShoot(){
         return obj_localization_data_.one_shoot_estimation_;
+    }
+
+    bool LocalizationInterface::isToolLocCompensated(){
+        return tool_localization_data_.apply_error_compensation;
+    }
+
+    bool LocalizationInterface::isObjLocCompensated(){
+        return obj_localization_data_.apply_error_compensation;
     }
 }
