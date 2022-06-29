@@ -166,9 +166,7 @@ namespace mimic_grasping {
 
         root_folder_path_ = std::string(env_root_folder_path);
 
-        output_export_path_ = root_folder_path_+"/outputs/"+ profile_;
         config_folder_path_ = root_folder_path_ + config_folder_dir_ ;
-        profile_folder_path_ = config_folder_path_+ "/" + profile_;
         script_folder_path_ = root_folder_path_ + scripts_folder_dir_;
         plugins_folder_path_ = root_folder_path_ + plugins_folder_dir_;
         general_config_folder_path_ = config_folder_path_ + general_;
@@ -184,12 +182,17 @@ namespace mimic_grasping {
             output_string_ = "Selected Profile: " + profile_;
         }
 
+        profile_folder_path_ = config_folder_path_+ "/" + profile_;
+        output_export_path_ = root_folder_path_+"/outputs/"+ profile_;
+
 
         if(!std::filesystem::exists(profile_folder_path_)){
             output_string_ ="Profile \"" + profile_ + "\" does not exist.";
             DEBUG_MSG(output_string_);
             generateProfileDirectoryTemplate();
         }
+        DEBUG_MSG("Current Profile: " << profile_);
+
 
         buildProfileList();
 
@@ -687,7 +690,7 @@ namespace mimic_grasping {
             } catch (const std::exception &e) {
                 //std::cerr << e.what() << std::endl;
                 output_string_ = e.what();
-                std::cout <<" Exception error: " <<output_string_ << std::endl;
+                DEBUG_MSG("Loading general file exception error: " << output_string_ << std::endl);
                 return false;
             }
         } else {
@@ -698,7 +701,7 @@ namespace mimic_grasping {
         }
 
         setProfile(general_config_data_[JSON_GENERAL_TAG][JSON_PROFILE_TAG].asString());
-        output_string_ = "Setting "+ profile_ +"profile";
+        output_string_ = "Setting "+ profile_ +" profile";
 
         return true;
     }

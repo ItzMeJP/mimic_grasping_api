@@ -173,8 +173,9 @@ namespace mimic_grasping {
             return false;
         }
 
-        if(loadCompensationFile(error_compensation_path)){
+        if(_data.apply_error_compensation && !loadCompensationFile(error_compensation_path)){
             output_string_ = "Failed to load error compensation file.";
+            DEBUG_MSG("!!!" << output_string_);
             return false;
         }
 
@@ -202,6 +203,7 @@ namespace mimic_grasping {
             std::string error_compensation_path = profile_folder_path_ + "/" + obj_localization_data_.error_compensation_file;
             std::cout << "Applying correction in object pose. " << std::endl;
             applyRunTimeLoadCorrection(error_compensation_path,_pose);
+            return true;
         }
     }
 
@@ -217,6 +219,7 @@ namespace mimic_grasping {
             std::string error_compensation_path = profile_folder_path_ + "/" + tool_localization_data_.error_compensation_file;
             std::cout << "Applying correction in tool pose. " << std::endl;
             applyRunTimeLoadCorrection(error_compensation_path,_pose);
+            return true;
         }
 
 

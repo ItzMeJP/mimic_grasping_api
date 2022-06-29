@@ -1,0 +1,11 @@
+object_pose_0:
+  parent_frame_id: camera_link
+  position:
+    x: 0.00902677
+    y: 0.00896319
+    z: 0.567858
+  orientation:
+    x: -0.549524
+    y: 0.665266
+    z: 0.185584
+    w: 0.470109

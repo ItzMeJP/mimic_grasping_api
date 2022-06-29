@@ -1,48 +1,40 @@
 {
-  	"x" :
-	{
-		"type" : "linear_absolute",
-		"description" :{
-          "offset": 1.0
-        }
+	"x":
+  {
+    "type": 0,
+    "description": {
+      "offset": 0.0
+		  }
 	},
-    "y" :
-	{
-		"type" : "linear_relative",
-		"description" :{
-          "percentage": 10
-        }
+	"y": {
+		"type": 0,
+		"description": {
+			"offset": 0.0
+		}
 	},
-    "z" :
-	{
-		"type" : "exponential",
-		"description" :{
-          "multiplier": -1,
-          "base": 2.71828,
-          "alpha":1
-        }
+	"z": {
+		"type": 0,
+		"description": {
+			"offset": 0.0
+		}
 	},
-  	"roll" :
-	{
-		"type" : "linear_absolute",
-		"description" :{
-          "offset": 1.0
-        }
+	"roll": {
+		"type": 0,
+		"description": {
+			"offset": 0.0
+		}
 	},
-    "pitch" :
-	{
-		"type" : "linear_relative",
-		"description" :{
-          "percentage": 10
-        }
+	"pitch": {
+		"type": 0,
+		"description": {
+			"offset": 0.0
+		}
 	},
-    "yaw" :
-	{
-		"type" : "exponential",
-		"description" :{
-          "multiplier": -1,
-          "base": 2.71828,
-          "alpha":1
-        }
+	"yaw": {
+		"type": 0,
+		"description": {
+			"offset": 0.0
+		}
 	}
+
 }

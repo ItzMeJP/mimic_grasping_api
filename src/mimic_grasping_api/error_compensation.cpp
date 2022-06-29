@@ -16,12 +16,15 @@ bool ErrorCompensation::loadCompensationFile(std::string _file_with_path) {
             config_file >> json_file_;
         } catch (const std::exception &e) {
             output_string_ = e.what();
+            DEBUG_MSG("Loading compensation file exception error: " << output_string_);
             return false;
         }
     } else {
         output_string_ = "Error compensation files does not found. Current path: \" + _file";
+        DEBUG_MSG(output_string_);
         return false;
     }
+
 
     loadSpecificErrorCompensation(x_data_,JSON_X_DISPLACEMENT_TAG);
     loadSpecificErrorCompensation(y_data_,JSON_Y_DISPLACEMENT_TAG);
@@ -30,6 +33,7 @@ bool ErrorCompensation::loadCompensationFile(std::string _file_with_path) {
     loadSpecificErrorCompensation(pitch_data_,JSON_PITCH_DISPLACEMENT_TAG);
     loadSpecificErrorCompensation(yaw_data_,JSON_YAW_DISPLACEMENT_TAG);
 
+
     return true;
 }
 
@@ -37,17 +41,19 @@ bool ErrorCompensation::loadCompensationFile(std::string _file_with_path) {
 
         _in_data.type = json_file_[_tag_name][JSON_TYPE_TAG].asInt();
 
+
+
         switch (_in_data.type) {
             case CORRECTION_TYPE::LINEAR_ABS:
-                _in_data.offset = json_file_[_tag_name][JSON_LIN_ABS_OFFSET_TAG].asDouble();
+                _in_data.offset = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_LIN_ABS_OFFSET_TAG].asDouble();
                 break;
             case CORRECTION_TYPE::LINEAR_RELATIVE:
-                _in_data.percentage = json_file_[_tag_name][JSON_LIN_REL_PERCENTAGE_TAG].asDouble();
+                _in_data.percentage = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_LIN_REL_PERCENTAGE_TAG].asDouble();
                 break;
             case CORRECTION_TYPE::EXPONENTIAL:
-                _in_data.base = json_file_[_tag_name][JSON_EXP_BASE_TAG].asDouble();
-                _in_data.alpha = json_file_[_tag_name][JSON_EXP_ALPHA_TAG].asDouble();
-                _in_data.multiplier = json_file_[_tag_name][JSON_EXP_MULT_TAG].asDouble();
+                _in_data.base = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_EXP_BASE_TAG].asDouble();
+                _in_data.alpha = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_EXP_ALPHA_TAG].asDouble();
+                _in_data.multiplier = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_EXP_MULT_TAG].asDouble();
                 break;
         }
     return true;
