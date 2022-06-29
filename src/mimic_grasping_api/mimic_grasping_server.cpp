@@ -166,19 +166,24 @@ namespace mimic_grasping {
 
         root_folder_path_ = std::string(env_root_folder_path);
 
-        if(profile_.empty()){
-            output_string_ ="Profile empty. Setting DEFAULT";
-            profile_ = "default";
-        }
-        else{
-            output_string_ = "Selected Profile: " + profile_;
-        }
-
         output_export_path_ = root_folder_path_+"/outputs/"+ profile_;
         config_folder_path_ = root_folder_path_ + config_folder_dir_ ;
         profile_folder_path_ = config_folder_path_+ "/" + profile_;
         script_folder_path_ = root_folder_path_ + scripts_folder_dir_;
         plugins_folder_path_ = root_folder_path_ + plugins_folder_dir_;
+        general_config_folder_path_ = config_folder_path_ + general_;
+
+        if(profile_.empty()){
+            output_string_ ="Profile empty. Setting profile according to general configuration file.";
+            std::cout << output_string_ << std::endl;
+            if(!loadGeneralConfigFile(general_config_folder_path_)){
+                return false;
+            }
+        }
+        else{
+            output_string_ = "Selected Profile: " + profile_;
+        }
+
 
         if(!std::filesystem::exists(profile_folder_path_)){
             output_string_ ="Profile \"" + profile_ + "\" does not exist.";
@@ -658,6 +663,43 @@ namespace mimic_grasping {
         saveFirmwareInterfaceConfigFile(profile_folder_path_  + tool_firmware_file_);
         saveLocalizationConfigFile(profile_folder_path_  + localization_file_);
         saveTransformationMatrix(profile_folder_path_ + matrix_file_);
+        return true;
+    }
+
+
+    bool MimicGraspingServer::saveGeneralConfigFile(std::string _file) {
+
+        general_config_data_[JSON_GENERAL_TAG][JSON_PROFILE_TAG] = profile_;
+
+        std::ofstream outfile(_file);
+        outfile << general_config_data_ << std::endl;
+        outfile.close();
+
+        return true;
+    }
+
+    bool MimicGraspingServer::loadGeneralConfigFile(std::string _file) {
+
+        std::ifstream config_file(_file, std::ifstream::binary);
+        if (config_file) {
+            try {
+                config_file >> general_config_data_;
+            } catch (const std::exception &e) {
+                //std::cerr << e.what() << std::endl;
+                output_string_ = e.what();
+                std::cout <<" Exception error: " <<output_string_ << std::endl;
+                return false;
+            }
+        } else {
+            output_string_ = "General configuration file not found. Current path: " + _file + "Setting default profile";
+            setProfile("default");
+            std::cout << output_string_ << std::endl;
+            return true;
+        }
+
+        setProfile(general_config_data_[JSON_GENERAL_TAG][JSON_PROFILE_TAG].asString());
+        output_string_ = "Setting "+ profile_ +"profile";
+
         return true;
     }
 

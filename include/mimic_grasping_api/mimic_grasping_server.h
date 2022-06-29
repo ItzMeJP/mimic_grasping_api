@@ -15,6 +15,9 @@
 
 #define MSG_PREFIX "<MimicGraspingAPI> "
 
+#define JSON_GENERAL_TAG "general"
+#define JSON_PROFILE_TAG "profile"
+
 #ifndef NDEBUG
 #define DEBUG_MSG(str) do { std::cout << "\033[;33m" << MSG_PREFIX << str << "\033[0m"<< std::endl; } while( false )
 #else
@@ -44,6 +47,10 @@ namespace mimic_grasping{
         void request_stop();
         bool closeInterfaces();
         void clearDataset();
+
+        bool saveGeneralConfigFile(std::string _file);
+        bool loadGeneralConfigFile(std::string _file);
+
 
         std::vector<Pose> getDataset(int _dataset_type);
         Pose getDataset(int _dataset_type, int _index);
@@ -78,7 +85,10 @@ namespace mimic_grasping{
                     localization_file_ = "/localization_config.json",
                     matrix_file_ = "/calib_matrix.json",
                     current_msg_ = "",
-                    profile_ ;
+                    profile_,
+                    general_ = "/general.json";
+
+        Json::Value general_config_data_;
 
         int current_code_, last_current_code_;
         bool stop_ = false;
@@ -88,7 +98,7 @@ namespace mimic_grasping{
 
 
     private:
-        std::string output_string_, error_string_, output_export_path_, plugins_folder_path_, script_folder_path_, profile_folder_path_, config_folder_path_;
+        std::string output_string_, error_string_, output_export_path_, plugins_folder_path_, script_folder_path_, profile_folder_path_, config_folder_path_, general_config_folder_path_;
         Pose current_obj_pose_,
              current_tool_pose_;
         std::vector<Pose> obj_pose_arr_,
