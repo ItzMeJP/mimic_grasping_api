@@ -84,6 +84,7 @@ namespace mimic_grasping{
                     tool_firmware_file_ = "/tool_firmware_config.json",
                     localization_file_ = "/localization_config.json",
                     matrix_file_ = "/calib_matrix.json",
+                    output_compensation_file_ = "/general_error_compensation.json",
                     current_msg_ = "",
                     profile_,
                     general_ = "/general.json";

@@ -219,9 +219,16 @@ namespace mimic_grasping {
             return false;
         }
 
-        if(!loadLocalizationConfigFile(profile_folder_path_ + localization_file_)
-        || !setLocalizationScriptsFolderPath( script_folder_path_ )
-        || !setLocalizationConfigsFolderPath(profile_folder_path_)){
+
+        if(!loadCompensationFileForOutputDataset(profile_folder_path_ + output_compensation_file_)){
+            error_string_ = "Dataset manipulator error: " + getDatasetManipulatorOutputSTR();
+            DEBUG_MSG(error_string_);
+            return false;
+        }
+
+        if(!setLocalizationScriptsFolderPath( script_folder_path_ )
+        || !setLocalizationConfigsFolderPath(profile_folder_path_)
+        || !loadLocalizationConfigFile(profile_folder_path_ + localization_file_)){
             //output_string_ = getLocalizationOutputSTR();
             error_string_ = "Localization error: " + getLocalizationInterfaceOutputSTR();
             DEBUG_MSG(error_string_);

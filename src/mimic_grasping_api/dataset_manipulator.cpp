@@ -3,6 +3,7 @@
 //
 
 #include "dataset_manipulator.h"
+
 namespace mimic_grasping {
     DatasetManipulator::DatasetManipulator() {
 
@@ -42,6 +43,19 @@ namespace mimic_grasping {
         return true;
     }
 
+    bool DatasetManipulator::loadCompensationFileForOutputDataset(std::string _file_with_path){
+
+        output_error_compensation_path_ = _file_with_path;
+
+        if(!loadCompensationFile(_file_with_path)){
+            output_string_ = "Error while loading compensation configuration file for output dataset.";
+            DEBUG_MSG(output_string_);
+            return false;
+        }
+
+        return true;
+    }
+
     bool DatasetManipulator::saveTransformationMatrix(std::string _file_with_path){
 
         Json::Value jm;
@@ -77,6 +91,10 @@ namespace mimic_grasping {
             output_string_ = "Error in transformation.";
             return false;
         }
+
+        DEBUG_MSG("Path to general output compensation file: " << output_error_compensation_path_);
+
+        applyRunTimeLoadCorrection(output_error_compensation_path_,_tool_pose_wrt_obj);
 
         return true;
 

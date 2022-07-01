@@ -44,11 +44,15 @@ bool ErrorCompensation::loadCompensationFile(std::string _file_with_path) {
 
 
         switch (_in_data.type) {
-            case CORRECTION_TYPE::LINEAR_ABS:
-                _in_data.offset = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_LIN_ABS_OFFSET_TAG].asDouble();
+            case CORRECTION_TYPE::CONST_ABS:
+                _in_data.offset = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_CONST_ABS_OFFSET_TAG].asDouble();
                 break;
-            case CORRECTION_TYPE::LINEAR_RELATIVE:
-                _in_data.percentage = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_LIN_REL_PERCENTAGE_TAG].asDouble();
+            case CORRECTION_TYPE::CONST_RELATIVE:
+                _in_data.percentage = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_CONST_REL_PERCENTAGE_TAG].asDouble();
+                break;
+            case CORRECTION_TYPE::LINEAR:
+                _in_data.a_coef = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_LIN_A_TAG].asDouble();
+                _in_data.b_coef = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_LIN_B_TAG].asDouble();
                 break;
             case CORRECTION_TYPE::EXPONENTIAL:
                 _in_data.base = json_file_[_tag_name][JSON_DESCRIPTION_TAG][JSON_EXP_BASE_TAG].asDouble();
@@ -61,20 +65,58 @@ bool ErrorCompensation::loadCompensationFile(std::string _file_with_path) {
 
     bool ErrorCompensation::applySpecificErrorCompensation(errorCompensationData _in_data, double &input){
 
+        DEBUG_MSG("Input Raw: " << input);
+
         switch (_in_data.type) {
-            case CORRECTION_TYPE::LINEAR_ABS:
+            case CORRECTION_TYPE::CONST_ABS:
                 input += _in_data.offset;
                 break;
-            case CORRECTION_TYPE::LINEAR_RELATIVE:
+            case CORRECTION_TYPE::CONST_RELATIVE:
                 input += (_in_data.percentage*input)/100;
+                break;
+            case CORRECTION_TYPE::LINEAR:
+                input += _in_data.a_coef*input+_in_data.b_coef;
                 break;
             case CORRECTION_TYPE::EXPONENTIAL:
                 input += _in_data.multiplier*pow(_in_data.base,(_in_data.alpha*input));
                 break;
         }
+
+        DEBUG_MSG("Input Corrected: " << input);
+
         return true;
 
 }
+/*
+    double  ErrorCompensation::applyLinearCorrection(double _a, double _b, double _input){
+
+        double err;
+
+        err = _a*_input+_b;
+        err = abs(err);
+
+
+        err
+        return y;
+    }
+
+
+
+    double ErrorCompensation::applyAbsConstCorrection(){
+        double r;
+    return r;
+    }
+
+    double ErrorCompensation::applyRelConstCorrection(){
+        double r;
+    return r;
+    }
+
+    double ErrorCompensation::applyExpCorrection(){
+        double r;
+    return r;
+    }
+*/
 
     bool ErrorCompensation::applyRunTimeLoadCorrection(std::string _file_with_path,Pose &_pose){
 
@@ -87,6 +129,9 @@ bool ErrorCompensation::loadCompensationFile(std::string _file_with_path) {
     }
 
     bool ErrorCompensation::applyCorrection(Pose &_pose) {
+
+        output_string_ = "Applying correction. ";
+        DEBUG_MSG(output_string_);
 
         Eigen::Translation3d t = _pose.getPosition();
         Eigen::Vector3d r = _pose.getRPYOrientationZYXOrder();

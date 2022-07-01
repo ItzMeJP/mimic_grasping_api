@@ -12,8 +12,11 @@
 #include <jsoncpp/json/json.h>
 #include <fstream>
 
+#include "error_compensation.h"
+
+
 namespace mimic_grasping {
-    class DatasetManipulator {
+    class DatasetManipulator : public ErrorCompensation {
     public:
         DatasetManipulator();
 
@@ -61,6 +64,7 @@ namespace mimic_grasping {
 
         bool loadTransformationMatrix(std::string _file_with_path);
         bool saveTransformationMatrix(std::string _file_with_path);
+        bool loadCompensationFileForOutputDataset(std::string _file_with_path);
 
     protected:
         Json::Value json_matrix_;
@@ -76,6 +80,8 @@ namespace mimic_grasping {
 
 
     private:
+
+        std::string output_error_compensation_path_ = "";
 
         Json::Value json_pose_arr_;
         std::string output_string_;

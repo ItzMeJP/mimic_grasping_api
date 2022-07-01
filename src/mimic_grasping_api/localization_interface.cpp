@@ -64,6 +64,15 @@ namespace mimic_grasping {
         aux_tool_data.error_compensation_file = localization_interface_config_data_[JSON_TOOL_LOC_TAG][JSON_ERR_CORRECTION_FILE_TAG].asString();
         setToolLocConfig(aux_tool_data);
 
+        std::string error_compensation_path = "";
+        error_compensation_path =  profile_folder_path_ + "/" + aux_tool_data.error_compensation_file;
+
+        if(aux_tool_data.apply_error_compensation && !loadCompensationFile(error_compensation_path)){
+            output_string_ = "Failed to load error compensation file for Tool Localizator.";
+            DEBUG_MSG("!!!" << output_string_);
+            return false;
+        }
+
         ObjLocalizationData aux_obj_data;
         aux_obj_data.plugin_name = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_PL_NAME_TAG].asString();
         aux_obj_data.executor = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_EX_CMD_TAG].asString();
@@ -73,6 +82,14 @@ namespace mimic_grasping {
         aux_obj_data.one_shoot_estimation_ = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_OBJ_ONESHOOT_TAG].asBool();
         aux_obj_data.error_compensation_file = localization_interface_config_data_[JSON_OBJ_LOC_TAG][JSON_ERR_CORRECTION_FILE_TAG].asString();
         setObjLocConfig(aux_obj_data);
+
+        error_compensation_path =  profile_folder_path_ + "/" + aux_obj_data.error_compensation_file;
+
+        if(aux_obj_data.apply_error_compensation && !loadCompensationFile(error_compensation_path)){
+            output_string_ = "Failed to load error compensation file for Obj Localizator.";
+            DEBUG_MSG("!!!" << output_string_);
+            return false;
+        }
 
         return true;
     }
@@ -147,11 +164,10 @@ namespace mimic_grasping {
             return false;
         }
 
-        std::string ex_cmd = "", term_cmd = "", config_path = "", error_compensation_path = "";
+        std::string ex_cmd = "", term_cmd = "", config_path = "";
         ex_cmd = isScript(_data.executor) ? scripts_folder_path_ + "/" + _data.executor : _data.executor;
         term_cmd = isScript(_data.terminator) ? scripts_folder_path_ + "/" + _data.terminator : _data.terminator;
         config_path = profile_folder_path_ + "/" + _data.specific_configuration_file;
-        error_compensation_path = profile_folder_path_ + "/" + _data.error_compensation_file;
 
         if (!_loc_instance->setAppExec(ex_cmd)
             || !_loc_instance->setAppTermination(term_cmd)
@@ -170,12 +186,6 @@ namespace mimic_grasping {
         output_string_ = _loc_instance->getOutputString();
 
         if (_loc_instance->getStatus() == LocalizationBase::FEEDBACK::ERROR) {
-            return false;
-        }
-
-        if(_data.apply_error_compensation && !loadCompensationFile(error_compensation_path)){
-            output_string_ = "Failed to load error compensation file.";
-            DEBUG_MSG("!!!" << output_string_);
             return false;
         }
 

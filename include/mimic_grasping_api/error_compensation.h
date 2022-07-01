@@ -22,11 +22,13 @@
 #define JSON_TYPE_TAG "type"
 #define JSON_DESCRIPTION_TAG "description"
 
-#define JSON_LIN_ABS_OFFSET_TAG "offset"
-#define JSON_LIN_REL_PERCENTAGE_TAG "percentage"
+#define JSON_CONST_ABS_OFFSET_TAG "offset"
+#define JSON_CONST_REL_PERCENTAGE_TAG "percentage"
 #define JSON_EXP_BASE_TAG "base"
 #define JSON_EXP_ALPHA_TAG "alpha"
 #define JSON_EXP_MULT_TAG "multiplier"
+#define JSON_LIN_A_TAG "a"
+#define JSON_LIN_B_TAG "b"
 
 namespace mimic_grasping {
     class ErrorCompensation {
@@ -36,18 +38,21 @@ namespace mimic_grasping {
         ~ErrorCompensation(){};
 
         enum CORRECTION_TYPE {
-            LINEAR_ABS,
-            LINEAR_RELATIVE,
+            CONST_ABS,
+            CONST_RELATIVE,
+            LINEAR,
             EXPONENTIAL
         };
 
-        struct errorCompensationData{
+        struct errorCompensationData {
             int type;
-            double offset = NAN,
-                   percentage = NAN,
-                   base = NAN,
-                   alpha = NAN,
-                   multiplier = NAN;
+            double offset = NAN,     //  absolute constant correction
+            percentage = NAN, //  relative constant correction
+            base = NAN,       //  exponential correction
+            alpha = NAN,      //  exponential correction
+            multiplier = NAN, //  exponential correction
+            a_coef = NAN,     //  linear correction
+            b_coef = NAN;     //  linear correction
         };
 
         bool loadCompensationFile(std::string _file_with_path);
@@ -74,6 +79,13 @@ namespace mimic_grasping {
 
         bool loadSpecificErrorCompensation(errorCompensationData &_in_data, std::string _tag_name);
         bool applySpecificErrorCompensation(errorCompensationData _in_data, double &_input);
+
+/*
+        double applyLinearCorrection(double _a, double _b, double _x)
+        double applyAbsConstCorrection();
+        double applyRelConstCorrection();
+        double applyExpCorrection();
+*/
     };
 }
 

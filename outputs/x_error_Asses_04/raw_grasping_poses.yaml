@@ -7,14 +7,14 @@ candidate_0:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0578957
-    y: 1.59875
-    z: 0.0528971
+    x: -0.0592033
+    y: 1.60181
+    z: 0.0498674
   orientation:
-    x: 0.576422
-    y: -0.696806
-    z: 0.216959
-    w: 0.367597
+    x: 0.546431
+    y: -0.726569
+    z: 0.223762
+    w: 0.351343
 candidate_1:
   method: 
     type: 3
@@ -24,14 +24,14 @@ candidate_1:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0545312
-    y: 1.59959
-    z: 0.0725176
+    x: -0.060127
+    y: 1.59968
+    z: 0.0711956
   orientation:
-    x: 0.568251
-    y: -0.710917
-    z: 0.227015
-    w: 0.346629
+    x: 0.577915
+    y: -0.702475
+    z: 0.240442
+    w: 0.338718
 candidate_2:
   method: 
     type: 3
@@ -41,14 +41,14 @@ candidate_2:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0509375
-    y: 1.60042
-    z: 0.0902514
+    x: -0.0571624
+    y: 1.60026
+    z: 0.0915427
   orientation:
-    x: 0.565115
-    y: -0.712691
-    z: 0.224521
-    w: 0.349724
+    x: 0.569247
+    y: -0.711134
+    z: 0.228991
+    w: 0.343232
 candidate_3:
   method: 
     type: 3
@@ -58,14 +58,14 @@ candidate_3:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0604091
-    y: 1.60449
-    z: 0.118066
+    x: -0.058252
+    y: 1.60403
+    z: 0.119091
   orientation:
-    x: 0.595275
-    y: -0.718352
-    z: 0.166917
-    w: 0.318995
+    x: 0.602687
+    y: -0.716491
+    z: 0.185089
+    w: 0.298581
 candidate_4:
   method: 
     type: 3
@@ -75,14 +75,14 @@ candidate_4:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0573183
-    y: 1.60426
-    z: 0.137513
+    x: -0.0625355
+    y: 1.60379
+    z: 0.137262
   orientation:
-    x: 0.596292
-    y: -0.715995
-    z: 0.171089
-    w: 0.32018
+    x: 0.593624
+    y: -0.713108
+    z: 0.175313
+    w: 0.329172
 candidate_5:
   method: 
     type: 3
@@ -92,11 +92,11 @@ candidate_5:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0586709
-    y: 1.60525
-    z: 0.157041
+    x: -0.0614632
+    y: 1.60366
+    z: 0.157622
   orientation:
-    x: 0.601253
-    y: -0.713603
-    z: 0.167987
-    w: 0.317877
+    x: 0.601963
+    y: -0.709316
+    z: 0.174569
+    w: 0.322549
