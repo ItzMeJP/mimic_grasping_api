@@ -17,10 +17,12 @@ VideoSync (copia do iilab profile)
 Segmentation (copia do iilab profile)
 Icosaedron 3D (copia iilab profile contudo com ficheiros de calib horizontal e vertical e tip diferentes)
 
-Fazer o profile funcionar na API
+
 
 Corrigir problema do load to localization.config
 
 Apenas ONE_SHOOT estimation esta a funcionar
 
 Preciso atualizar o firmware do manípulo para identificar os tipo de gripper com os nomes corretos!
+
+Fazer a interface com firmware de ferramenta usando também plugins!
