@@ -67,6 +67,8 @@ bool ErrorCompensation::loadCompensationFile(std::string _file_with_path) {
 
         DEBUG_MSG("Input Raw: " << input);
 
+
+
         switch (_in_data.type) {
             case CORRECTION_TYPE::CONST_ABS:
                 input += _in_data.offset;

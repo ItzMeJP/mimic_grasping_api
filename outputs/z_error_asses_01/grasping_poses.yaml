@@ -1,5 +1,5 @@
 candidate_0:
-  method: 
+  method:
     type: 3
   gripper:
     type: 5
@@ -7,16 +7,16 @@ candidate_0:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: -0.032778
-    y: -0.0469519
-    z: 0.0413175
+    x: 0.00419086
+    y: -0.000613856
+    z: 0.0457804
   orientation:
-    x: -0.727939
-    y: -0.266945
-    z: 0.243134
-    w: 0.582864
+    x: -0.678813
+    y: -0.247527
+    z: 0.178096
+    w: 0.668001
 candidate_1:
-  method: 
+  method:
     type: 3
   gripper:
     type: 5
@@ -24,16 +24,16 @@ candidate_1:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: -0.0311501
-    y: -0.0492313
-    z: 0.0615987
+    x: 0.00237993
+    y: -0.00155753
+    z: 0.0639984
   orientation:
-    x: -0.720962
-    y: -0.27074
-    z: 0.268918
-    w: 0.578443
+    x: -0.689998
+    y: -0.249246
+    z: 0.180965
+    w: 0.655004
 candidate_2:
-  method: 
+  method:
     type: 3
   gripper:
     type: 5
@@ -41,16 +41,16 @@ candidate_2:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: -0.0294804
-    y: -0.0476005
-    z: 0.0765347
+    x: 0.0025782
+    y: -0.00178211
+    z: 0.0858355
   orientation:
-    x: -0.713795
-    y: -0.294811
-    z: 0.241525
-    w: 0.587579
+    x: -0.68186
+    y: -0.262303
+    z: 0.189532
+    w: 0.656005
 candidate_3:
-  method: 
+  method:
     type: 3
   gripper:
     type: 5
@@ -58,16 +58,16 @@ candidate_3:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: -0.030213
-    y: -0.0492467
-    z: 0.098672
+    x: 0.00199892
+    y: -0.00162844
+    z: 0.106388
   orientation:
-    x: -0.724758
-    y: -0.284354
-    z: 0.260758
-    w: 0.570854
+    x: -0.692645
+    y: -0.250357
+    z: 0.165495
+    w: 0.655878
 candidate_4:
-  method: 
+  method:
     type: 3
   gripper:
     type: 5
@@ -75,16 +75,16 @@ candidate_4:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: -0.0231975
-    y: -0.0513964
-    z: 0.112094
+    x: 0.00138016
+    y: -0.00171646
+    z: 0.131314
   orientation:
-    x: -0.693386
-    y: -0.334891
-    z: 0.286536
-    w: 0.570053
+    x: -0.695577
+    y: -0.24343
+    z: 0.171405
+    w: 0.653862
 candidate_5:
-  method: 
+  method:
     type: 3
   gripper:
     type: 5
@@ -92,11 +92,11 @@ candidate_5:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: -0.0280433
-    y: -0.047168
-    z: 0.127397
+    x: 0.000799826
+    y: -0.000902624
+    z: 0.144298
   orientation:
-    x: -0.706513
-    y: -0.300098
-    z: 0.253976
-    w: 0.588452
+    x: -0.70849
+    y: -0.252803
+    z: 0.155783
+    w: 0.640207

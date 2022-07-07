@@ -342,10 +342,15 @@ namespace mimic_grasping {
         if(
                 !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", output_export_path_ +"/raw_grasping_poses.yaml",EXPORT_EXTENSION::YAML) ||
                 !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", output_export_path_ +"/raw_grasping_poses.json",EXPORT_EXTENSION::JSON) ||
+                !saveDataset(tool_pose_arr_, gripper_type_label, "candidate_", output_export_path_ +"/raw_grasping_poses.csv",EXPORT_EXTENSION::CSV) ||
+
                 !saveDataset(tool_pose_wrt_obj_frame_arr_, gripper_type_label, "candidate_", output_export_path_ +"/grasping_poses.yaml",EXPORT_EXTENSION::YAML) ||
                 !saveDataset(tool_pose_wrt_obj_frame_arr_, gripper_type_label, "candidate_", output_export_path_ +"/grasping_poses.json",EXPORT_EXTENSION::JSON) ||
+                !saveDataset(tool_pose_wrt_obj_frame_arr_, gripper_type_label, "candidate_", output_export_path_ +"/grasping_poses.csv",EXPORT_EXTENSION::CSV) ||
+
                 !saveDataset(obj_pose_arr_, "object_pose_", output_export_path_ +"/object_poses.yaml",EXPORT_EXTENSION::YAML) ||
-                !saveDataset(obj_pose_arr_, "object_pose_", output_export_path_ +"/object_poses.json",EXPORT_EXTENSION::JSON)
+                !saveDataset(obj_pose_arr_, "object_pose_", output_export_path_ +"/object_poses.json",EXPORT_EXTENSION::JSON) ||
+                !saveDataset(obj_pose_arr_, "object_pose_", output_export_path_ +"/object_poses.csv",EXPORT_EXTENSION::CSV)
                 ){
 
             //output_string_ = getDatasetManipulatorOutputSTR();

@@ -25,6 +25,7 @@ namespace mimic_grasping {
         enum EXPORT_EXTENSION {
             YAML,
             JSON,
+            CSV,
         };
 
         enum GRIPPER_ID {        // Type of gripper used
@@ -87,7 +88,7 @@ namespace mimic_grasping {
         std::string output_string_;
 
         bool exportJSONDataset(std::vector<Pose> _dataset,
-                               int gripper_type_,
+                               int _gripper_type,
                                std::string _prefix,
                                std::string _file_name_with_path);
 
@@ -100,9 +101,19 @@ namespace mimic_grasping {
                                std::string _file_name_with_path);
 
         bool exportYAMLDataset(std::vector<Pose> _dataset,
-                               int gripper_type_,
+                               int _gripper_type,
                                std::string _prefix,
                                std::string _file_name_with_path);
+
+        bool exportCSVDataset(std::vector<Pose> _dataset,
+                               std::string _prefix,
+                               std::string _file_name_with_path);
+
+        bool exportCSVDataset(std::vector<Pose> _dataset,
+                               int _gripper_type,
+                               std::string _prefix,
+                               std::string _file_name_with_path);
+
 
     };
 }

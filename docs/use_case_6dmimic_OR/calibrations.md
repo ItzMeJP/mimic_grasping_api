@@ -46,7 +46,7 @@ Marker LEDs configuration into mimic tool.
  Horizontal calibration pose.
  </p>
 
- - **Defining the tool rotation matrix:** aligns the mimic grasping tool probe tool with the robot TCP0 (**verify it**) (more near possible), see Figure below, then select Tool Tab>Get>Set. The generated matrix is placed at "/home/mimic/Projects/6DM-IILAB/6DM/Icosahedron3D/mimic_grasping/RotMatrixTool.rot". This defines the manual tool's tip rotation matrix w.r.t the tcp0.
+ - **Defining the tool rotation matrix:** aligns the mimic grasping tool probe tool with the robot TCP0 (more near possible, if need mode robot mantaining the orientation, the init orientation), see Figure below, then select Tool Tab>Get>Set. The generated matrix is placed at "/home/mimic/Projects/6DM-IILAB/6DM/Icosahedron3D/mimic_grasping/RotMatrixTool.rot". This defines the manual tool's tip rotation matrix w.r.t the tcp0.
 
  <p align="center">
    <img src="./tool_calib_pose.jpg" width="420">
@@ -63,3 +63,5 @@ Marker LEDs configuration into mimic tool.
 6. All these created files (robotStandBy.rot, tip.pnt, RotMatrixHoriz.rot, RotMatrixTool.rot ) must be placed at 6DMimic icosaedron folder inside 6D Mimic computer (namely "/home/mimic/Projects/6DM-IILAB/6DM/Icosahedron3D/mimic_grasping"). Therefore the system can be correctly load the use-case qualibration.
 
 **obs:** The /MimigGrasping/Verify_Calib_With_6DMimic.sh can help verify the calibration using the original 6DMimic procedure.
+
+See doc [error_compensation.md](\error_compensation.md) to understand the error compensation method if needed.

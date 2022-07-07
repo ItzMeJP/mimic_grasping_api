@@ -7,14 +7,14 @@ candidate_0:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0755617
-    y: 1.5834
-    z: 0.08932
+    x: -0.0311526
+    y: 1.51251
+    z: 0.0795803
   orientation:
-    x: 0.671017
-    y: -0.736763
-    z: -0.0725461
-    w: 0.0406787
+    x: 0.820037
+    y: -0.571253
+    z: 0.0109793
+    w: 0.0329897
 candidate_1:
   method: 
     type: 3
@@ -24,14 +24,14 @@ candidate_1:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0778262
-    y: 1.56303
-    z: 0.0857589
+    x: -0.0290563
+    y: 1.49539
+    z: 0.0782574
   orientation:
-    x: 0.685612
-    y: -0.723139
-    z: -0.0537094
-    w: 0.0641958
+    x: 0.83465
+    y: -0.548543
+    z: 0.0112264
+    w: 0.0483155
 candidate_2:
   method: 
     type: 3
@@ -41,14 +41,14 @@ candidate_2:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.074206
-    y: 1.54409
-    z: 0.0861915
+    x: -0.023359
+    y: 1.47632
+    z: 0.0773959
   orientation:
-    x: 0.665221
-    y: -0.742989
-    z: -0.0538133
-    w: 0.0505298
+    x: 0.829372
+    y: -0.555796
+    z: 0.0151405
+    w: 0.0548075
 candidate_3:
   method: 
     type: 3
@@ -58,14 +58,14 @@ candidate_3:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0744068
-    y: 1.52324
-    z: 0.0837392
+    x: -0.0238643
+    y: 1.45673
+    z: 0.076622
   orientation:
-    x: 0.6707
-    y: -0.739179
-    z: -0.0307584
-    w: 0.0532018
+    x: 0.835886
+    y: -0.54555
+    z: 0.0171178
+    w: 0.058112
 candidate_4:
   method: 
     type: 3
@@ -75,14 +75,14 @@ candidate_4:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0789286
-    y: 1.50382
-    z: 0.0834075
+    x: -0.0138298
+    y: 1.44022
+    z: 0.0762521
   orientation:
-    x: 0.663221
-    y: -0.745289
-    z: -0.0393881
-    w: 0.0559564
+    x: 0.841223
+    y: -0.538481
+    z: 0.0155358
+    w: 0.0462731
 candidate_5:
   method: 
     type: 3
@@ -92,11 +92,11 @@ candidate_5:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0785991
-    y: 1.48346
-    z: 0.0831809
+    x: -0.0082637
+    y: 1.42
+    z: 0.0755893
   orientation:
-    x: 0.663109
-    y: -0.74584
-    z: -0.0376785
-    w: 0.0508805
+    x: 0.831695
+    y: -0.552093
+    z: 0.0188607
+    w: 0.0558719

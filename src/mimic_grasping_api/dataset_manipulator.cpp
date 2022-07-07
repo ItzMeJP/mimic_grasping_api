@@ -61,9 +61,9 @@ namespace mimic_grasping {
         Json::Value jm;
 
         jm["matrix"][0][0] = 1; jm["matrix"][0][1] = 0; jm["matrix"][0][2] = 0; jm["matrix"][0][3] = 0;
-        jm["matrix"][0][0] = 0; jm["matrix"][0][1] = 1; jm["matrix"][0][2] = 0; jm["matrix"][0][3] = 0;
-        jm["matrix"][0][0] = 0; jm["matrix"][0][1] = 0; jm["matrix"][0][2] = 1; jm["matrix"][0][3] = 0;
-        jm["matrix"][0][0] = 0; jm["matrix"][0][1] = 0; jm["matrix"][0][2] = 0; jm["matrix"][0][3] = 1;
+        jm["matrix"][1][0] = 0; jm["matrix"][1][1] = 1; jm["matrix"][1][2] = 0; jm["matrix"][1][3] = 0;
+        jm["matrix"][2][0] = 0; jm["matrix"][2][1] = 0; jm["matrix"][2][2] = 1; jm["matrix"][2][3] = 0;
+        jm["matrix"][3][0] = 0; jm["matrix"][3][1] = 0; jm["matrix"][3][2] = 0; jm["matrix"][3][3] = 1;
 
         std::ofstream outfile(_file_with_path);
         outfile << jm << std::endl;
@@ -161,10 +161,17 @@ namespace mimic_grasping {
                                          std::string _file_name_with_path,
                                          int _type) {
 
-        if (_type == EXPORT_EXTENSION::JSON)
-            return exportJSONDataset(_dataset, _gripper_type, _prefix, _file_name_with_path);
-        else
-            return exportYAMLDataset(_dataset, _gripper_type, _prefix, _file_name_with_path);
+        switch (_type) {
+            case EXPORT_EXTENSION::JSON:
+                return exportJSONDataset(_dataset, _gripper_type, _prefix, _file_name_with_path);
+            case EXPORT_EXTENSION::YAML:
+                return exportYAMLDataset(_dataset, _gripper_type, _prefix, _file_name_with_path);
+            case EXPORT_EXTENSION::CSV:
+                return exportCSVDataset(_dataset, _gripper_type, _prefix, _file_name_with_path);
+        }
+
+        return false;
+
     }
 
 
@@ -173,10 +180,16 @@ namespace mimic_grasping {
                                          std::string _file_name_with_path,
                                          int _type) {
 
-        if (_type == EXPORT_EXTENSION::JSON)
-            return exportJSONDataset(_dataset, _prefix, _file_name_with_path);
-        else
-            return exportYAMLDataset(_dataset, _prefix, _file_name_with_path);
+        switch (_type) {
+            case EXPORT_EXTENSION::JSON:
+                return exportJSONDataset(_dataset, _prefix, _file_name_with_path);
+            case EXPORT_EXTENSION::YAML:
+                return exportYAMLDataset(_dataset, _prefix, _file_name_with_path);
+            case EXPORT_EXTENSION::CSV:
+                return exportCSVDataset(_dataset, _prefix, _file_name_with_path);
+        }
+
+        return false;
     }
 
 
@@ -369,5 +382,114 @@ namespace mimic_grasping {
         file.close();
         return true;
 
+    }
+
+
+    bool DatasetManipulator::exportCSVDataset(std::vector<Pose> _dataset,
+                           int _gripper_type,
+                           std::string _prefix,
+                           std::string _file_name_with_path){
+        std::ofstream file;
+        std::stringstream toFile, dof_ss, parameters_ss;
+
+
+        if (_dataset.empty()) {
+            output_string_ = "Cannot export an empty dataset.";
+            return false;
+        }
+
+        toFile << "Candidate, Parent Frame, Method Type, Gripper Type, Gripper Params, Gripper DOFs,X, Y, Z, Roll, Pitch, Yaw, qX, qY, qZ, qW\n";
+
+        for (size_t i = 0; i < _dataset.size(); ++i) {
+
+            dof_ss.str(""); //clear it
+            dof_ss << "[]";
+
+            // TODO: future work... There is no DOF in this situation
+            /*
+              for (size_t j = 0; j < g.candidates.at(i).gripper_data.dof.size(); ++j) {
+                if(j == (g.candidates.at(i).gripper_data.dof.size()-1))
+                    dof_ss << g.candidates.at(i).gripper_data.dof.at(j) << "]" ;
+                else
+                    dof_ss << g.candidates.at(i).gripper_data.dof.at(j) << ", " ;
+            }
+            */
+
+
+            parameters_ss.str(""); //clear it
+            parameters_ss << "[]";
+
+            // TODO: future work... There is no Additional parameters in this situation since the pneumatic grippers only support ON-OFF
+            /*
+            for (size_t j = 0; j < g.candidates.at(i).gripper_data.parameters.size(); ++j) {
+                if(j == (g.candidates.at(i).gripper_data.parameters.size()-1))
+                    parameters_ss << g.candidates.at(i).gripper_data.parameters.at(j) << "]" ;
+                else
+                    parameters_ss << g.candidates.at(i).gripper_data.parameters.at(j) << ", " ;
+            }
+            */
+
+
+            toFile << _prefix << std::to_string(i) << "," <<
+                    _dataset.at(i).getParentName() << "," <<
+                    SYNTHESIS_METHOD::MIMIC_GRASPING << "," <<
+                    _gripper_type << "," <<
+                    parameters_ss.str() << "," <<
+                    dof_ss.str() << "," <<
+                    _dataset.at(i).getPosition().x() << "," <<
+                    _dataset.at(i).getPosition().y() << "," <<
+                    _dataset.at(i).getPosition().z() << "," <<
+                    _dataset.at(i).getRPYOrientationZYXOrder().x() << "," <<
+                    _dataset.at(i).getRPYOrientationZYXOrder().y() << "," <<
+                    _dataset.at(i).getRPYOrientationZYXOrder().z() << "," <<
+                    _dataset.at(i).getQuaternionOrientation().x() << "," <<
+                    _dataset.at(i).getQuaternionOrientation().y() << "," <<
+                    _dataset.at(i).getQuaternionOrientation().z() << "," <<
+                    _dataset.at(i).getQuaternionOrientation().w() << "\n" ;
+
+        }
+
+        file.open(_file_name_with_path);
+        file << toFile.str();
+        file.close();
+        return true;
+
+    }
+
+    bool DatasetManipulator::exportCSVDataset(std::vector<Pose> _dataset, std::string _prefix,
+                                              std::string _file_name_with_path) {
+
+        std::ofstream file;
+        std::stringstream toFile;
+
+        if (_dataset.empty()) {
+            output_string_ = "Cannot export an empty dataset.";
+            return false;
+        }
+
+        toFile << "Name, Parent Frame, X, Y, Z, Roll, Pitch, Yaw, qX, qY, qZ, qW\n";
+
+        for (size_t i = 0; i < _dataset.size(); ++i) {
+
+            toFile << _prefix << std::to_string(i) << "," <<
+                   _dataset.at(i).getParentName() << "," <<
+                   _dataset.at(i).getPosition().x() << "," <<
+                   _dataset.at(i).getPosition().y() << "," <<
+                   _dataset.at(i).getPosition().z() << "," <<
+                   _dataset.at(i).getRPYOrientationZYXOrder().x() << "," <<
+                   _dataset.at(i).getRPYOrientationZYXOrder().y() << "," <<
+                   _dataset.at(i).getRPYOrientationZYXOrder().z() << "," <<
+                   _dataset.at(i).getQuaternionOrientation().x() << "," <<
+                   _dataset.at(i).getQuaternionOrientation().y() << "," <<
+                   _dataset.at(i).getQuaternionOrientation().z() << "," <<
+                   _dataset.at(i).getQuaternionOrientation().w() << "\n" ;
+
+        }
+
+        file.open(_file_name_with_path);
+        file << toFile.str();
+        file.close();
+
+        return true;
     }
 }

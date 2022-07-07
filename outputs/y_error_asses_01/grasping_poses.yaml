@@ -7,14 +7,14 @@ candidate_0:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: 0.0260819
-    y: -0.0241223
-    z: -0.00433801
+    x: 0.0184728
+    y: 0.0409513
+    z: 0.0139047
   orientation:
-    x: 0.533474
-    y: 0.534193
-    z: -0.483373
-    w: -0.443164
+    x: -0.516525
+    y: -0.501241
+    z: 0.466223
+    w: 0.514389
 candidate_1:
   method: 
     type: 3
@@ -24,14 +24,14 @@ candidate_1:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: 0.022503
-    y: -0.00366588
-    z: -0.00544208
+    x: 0.0172557
+    y: 0.0578747
+    z: 0.0104991
   orientation:
-    x: 0.540101
-    y: 0.530254
-    z: -0.457262
-    w: -0.46694
+    x: -0.513143
+    y: -0.515555
+    z: 0.441249
+    w: 0.525535
 candidate_2:
   method: 
     type: 3
@@ -41,14 +41,14 @@ candidate_2:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: 0.0230337
-    y: 0.0150543
-    z: -0.000827522
+    x: 0.0165309
+    y: 0.0777715
+    z: 0.00989725
   orientation:
-    x: 0.544613
-    y: 0.51669
-    z: -0.481384
-    w: -0.452434
+    x: -0.522561
+    y: -0.509024
+    z: 0.440768
+    w: 0.523017
 candidate_3:
   method: 
     type: 3
@@ -58,14 +58,14 @@ candidate_3:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: 0.0206057
-    y: 0.0358857
-    z: 0.000132239
+    x: 0.0158616
+    y: 0.0962051
+    z: 0.00324522
   orientation:
-    x: 0.543312
-    y: 0.503942
-    z: -0.477118
-    w: -0.472454
+    x: -0.518708
+    y: -0.513722
+    z: 0.431792
+    w: 0.529705
 candidate_4:
   method: 
     type: 3
@@ -75,14 +75,14 @@ candidate_4:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: 0.0202088
-    y: 0.0555181
-    z: -0.00334103
+    x: 0.0156389
+    y: 0.115042
+    z: 0.00756282
   orientation:
-    x: 0.549858
-    y: 0.504931
-    z: -0.479536
-    w: -0.461244
+    x: -0.505941
+    y: -0.518049
+    z: 0.435863
+    w: 0.534483
 candidate_5:
   method: 
     type: 3
@@ -92,11 +92,11 @@ candidate_5:
     DOFs: []
   parent_frame_id: gt01_frame_id
   position:
-    x: 0.020016
-    y: 0.0758398
-    z: -0.00192244
+    x: 0.0151184
+    y: 0.13599
+    z: 0.00647246
   orientation:
-    x: 0.546589
-    y: 0.50374
-    z: -0.483515
-    w: -0.462278
+    x: -0.521407
+    y: -0.508583
+    z: 0.437265
+    w: 0.52752
