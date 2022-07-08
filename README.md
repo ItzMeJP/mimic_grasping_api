@@ -74,6 +74,14 @@ cmake ..
 sudo make install
 ```
 
+Setup the environment variable $MIMIC_GRASPING_SERVER_ROOT such as:
+```
+cd $HOME
+echo MIMIC_GRASPING_SERVER_ROOT="{YOUR_PATH_TO}/mimic_grasping_api" >> .bashrc
+echo export MIMIC_GRASPING_SERVER_ROOT >> .bashrc
+```
+
+
 After the installation the shared libs will be located at ```/usr/local/lib```. The headers files will be located at ```/usr/local/include```
 
 ### <a name="gui_installation"></a> GUI
@@ -122,7 +130,7 @@ The localisation method definition is composed by (see [this](/configs/iilab_ine
 
 ### <a name="use_cases"></a> Running
 
-The API is modular and allows different configurations, therefore there exists distinctive methods to run it. Therefore, use-cases are proposed and the supported one are listed bellow. **It is recommended to use the mimic_grasping_api with its [Mimic Grasping GUI] to easy deployment and assessment.**
+The API is modular and allows different configurations, therefore there exists distinctive methods to run it. Thus, use-cases are proposed and the supported one are listed bellow. **It is recommended to use the mimic_grasping_api with its [Mimic Grasping GUI] to easy deployment and assessment.**
 
 #### 1) Debugger 6DMimic and OR 
 Debugger use-case to development tests using OR and 6DMimic. The only hardware needed is the tool firmware communication.

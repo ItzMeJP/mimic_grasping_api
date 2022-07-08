@@ -67,6 +67,9 @@ namespace mimic_grasping {
         bool saveTransformationMatrix(std::string _file_with_path);
         bool loadCompensationFileForOutputDataset(std::string _file_with_path);
 
+        void setCompensationFlagValue(bool _apply_compensation);
+        bool isOutputCompensated();
+
     protected:
         Json::Value json_matrix_;
         Eigen::Matrix4d transformation_matrix_;
@@ -79,6 +82,9 @@ namespace mimic_grasping {
                                  Pose _tool_pose,
                                  Pose &_tool_pose_wrt_obj);
 
+        bool apply_output_error_compensation_ = false;
+        std::string matrix_file_ = "/calib_matrix.json",
+                    output_compensation_file_ = "/general_error_compensation.json";
 
     private:
 
@@ -113,6 +119,7 @@ namespace mimic_grasping {
                                int _gripper_type,
                                std::string _prefix,
                                std::string _file_name_with_path);
+
 
 
     };

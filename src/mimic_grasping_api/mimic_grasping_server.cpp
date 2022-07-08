@@ -193,6 +193,11 @@ namespace mimic_grasping {
         }
         DEBUG_MSG("Current Profile: " << profile_);
 
+        general_profile_config_folder_path_ = profile_folder_path_ + general_profile_config_file_name_;
+
+        if(!loadGeneralConfigFile(general_profile_config_folder_path_)){
+            return false;
+        }
 
         buildProfileList();
 
@@ -219,8 +224,7 @@ namespace mimic_grasping {
             return false;
         }
 
-
-        if(!loadCompensationFileForOutputDataset(profile_folder_path_ + output_compensation_file_)){
+        if(apply_output_error_compensation_ && !loadCompensationFileForOutputDataset(profile_folder_path_ + output_compensation_file_)){
             error_string_ = "Dataset manipulator error: " + getDatasetManipulatorOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
@@ -678,6 +682,7 @@ namespace mimic_grasping {
         saveFirmwareInterfaceConfigFile(profile_folder_path_  + tool_firmware_file_);
         saveLocalizationConfigFile(profile_folder_path_  + localization_file_);
         saveTransformationMatrix(profile_folder_path_ + matrix_file_);
+        saveGeneralProfileConfigFile(profile_folder_path_ + general_profile_config_file_name_);
         return true;
     }
 
@@ -717,6 +722,47 @@ namespace mimic_grasping {
 
         return true;
     }
+
+    bool MimicGraspingServer::loadGeneralProfileConfigFile(std::string _file) {
+
+        std::ifstream config_file(_file, std::ifstream::binary);
+        if (config_file) {
+            try {
+                config_file >> general_profile_config_data_;
+            } catch (const std::exception &e) {
+                //std::cerr << e.what() << std::endl;
+                output_string_ = e.what();
+                DEBUG_MSG("Loading general profile configuration file exception error: " << output_string_ << std::endl);
+                return false;
+            }
+        } else {
+            output_string_ = "General profile configuration file not found. Current path: " + _file ;
+            return false;
+        }
+
+        output_compensation_file_ = general_profile_config_data_[JSON_ERR_CORRECTION_FILE_TAG].asString();
+        apply_output_error_compensation_ = general_profile_config_data_[JSON_APPLY_CORRECTION_TAG].asBool();
+        matrix_file_ = general_profile_config_data_[JSON_CALIB_MATRIX_FILE_TAG].asString();
+
+        output_string_ = "General profile configuration loaded.";
+
+        return true;
+    }
+
+    bool MimicGraspingServer::saveGeneralProfileConfigFile(std::string _file) {
+
+        general_profile_config_data_[JSON_ERR_CORRECTION_FILE_TAG] = output_compensation_file_;
+        general_profile_config_data_[JSON_APPLY_CORRECTION_TAG] = apply_output_error_compensation_;
+        general_profile_config_data_[JSON_CALIB_MATRIX_FILE_TAG] = matrix_file_;
+
+        std::ofstream outfile(_file);
+        outfile << general_profile_config_data_ << std::endl;
+        outfile.close();
+
+        return true;
+    }
+
+
 
 
 

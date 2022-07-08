@@ -56,6 +56,14 @@ namespace mimic_grasping {
         return true;
     }
 
+    void DatasetManipulator::setCompensationFlagValue(bool _apply_compensation){
+        apply_output_error_compensation_ = _apply_compensation;
+    }
+
+    bool DatasetManipulator::isOutputCompensated(){
+        return apply_output_error_compensation_;
+    }
+
     bool DatasetManipulator::saveTransformationMatrix(std::string _file_with_path){
 
         Json::Value jm;
@@ -94,7 +102,8 @@ namespace mimic_grasping {
 
         DEBUG_MSG("Path to general output compensation file: " << output_error_compensation_path_);
 
-        applyRunTimeLoadCorrection(output_error_compensation_path_,_tool_pose_wrt_obj);
+        if(apply_output_error_compensation_)
+            applyRunTimeLoadCorrection(output_error_compensation_path_,_tool_pose_wrt_obj);
 
         return true;
 

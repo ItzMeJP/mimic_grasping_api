@@ -30,7 +30,7 @@
 #define JSON_OBJ_ONESHOOT_TAG "one_shoot_estimation"
 #define JSON_APPLY_CORRECTION_TAG "apply_compensation"
 #define JSON_ERR_CORRECTION_FILE_TAG "error_compensation_file"
-
+#define JSON_CALIB_MATRIX_FILE_TAG "matrix_file"
 
 #define JSON_PL_FOLDER_PTH "folder_path"
 

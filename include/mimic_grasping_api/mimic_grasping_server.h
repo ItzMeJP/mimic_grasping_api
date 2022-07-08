@@ -51,6 +51,9 @@ namespace mimic_grasping{
         bool saveGeneralConfigFile(std::string _file);
         bool loadGeneralConfigFile(std::string _file);
 
+        bool loadGeneralProfileConfigFile(std::string _file);
+        bool saveGeneralProfileConfigFile(std::string _file);
+
 
         std::vector<Pose> getDataset(int _dataset_type);
         Pose getDataset(int _dataset_type, int _index);
@@ -83,13 +86,14 @@ namespace mimic_grasping{
                     scripts_folder_dir_ = "/scripts",
                     tool_firmware_file_ = "/tool_firmware_config.json",
                     localization_file_ = "/localization_config.json",
-                    matrix_file_ = "/calib_matrix.json",
-                    output_compensation_file_ = "/general_error_compensation.json",
                     current_msg_ = "",
                     profile_,
-                    general_ = "/general.json";
+                    general_ = "/general.json",
+                    general_profile_config_file_name_ = "/general_profile_config.json";
 
-        Json::Value general_config_data_;
+        Json::Value general_config_data_,
+                    general_profile_config_data_;
+
 
         int current_code_, last_current_code_;
         bool stop_ = false;
@@ -99,7 +103,7 @@ namespace mimic_grasping{
 
 
     private:
-        std::string output_string_, error_string_, output_export_path_, plugins_folder_path_, script_folder_path_, profile_folder_path_, config_folder_path_, general_config_folder_path_;
+        std::string output_string_, error_string_, output_export_path_, plugins_folder_path_, script_folder_path_, profile_folder_path_, config_folder_path_, general_config_folder_path_, general_profile_config_folder_path_;
         Pose current_obj_pose_,
              current_tool_pose_;
         std::vector<Pose> obj_pose_arr_,
