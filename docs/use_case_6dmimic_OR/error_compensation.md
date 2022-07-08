@@ -1,5 +1,7 @@
 # 6DMimic + OR error estimation
 
+# TODO
+
 It is possible to correct estimation error (compensate it) by setting one of the above files:
 
 - **tool_error_compensation.json:** set of compensation heuristics to correct the measurements that come from tool localization, i.e. the tool pose w.r.t. tool localization base frame.

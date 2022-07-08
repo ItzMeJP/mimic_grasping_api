@@ -1,6 +1,25 @@
-# mimic_grasping_api
-
+# Mimic Grasping API
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" />
+
+
+<!-- External Links -->
+[Eigen3]: https://eigen.tuxfamily.org/index.php?title=Main_Page
+[Boost]: https://www.boost.org/
+[Jsoncpp]: https://open-source-parsers.github.io/jsoncpp-docs/doxygen/index.html#_intro
+
+<!-- GitHub Links>
+[Simple Serial]: https://github.com/ItzMeJP/SimpleSerialInterface
+[Plugin System Management]: https://github.com/ItzMeJP/plugin_system_cpp
+[Transform Manipulation]: https://github.com/ItzMeJP/transform_manipulation
+[Mimic Grasping GUI]: https://github.com/ItzMeJP/mimic_grasping_gui/tree/master
+-->
+
+<!-- GitLab Links-->
+[Simple Serial]: https://gitlab.inesctec.pt/CRIIS/mimicgrasping/simple_serial
+[Plugin System Management]: https://gitlab.inesctec.pt/CRIIS/mimicgrasping/plugin_system_management
+[Transform Manipulation]: https://gitlab.inesctec.pt/CRIIS/mimicgrasping/transform_manipulation
+[Mimic Grasping GUI]:https://gitlab.inesctec.pt/CRIIS/mimicgrasping/mimic_grasping_gui
+
 
 ## <a name="summary"></a>1. Summary
 
@@ -9,6 +28,8 @@
 * [Prerequisites](#prerequisites)
 * [Installation](#installation)
 * [Usage](#usage)
+* [TODO](#todo_list)
+
 
 ## <a name="overview"></a>2. Overview
 
@@ -29,20 +50,21 @@ When the system is started the implemented plugins are loaded into API memory wi
 ## <a name="prerequisites"></a>2. Prerequisites
 
 ### Essential
-* [Simple serial](https://github.com/ItzMeJP/SimpleSerialInterface)
-* [Plugin system management](https://github.com/ItzMeJP/plugin_system_cpp)
-* [Transform Manipulation](https://github.com/ItzMeJP/transform_manipulation)
-* [Eigen3](https://eigen.tuxfamily.org/index.php?title=Main_Page)
-* [Boost](https://www.boost.org/)
-* [Jsoncpp](https://open-source-parsers.github.io/jsoncpp-docs/doxygen/index.html#_intro)
+* [Simple Serial] 
+* [Plugin System Management]
+* [Transform Manipulation]
+* [Eigen3]
+* [Boost]
+* [Jsoncpp]
 
 ### Complementary
 
-Since the mimic_grasping_api is based on plugin management, the plugins used could have to communicate to externals applications. Thus, verify [use-case](#use_cases) section for additional install information.
+Since the mimic_grasping_api is based on plugin management, the plugins used could have to communicate to externals applications. Thus, verify [use-case](#use_cases) section for additional install information according to setup in usage.
 
 ## <a name="installation"></a>3. Installation
+(Current testes with this API was performed using gcc 10.3.0)
 
-Setup all prerequisites. (Current testes with this API was performed using gcc 10.3.0)
+Setup all prerequisites and git clone the package. 
 Then:
 ```
 cd /mimic_grasping_server
@@ -56,14 +78,14 @@ After the installation the shared libs will be located at ```/usr/local/lib```. 
 
 ### <a name="gui_installation"></a> GUI
 
-A GUI was designed to easy interaction with this API, for further information and how to setup it, check [this package](https://gitlab.inesctec.pt/CRIIS/mimicgrasping/mimic_grasping_gui)
+A GUI was designed to easy interaction with this API, for further information and how to setup it, check [Mimic Grasping GUI]
 
 
 ## <a name="usage"></a> 4. USAGE
 
-## <a name="config_files"></a> Configuration Files
+### <a name="config_files"></a> Configuration Files
 
-Three configuration file composes the mimic_grasping_api: the general, the tool communication and the localisators. Each one of these files are defined bellow:
+The mimic_grasping_api has three configuration files which is discussed in current section: the general, the tool communication and the localisators. Besides, each used plugin also have its configuration file, however this specific configuration file is described according to the used use-case. Check the section [use-case](#use_cases) for more information.
 
 The general configuration file is composed by (see [this](/configs/general.json) example):
 
@@ -98,8 +120,22 @@ The localisation method definition is composed by (see [this](/configs/iilab_ine
 
 * **error_compensation_file:** the file which defines the correction factor. It is only read if "apply_compensation" flag is set. See [this](#corrector_ids) for further details.
 
+### <a name="use_cases"></a> Running
 
-## <a name="grippers_id"></a> Grippers IDs
+The API is modular and allows different configurations, therefore there exists distinctive methods to run it. Therefore, use-cases are proposed and the supported one are listed bellow. **It is recommended to use the mimic_grasping_api with its [Mimic Grasping GUI] to easy deployment and assessment.**
+
+#### 1) Debugger 6DMimic and OR 
+Debugger use-case to development tests using OR and 6DMimic. The only hardware needed is the tool firmware communication.
+See [this](/docs/use_case_debuger_6dmimic_OR/README.md) document for a use-case overview and detailed about the installation, calibration and usage;
+
+
+#### 2) 6DMimic and OR+Photoneo
+Application use-case using the 6DMimic system to detect the tool and the OR package to detect the object pose. The camera used is the Photoneo S. A robot is also used to support, ABB IRB1600. This setup is placed on iiLab facilities (08/07/2022).
+See [this](/docs/use_case_6dmimic_OR/README.md) document for a use-case overview and detailed about the installation, calibration and usage;
+
+
+
+### <a name="grippers_id"></a> Grippers IDs
 
 The list of supported grippers are defined below:
 
@@ -111,11 +147,10 @@ The list of supported grippers are defined below:
 * **SCHMALZ_FOAM_SUCTION_CUP_FMSW_N10_76x22: {Id: 5}** Small rectangular foam suction cup from Schmalz
 
 
-## <a name="corrector_ids"></a> Compensation Heuristics
+### <a name="corrector_ids"></a> Compensation Heuristics
 
 The compensation methods allow correct a pose value (x,y,z,roll,pitch,yaw) result according to an estimated error, i.e:
-``result += estimated_error``. It is necessary to establish a .json file (see [this](/configs/iilab_inesctecrobotics_wifi/general_error_compensation.json) example) which defines each translation (displacement in meters) and rotation (roll, pitch and yaw angles in radians - ZYX order) coordinate.
-
+``result += estimated_error``. Since the correction is performed at each pose component individually, it is necessary to establish a .json file (see [this](/configs/iilab_inesctecrobotics_wifi/general_error_compensation.json) example) which defines each translation (displacement in meters) and rotation (roll, pitch and yaw angles in radians - ZYX order) coordinate compensation.
 Thus, the list of supported heuristics to correct this error is defined bellow:
 
 #### 1. Constant absolute {Id: 0}: 
@@ -145,13 +180,10 @@ Configuration description params:
 * **base:** base coefficient to the power of an exponent;
 * **alpha:** exponential multiplier value ;
 
-
-### <a name="use_cases"></a> Use-Cases
-
-#### 1. OR+Photoneo and 6DMimic
-See [this](/docs/use_case_6dmimic_OR/README.md) document for a use-case overview and detailed about the installation, calibration and usage;
-
-
+## <a name="todo_list"></a> TODO
+* By now only serial communication is expected to change data with the demonstration tool mechanism, thus improve this interface by using plugins could allow more types of interface with external devices.
+* The compensation heuristics could be improved adding more types of correction factors.
+* Every time a new Gripper is used, it needs to be defined into Gripper ID lists inside the code.
 
 
 
