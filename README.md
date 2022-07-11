@@ -79,6 +79,7 @@ Setup the environment variable $MIMIC_GRASPING_SERVER_ROOT such as:
 cd $HOME
 echo MIMIC_GRASPING_SERVER_ROOT="{YOUR_PATH_TO}/mimic_grasping_api" >> .bashrc
 echo export MIMIC_GRASPING_SERVER_ROOT >> .bashrc
+source .bashrc
 ```
 
 
@@ -192,7 +193,7 @@ Configuration description params:
 * By now only serial communication is expected to change data with the demonstration tool mechanism, thus improve this interface by using plugins could allow more types of interface with external devices.
 * The compensation heuristics could be improved adding more types of correction factors.
 * Every time a new Gripper is used, it needs to be defined into Gripper ID lists inside the code.
-
+* Rename all references to name Localizator(s) to Locator(s) into the code;
 
 
 
