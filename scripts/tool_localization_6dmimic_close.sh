@@ -11,4 +11,4 @@
 #  sleep 1
 #done
 #echo "Killed"
-pkill mimic_void_proc&
+pkill 6dmimic_heartbi&

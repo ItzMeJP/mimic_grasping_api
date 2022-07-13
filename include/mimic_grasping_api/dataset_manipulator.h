@@ -83,8 +83,8 @@ namespace mimic_grasping {
                                  Pose &_tool_pose_wrt_obj);
 
         bool apply_output_error_compensation_ = false;
-        std::string matrix_file_ = "/calib_matrix.json",
-                    output_compensation_file_ = "/general_error_compensation.json";
+        std::string matrix_file_ = "",
+                    output_compensation_file_ = "";
 
     private:
 

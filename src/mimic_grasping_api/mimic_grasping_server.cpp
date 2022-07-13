@@ -191,15 +191,16 @@ namespace mimic_grasping {
             DEBUG_MSG(output_string_);
             generateProfileDirectoryTemplate();
         }
+
         DEBUG_MSG("Current Profile: " << profile_);
 
-        general_profile_config_folder_path_ = profile_folder_path_ + general_profile_config_file_name_;
+        buildProfileList();
 
-        if(!loadGeneralConfigFile(general_profile_config_folder_path_)){
+        general_profile_config_folder_path_ = profile_folder_path_ + "/" + general_profile_config_file_name_;
+
+        if(!loadGeneralProfileConfigFile(general_profile_config_folder_path_)){
             return false;
         }
-
-        buildProfileList();
 
 //        DEBUG_MSG("Current output export file defined: " << getOutputExportPath());
         output_string_ = "Setup process has been completed.";
@@ -217,14 +218,14 @@ namespace mimic_grasping {
             return false;
         }
 
-        if(!loadTransformationMatrix(profile_folder_path_ + matrix_file_)){
+        if(!loadTransformationMatrix(profile_folder_path_ +  "/" + matrix_file_)){
             //output_string_ = getDatasetManipulatorOutputSTR();
             error_string_ = "Dataset manipulator error: " + getDatasetManipulatorOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
         }
 
-        if(apply_output_error_compensation_ && !loadCompensationFileForOutputDataset(profile_folder_path_ + output_compensation_file_)){
+        if(apply_output_error_compensation_ && !loadCompensationFileForOutputDataset(profile_folder_path_ + "/" + output_compensation_file_)){
             error_string_ = "Dataset manipulator error: " + getDatasetManipulatorOutputSTR();
             DEBUG_MSG(error_string_);
             return false;
@@ -681,7 +682,7 @@ namespace mimic_grasping {
         mkdir(profile_folder_path_.c_str(),0777);
         saveFirmwareInterfaceConfigFile(profile_folder_path_  + tool_firmware_file_);
         saveLocalizationConfigFile(profile_folder_path_  + localization_file_);
-        saveTransformationMatrix(profile_folder_path_ + matrix_file_);
+        saveTransformationMatrix(profile_folder_path_ + "/" + matrix_file_);
         saveGeneralProfileConfigFile(profile_folder_path_ + general_profile_config_file_name_);
         return true;
     }

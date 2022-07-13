@@ -3,7 +3,7 @@
 	{
 		"ros_namespace" : "object_recognition",
 		"action_name" : "object_recognition/ObjectRecognitionSkill",
-		"target" : "/home/joaopedro/ros_ws/ws_grasping/src/mimic_grasping_ros_interface_pkg/models/gt01.ply",
+		"target" : "/home/joaopedro/ros_ws/ws_grasping/src/mimic_grasping_ros_interface_pkg/models/linear_groundtruth.ply",
 		"wait_for_server_timeout_in_seconds" : 50,
 		"wait_for_result_timeout_in_seconds" : 45
 	},

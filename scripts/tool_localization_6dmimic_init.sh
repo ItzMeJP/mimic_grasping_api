@@ -1,10 +1,11 @@
 #!/bin/bash
 
-./setup_hearbit.sh
+./setup_hearbit.sh&
 
 cd ${MIMIC_HEARTBIT_CHECKER_ROOT}
 
-./6dmimic_heartbit_checker &
+./6dmimic_heartbit_checker&
+
 #it is mandatory to put & in the last command, otherwise the finish function will not work
 
 #./SA -p iilab -c sa_auto.conf &

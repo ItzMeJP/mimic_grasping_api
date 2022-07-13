@@ -28,7 +28,7 @@ namespace mimic_grasping {
                 return false;
             }
         } else {
-            output_string_ = "Matrix file not found. Current path: \" + _file";
+            output_string_ = "Matrix file not found. Current path: " + _file_with_path;
             return false;
         }
 
@@ -48,7 +48,7 @@ namespace mimic_grasping {
         output_error_compensation_path_ = _file_with_path;
 
         if(!loadCompensationFile(_file_with_path)){
-            output_string_ = "Error while loading compensation configuration file for output dataset.";
+            output_string_ = "Error while loading compensation configuration file for output dataset. Current path: " + _file_with_path;
             DEBUG_MSG(output_string_);
             return false;
         }
@@ -102,9 +102,12 @@ namespace mimic_grasping {
 
         DEBUG_MSG("Path to general output compensation file: " << output_error_compensation_path_);
 
-        if(apply_output_error_compensation_)
-            applyRunTimeLoadCorrection(output_error_compensation_path_,_tool_pose_wrt_obj);
+        output_string_ = "Applying correction? :" + apply_output_error_compensation_;
+        DEBUG_MSG(output_string_);
 
+        if(apply_output_error_compensation_) {
+            applyRunTimeLoadCorrection(output_error_compensation_path_, _tool_pose_wrt_obj);
+        }
         return true;
 
     }
