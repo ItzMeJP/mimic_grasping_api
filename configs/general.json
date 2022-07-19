@@ -1,6 +1,6 @@
 {
-	"general" :
+	"general" : 
 	{
-		"profile" : "iilab_inesctecrobotics_wifi"
+		"profile" : "iilab_inesctecrobotics_angular_groundtruth"
 	}
 }

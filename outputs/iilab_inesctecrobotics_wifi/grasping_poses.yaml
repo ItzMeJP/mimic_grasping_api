@@ -5,16 +5,16 @@ candidate_0:
     type: 5
     parameters: []
     DOFs: []
-  parent_frame_id: angular_groundtruth_frame_id
+  parent_frame_id: linear_groundtruth_frame_id
   position:
-    x: -0.0026409
-    y: 0.0150277
-    z: 0.0922394
+    x: 0.0576972
+    y: 0.0634016
+    z: 0.0300658
   orientation:
-    x: 0.722235
-    y: -0.687716
-    z: 0.0110122
-    w: 0.0728179
+    x: 0.999012
+    y: 0.00145767
+    z: 0.0402414
+    w: 0.018811
 candidate_1:
   method: 
     type: 3
@@ -22,16 +22,16 @@ candidate_1:
     type: 5
     parameters: []
     DOFs: []
-  parent_frame_id: angular_groundtruth_frame_id
+  parent_frame_id: linear_groundtruth_frame_id
   position:
-    x: 0.00700056
-    y: 0.0183621
-    z: 0.0912115
+    x: 0.0488577
+    y: 0.0533552
+    z: 0.044919
   orientation:
-    x: -0.608901
-    y: 0.790044
-    z: 0.00182637
-    w: -0.0711797
+    x: 0.998742
+    y: 0.0166288
+    z: 0.0356762
+    w: 0.0310689
 candidate_2:
   method: 
     type: 3
@@ -39,16 +39,16 @@ candidate_2:
     type: 5
     parameters: []
     DOFs: []
-  parent_frame_id: angular_groundtruth_frame_id
+  parent_frame_id: linear_groundtruth_frame_id
   position:
-    x: 0.00853159
-    y: 0.0120324
-    z: 0.0911826
+    x: 0.0458444
+    y: 0.0506038
+    z: 0.0597824
   orientation:
-    x: -0.491833
-    y: 0.868797
-    z: 0.00349223
-    w: -0.0572739
+    x: 0.999182
+    y: 0.00998472
+    z: 0.0304854
+    w: 0.0246123
 candidate_3:
   method: 
     type: 3
@@ -56,16 +56,16 @@ candidate_3:
     type: 5
     parameters: []
     DOFs: []
-  parent_frame_id: angular_groundtruth_frame_id
+  parent_frame_id: linear_groundtruth_frame_id
   position:
-    x: 0.0065554
-    y: 0.00884183
-    z: 0.0913777
+    x: 0.0378446
+    y: 0.0420903
+    z: 0.074723
   orientation:
-    x: -0.413673
-    y: 0.908944
-    z: -0.00146268
-    w: -0.0518982
+    x: 0.99898
+    y: 0.0217615
+    z: 0.0304485
+    w: 0.0252693
 candidate_4:
   method: 
     type: 3
@@ -73,16 +73,16 @@ candidate_4:
     type: 5
     parameters: []
     DOFs: []
-  parent_frame_id: angular_groundtruth_frame_id
+  parent_frame_id: linear_groundtruth_frame_id
   position:
-    x: 0.0147853
-    y: 0.00998903
-    z: 0.0913716
+    x: 0.0318469
+    y: 0.0369986
+    z: 0.0893758
   orientation:
-    x: -0.222982
-    y: 0.973833
-    z: 0.0193172
-    w: -0.0394445
+    x: 0.998934
+    y: 0.0147931
+    z: 0.0257572
+    w: 0.0353282
 candidate_5:
   method: 
     type: 3
@@ -90,13 +90,81 @@ candidate_5:
     type: 5
     parameters: []
     DOFs: []
-  parent_frame_id: angular_groundtruth_frame_id
+  parent_frame_id: linear_groundtruth_frame_id
   position:
-    x: 0.0129694
-    y: 0.00831552
-    z: 0.091312
+    x: 0.0252757
+    y: 0.0325479
+    z: 0.105475
   orientation:
-    x: -0.0824628
-    y: 0.995862
-    z: 0.0201969
-    w: -0.0324147
+    x: 0.999359
+    y: 0.018201
+    z: 0.0265866
+    w: 0.015594
+candidate_6:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: linear_groundtruth_frame_id
+  position:
+    x: 0.0184861
+    y: 0.0239481
+    z: 0.120335
+  orientation:
+    x: 0.999307
+    y: -0.0131375
+    z: 0.0240679
+    w: 0.0251644
+candidate_7:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: linear_groundtruth_frame_id
+  position:
+    x: 0.0111191
+    y: 0.013215
+    z: 0.134966
+  orientation:
+    x: 0.998199
+    y: 0.00850512
+    z: 0.0134418
+    w: 0.0578413
+candidate_8:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: linear_groundtruth_frame_id
+  position:
+    x: 0.00613826
+    y: 0.0089268
+    z: 0.150182
+  orientation:
+    x: 0.998882
+    y: -0.00622211
+    z: 0.0164572
+    w: 0.0438682
+candidate_9:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: linear_groundtruth_frame_id
+  position:
+    x: -0.000217359
+    y: 0.00632313
+    z: 0.165531
+  orientation:
+    x: 0.999451
+    y: -0.000735535
+    z: 0.0241588
+    w: 0.0226739

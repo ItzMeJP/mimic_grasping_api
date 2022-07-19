@@ -1,0 +1,187 @@
+candidate_0:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: 0.0709133
+    y: 1.5862
+    z: 0.0770096
+  orientation:
+    x: 0.783698
+    y: -0.618018
+    z: -0.0054804
+    w: 0.0619766
+candidate_1:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: 0.066591
+    y: 1.58603
+    z: 0.0778342
+  orientation:
+    x: 0.787097
+    y: -0.61527
+    z: -0.00293308
+    w: 0.0437334
+candidate_2:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: 0.0544858
+    y: 1.58447
+    z: 0.0778673
+  orientation:
+    x: 0.790612
+    y: -0.610176
+    z: 0.002959
+    w: 0.0510854
+candidate_3:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: 0.0442191
+    y: 1.58275
+    z: 0.0779286
+  orientation:
+    x: 0.788218
+    y: -0.613496
+    z: 0.00225403
+    w: 0.0482784
+candidate_4:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: 0.033716
+    y: 1.58123
+    z: 0.078196
+  orientation:
+    x: 0.784254
+    y: -0.619052
+    z: -0.00219017
+    w: 0.041426
+candidate_5:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: 0.02836
+    y: 1.5798
+    z: 0.0787504
+  orientation:
+    x: 0.793155
+    y: -0.608327
+    z: -0.00096277
+    w: 0.0290182
+candidate_6:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: 0.0159943
+    y: 1.57869
+    z: 0.0788367
+  orientation:
+    x: 0.797065
+    y: -0.603048
+    z: 0.00803715
+    w: 0.0309114
+candidate_7:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: 0.0041713
+    y: 1.57667
+    z: 0.0786355
+  orientation:
+    x: 0.790381
+    y: -0.611592
+    z: 0.00294516
+    w: 0.0352753
+candidate_8:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.0047834
+    y: 1.57328
+    z: 0.0786822
+  orientation:
+    x: 0.792944
+    y: -0.607862
+    z: -0.00412346
+    w: 0.0415653
+candidate_9:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.0132012
+    y: 1.57263
+    z: 0.0787719
+  orientation:
+    x: 0.793945
+    y: -0.606897
+    z: -0.00305832
+    w: 0.0362982
+candidate_10:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.0238838
+    y: 1.56966
+    z: 0.0789149
+  orientation:
+    x: 0.788918
+    y: -0.610945
+    z: -0.026737
+    w: 0.0603338

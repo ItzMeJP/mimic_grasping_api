@@ -86,7 +86,7 @@ namespace mimic_grasping {
         error_compensation_path =  profile_folder_path_ + "/" + aux_obj_data.error_compensation_file;
 
         if(aux_obj_data.apply_error_compensation && !loadCompensationFile(error_compensation_path)){
-            output_string_ = "Failed to load error compensation file for Obj Localizator.";
+            output_string_ = "Failed to load error compensation file for Obj Locator.";
             DEBUG_MSG("!!!" << output_string_);
             return false;
         }
@@ -200,6 +200,20 @@ namespace mimic_grasping {
         return tool_localization_obj_->stopApp();
     }
 
+    int LocalizationInterface::requestToolLocatorStatus(){
+        int status = tool_localization_obj_->getStatus();
+        output_string_ = "Tool locator status request: Status Code:" + status;
+        DEBUG_MSG("output_string_");
+        return status;
+    }
+
+    int LocalizationInterface::requestObjLocatorStatus(){
+        int status = obj_localization_obj_->getStatus();
+        output_string_ = "Object locator status request: Status Code:" + status;
+        DEBUG_MSG("output_string_");
+        return status;
+    }
+
     bool LocalizationInterface::requestObjPose(Pose &_pose) {
 
         bool aux = obj_localization_obj_->requestData(_pose);
@@ -221,8 +235,17 @@ namespace mimic_grasping {
 
         bool aux = tool_localization_obj_->requestData(_pose);
 
-        if(!aux || !tool_localization_data_.apply_error_compensation)
-            return aux;
+        if(!aux){
+            if(tool_localization_obj_->getStatus() == LocalizationBase::FEEDBACK::ABORTED){
+                _pose.setName("ABORTED");
+                return true;
+            }
+            else
+                return aux;
+        }
+
+        if(!tool_localization_data_.apply_error_compensation)
+            return true;
 
         else
         {
@@ -231,7 +254,6 @@ namespace mimic_grasping {
             applyRunTimeLoadCorrection(error_compensation_path,_pose);
             return true;
         }
-
 
     }
 
@@ -282,13 +304,25 @@ std::string LocalizationInterface::execIt(const char *cmd, float _startup_delay_
         return true;
     }
 
-    bool LocalizationInterface::tool_localization_spinner_sleep(int usec) {
+    bool LocalizationInterface::tool_localization_spinner_sleep(int _usec, bool &_isAborted) {
 
-        tool_localization_obj_->spin(int(usec));
+        tool_localization_obj_->spin(int(_usec));
+        _isAborted = false;
+
         if (tool_localization_obj_->getStatus() == LocalizationBase::ERROR) {
             output_string_ = tool_localization_obj_->getOutputString();
+            DEBUG_MSG("Tool Locator Spinner: " << output_string_);
             return false;
         }
+
+        /*
+        if (tool_localization_obj_->getStatus() == LocalizationBase::ABORTED){
+            output_string_ = tool_localization_obj_->getOutputString();
+            DEBUG_MSG("Tool Locator Spinner: " << output_string_);
+            _isAborted = true;
+            return false;
+        }
+         */
 
         return true;
     }

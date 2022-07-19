@@ -443,7 +443,7 @@ namespace mimic_grasping {
 
     bool MimicGraspingServer::spin(){
 
-
+        //TODO: solve this issue!
         if(!firmware_spinner_sleep(500)){ // the serial reader is slow...
             error_string_ = "Tool firmware spin error: " + getToolFirmwareOutputSTR();
             initialized_firmware_communication_ = false;
@@ -462,7 +462,10 @@ namespace mimic_grasping {
             return false;
         }
 
-        if(!tool_localization_spinner_sleep(150)){
+        bool isToolLocatorAborted = false;
+        bool aux_tool_locator = tool_localization_spinner_sleep(150, isToolLocatorAborted);
+
+        if(!aux_tool_locator ){
             error_string_ = "Tool localization spin error: " + getLocalizationInterfaceOutputSTR();
             DEBUG_MSG(error_string_);
             initialized_tool_localization_ = false;
@@ -470,6 +473,16 @@ namespace mimic_grasping {
             output_string_  = "Closing interfaces since tool localization communication is lost." ;
             return false;
         }
+        /*
+        else if(!aux_tool_locator && isToolLocatorAborted){
+            error_string_ = "Tool localization spin error: " + getLocalizationInterfaceOutputSTR();
+            DEBUG_MSG(error_string_);
+            output_string_  = "Tool Locator does not retrieve any data." ;
+            DEBUG_MSG(error_string_);
+            //sendErrorMsg();
+            return true;
+        }
+         */
 
         current_msg_ = received_msg_;
         convertMsgToCode(current_msg_,current_code_);
@@ -499,43 +512,49 @@ namespace mimic_grasping {
             }
 
             if(!break_it) {
-                output_string_ = "Running tool localization...";
-                if (requestToolLocalization()) {
+                output_string_ = "Running tool locator...";
+                bool aux = requestToolLocalization();
+                if ( aux && !(requestToolLocatorStatus()==LocalizationBase::FEEDBACK::ABORTED)) {
                     DEBUG_MSG("" << current_tool_pose_.getName());
                     //tool_pose_arr_.push_back(current_tool_pose_);
                     DEBUG_MSG("Tool data size " << tool_pose_arr_.size());
                     sendSuccessMsg();
-                } else {
+                    output_string_ += "Acquisition saved with success. Grasping poses dataset size: " + tool_pose_arr_.size();
+                }
+                else if (aux && (requestToolLocatorStatus()==LocalizationBase::FEEDBACK::ABORTED)){
+                    sendErrorMsg();
+                    DEBUG_MSG("Acquisition: " << current_tool_pose_.getName());
+                }
+                else {
                     output_string_ = "Failed to localize the tool.";
                     obj_pose_arr_.pop_back();
                     sendErrorMsg();
                     //return false;
                 }
-
-                output_string_ +=
-                        "Acquisition saved with success. Grasping poses dataset size: " + tool_pose_arr_.size();
             }
         }
-        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && isOneShoot())
-        {
-            output_string_ = "Save pose request received. Running tool localization...";
-            if(requestToolLocalization()) {
-                DEBUG_MSG( "" << current_tool_pose_.getName() );
-                //tool_pose_arr_.push_back(current_tool_pose_);
-                DEBUG_MSG( "Tool data size " << tool_pose_arr_.size() );
-                sendSuccessMsg();
-            }
+        else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && isOneShoot()) {
+            output_string_ = "Save pose request received. Running tool locator...";
 
-            else{
+            bool aux = requestToolLocalization();
+            if (aux && !(requestToolLocatorStatus() == LocalizationBase::FEEDBACK::ABORTED)) {
+                DEBUG_MSG("" << current_tool_pose_.getName());
+                //tool_pose_arr_.push_back(current_tool_pose_);
+                DEBUG_MSG("Tool data size " << tool_pose_arr_.size());
+                sendSuccessMsg();
+                output_string_ +=
+                        "Acquisition saved with success. Grasping poses dataset size: " + tool_pose_arr_.size();
+            } else if (aux && (requestToolLocatorStatus() == LocalizationBase::FEEDBACK::ABORTED)) {
+                sendErrorMsg();
+                DEBUG_MSG("Acquisition: " << current_tool_pose_.getName());
+            } else {
                 output_string_ = "Failed to localize the tool.";
-                output_string_ = getLocalizationInterfaceOutputSTR();
+                obj_pose_arr_.pop_back();
                 sendErrorMsg();
                 //return false;
             }
-
-            output_string_ += "Acquisition saved with success. Grasping poses dataset size: " + tool_pose_arr_.size();
-
         }
+
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && !isOneShoot()){
             output_string_ = "Remove last saved pose request received.";
             DEBUG_MSG( output_string_ );
@@ -620,34 +639,80 @@ namespace mimic_grasping {
     bool MimicGraspingServer::requestToolLocalization(){
 
         if(requestToolPose(current_tool_pose_)) {
-            DEBUG_MSG( "################################################ ");
-            DEBUG_MSG( "Grasping Name: " << current_tool_pose_.getName() );
-            DEBUG_MSG( "Grasping Parent Frame: " << current_tool_pose_.getParentName() );
-            DEBUG_MSG( "Grasping Position [x, y, z][m]: " << "[" << current_tool_pose_.getPosition().x() << ", " << current_tool_pose_.getPosition().y() << ", " << current_tool_pose_.getPosition().z() << "]" );
-            DEBUG_MSG( "Grasping Orientation [x, y, z, w]: " << "[" << current_tool_pose_.getQuaternionOrientation().x() << ", " << current_tool_pose_.getQuaternionOrientation().y() << ", " << current_tool_pose_.getQuaternionOrientation().z() << ", " << current_tool_pose_.getQuaternionOrientation().w() << "]" );
-            DEBUG_MSG( "Grasping Orientation Euler Accumulative (Z-Y-X) [roll, pitch, yaw][rad]: " << "[" << current_tool_pose_.getRPYOrientationZYXOrder().x() << ", " << current_tool_pose_.getRPYOrientationZYXOrder().y() << ", " << current_tool_pose_.getRPYOrientationZYXOrder().z() << "]" );
-            DEBUG_MSG( "################################################ ");
-            tool_pose_arr_.push_back(current_tool_pose_);
 
-            Pose aux;
-            if(!applyTransformation(obj_pose_arr_.back(),tool_pose_arr_.back(),aux)) {
-                output_string_ = getDatasetManipulatorOutputSTR();
+            if(requestToolLocatorStatus()==LocalizationBase::FEEDBACK::ABORTED){
+                output_string_ = "Requesting tool data aborted.";
+                DEBUG_MSG(output_string_);
+                return true;
+            }
+            else {
+
+                DEBUG_MSG("################################################ ");
+                DEBUG_MSG("Grasping Name: " << current_tool_pose_.getName());
+                DEBUG_MSG("Grasping Parent Frame: " << current_tool_pose_.getParentName());
+                DEBUG_MSG("Grasping Position [x, y, z][m]: " << "[" << current_tool_pose_.getPosition().x() << ", "
+                                                             << current_tool_pose_.getPosition().y() << ", "
+                                                             << current_tool_pose_.getPosition().z() << "]");
+                DEBUG_MSG("Grasping Orientation [x, y, z, w]: " << "["
+                                                                << current_tool_pose_.getQuaternionOrientation().x()
+                                                                << ", "
+                                                                << current_tool_pose_.getQuaternionOrientation().y()
+                                                                << ", "
+                                                                << current_tool_pose_.getQuaternionOrientation().z()
+                                                                << ", "
+                                                                << current_tool_pose_.getQuaternionOrientation().w()
+                                                                << "]");
+                DEBUG_MSG("Grasping Orientation Euler Accumulative (Z-Y-X) [roll, pitch, yaw][rad]: " << "["
+                                                                                                      << current_tool_pose_.getRPYOrientationZYXOrder().x()
+                                                                                                      << ", "
+                                                                                                      << current_tool_pose_.getRPYOrientationZYXOrder().y()
+                                                                                                      << ", "
+                                                                                                      << current_tool_pose_.getRPYOrientationZYXOrder().z()
+                                                                                                      << "]");
+                DEBUG_MSG("################################################ ");
+
+                tool_pose_arr_.push_back(current_tool_pose_);
+
+                Pose aux;
+                if (!applyTransformation(obj_pose_arr_.back(), tool_pose_arr_.back(), aux)) {
+                    output_string_ = getDatasetManipulatorOutputSTR();
+                    return false;
+                }
+                DEBUG_MSG("################################################ ");
+                DEBUG_MSG("Grasping Name: " << aux.getName());
+                DEBUG_MSG("Grasping Parent Frame: " << aux.getParentName());
+                DEBUG_MSG("Grasping Position [x, y, z][m]: " << "[" << aux.getPosition().x() << ", "
+                                                             << aux.getPosition().y() << ", " << aux.getPosition().z()
+                                                             << "]");
+                DEBUG_MSG("Grasping Orientation [x, y, z, w]: " << "[" << aux.getQuaternionOrientation().x() << ", "
+                                                                << aux.getQuaternionOrientation().y() << ", "
+                                                                << aux.getQuaternionOrientation().z() << ", "
+                                                                << aux.getQuaternionOrientation().w() << "]");
+                DEBUG_MSG("Grasping Orientation Euler Accumulative (Z-Y-X) [roll, pitch, yaw][rad]: " << "["
+                                                                                                      << aux.getRPYOrientationZYXOrder().x()
+                                                                                                      << ", "
+                                                                                                      << aux.getRPYOrientationZYXOrder().y()
+                                                                                                      << ", "
+                                                                                                      << aux.getRPYOrientationZYXOrder().z()
+                                                                                                      << "]");
+                DEBUG_MSG("################################################ ");
+
+                tool_pose_wrt_obj_frame_arr_.push_back(aux);
+
+                return true;
+            }
+        }
+        else {
+
+            if(requestToolLocatorStatus()==LocalizationBase::FEEDBACK::ERROR){
+                error_string_ = "Error while requesting tool data.";
+                DEBUG_MSG(error_string_);
                 return false;
             }
-            DEBUG_MSG( "################################################ ");
-            DEBUG_MSG( "Grasping Name: " << aux.getName() );
-            DEBUG_MSG( "Grasping Parent Frame: " << aux.getParentName() );
-            DEBUG_MSG( "Grasping Position [x, y, z][m]: " << "[" << aux.getPosition().x() << ", " << aux.getPosition().y() << ", " << aux.getPosition().z() << "]" );
-            DEBUG_MSG( "Grasping Orientation [x, y, z, w]: " << "[" << aux.getQuaternionOrientation().x() << ", " << aux.getQuaternionOrientation().y() << ", " << aux.getQuaternionOrientation().z() << ", " << aux.getQuaternionOrientation().w() << "]" );
-            DEBUG_MSG( "Grasping Orientation Euler Accumulative (Z-Y-X) [roll, pitch, yaw][rad]: " << "[" << aux.getRPYOrientationZYXOrder().x() << ", " << aux.getRPYOrientationZYXOrder().y() << ", " << aux.getRPYOrientationZYXOrder().z() << "]" );
-            DEBUG_MSG( "################################################ ");
 
-            tool_pose_wrt_obj_frame_arr_.push_back(aux);
-
-            return true;
         }
-        else
-            return false;
+
+        return true; // TODO: be carefull
     }
 
     int MimicGraspingServer::getCurrentStateCode(){

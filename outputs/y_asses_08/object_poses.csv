@@ -1,0 +1,2 @@
+Name, Parent Frame, X, Y, Z, Roll, Pitch, Yaw, qX, qY, qZ, qW
+object_pose_0,camera_link,-0.00420739,-0.0116165,0.580653,-2.68136,0.375252,2.57386,0.308745,0.906355,-0.265985,0.111581

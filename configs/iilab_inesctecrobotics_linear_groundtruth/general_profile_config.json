@@ -1,0 +1,5 @@
+{
+  "matrix_file" : "calib_matrix.json",
+  "apply_compensation" : true,
+  "error_compensation_file" : "general_error_compensation.json"
+}

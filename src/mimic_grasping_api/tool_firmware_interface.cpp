@@ -100,7 +100,10 @@ namespace mimic_grasping {
 
     bool ToolFirmwareInterface::stopToolCommunication() {
         if (!first_tool_communication_) {
+            writeSerialCommand(MSG_TYPE::RESET); // put the tool to initial state  //TODO: verify this bug
             writeSerialCommand(MSG_TYPE::RESET); // put the tool to initial state
+            writeSerialCommand(MSG_TYPE::RESET); // put the tool to initial state
+
             serial_thread_reader_->interrupt();
             serial_thread_reader_->join();
 
@@ -164,7 +167,8 @@ namespace mimic_grasping {
             return false;
         }
         token = _msg.substr(_msg.find(delimiter) + delimiter.length(), std::string::npos);
-        output_string_ = "Identified code: " + token;
+        output_string_ = "Identified firmware code: " + token;
+        //DEBUG_MSG(output_string_);
         //std::cout << output_string_ << std::endl;
         _code = std::stoi(token);
         return true;
@@ -240,11 +244,11 @@ namespace mimic_grasping {
         std::string msg = received_msg_;
         if (!(msg.find("#" + std::to_string(MSG_TYPE::STATE_ERROR)) != std::string::npos)) {
             output_string_ = "Error msg not recognized.";
-            //std::cout << output_string_ << std::endl;
+            DEBUG_MSG("Send Firmware Error MSG: " << output_string_);
             return false;
         }
         output_string_ = "Error msg recognized.";
-        //std::cout << output_string_ << std::endl;
+        DEBUG_MSG("Send Firmware Error MSG: " << output_string_);
         return true;
     }
 

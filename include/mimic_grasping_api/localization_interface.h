@@ -81,9 +81,13 @@ namespace mimic_grasping {
 
         bool stopToolLocalization();
 
-        bool object_localization_spinner_sleep(int usec);
+        int requestObjLocatorStatus();
 
-        bool tool_localization_spinner_sleep(int usec);
+        int requestToolLocatorStatus();
+
+        bool object_localization_spinner_sleep(int _usec);
+
+        bool tool_localization_spinner_sleep(int _usec, bool& _isAborted);
 
         std::string getLocalizationInterfaceOutputSTR();
 
