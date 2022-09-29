@@ -1,0 +1,2 @@
+Candidate, Parent Frame, Method Type, Gripper Type, Gripper Params, Gripper DOFs,X, Y, Z, Roll, Pitch, Yaw, qX, qY, qZ, qW
+candidate_0,linear_groundtruth_frame_id,3,5,[],[],0.00928493,0.152339,0.0344962,3.00816,-0.0038967,0.0131044,0.997753,0.00640769,0.00238077,0.0666502

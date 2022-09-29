@@ -1,0 +1,2 @@
+Candidate, Parent Frame, Method Type, Gripper Type, Gripper Params, Gripper DOFs,X, Y, Z, Roll, Pitch, Yaw, qX, qY, qZ, qW
+candidate_0,knee_tube_frame_id,3,5,[],[],0.0298483,-0.110576,0.0554351,3.05828,-0.00536422,-2.28178,0.416321,-0.90826,-0.03674,0.0197936

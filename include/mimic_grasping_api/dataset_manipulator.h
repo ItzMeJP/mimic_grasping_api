@@ -69,6 +69,8 @@ namespace mimic_grasping {
 
         void setCompensationFlagValue(bool _apply_compensation);
         bool isOutputCompensated();
+        std::string getMatrixFileName();
+        std::string getOutputCompensationFileName();
 
     protected:
         Json::Value json_matrix_;
@@ -85,6 +87,8 @@ namespace mimic_grasping {
         bool apply_output_error_compensation_ = false;
         std::string matrix_file_ = "",
                     output_compensation_file_ = "";
+
+
 
     private:
 

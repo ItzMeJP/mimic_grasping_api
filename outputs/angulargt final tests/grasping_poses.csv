@@ -1,0 +1,5 @@
+Candidate, Parent Frame, Method Type, Gripper Type, Gripper Params, Gripper DOFs,X, Y, Z, Roll, Pitch, Yaw, qX, qY, qZ, qW
+candidate_0,angular_groundtruth_frame_id,3,5,[],[],-0.00604129,0.0265853,0.105165,3.03869,0.240697,1.45652,0.735844,0.664493,-0.0555019,0.117908
+candidate_1,angular_groundtruth_frame_id,3,5,[],[],0.049471,-0.00220733,0.097387,-2.56469,-0.0560442,1.47984,-0.70236,-0.652005,0.171883,0.228114
+candidate_2,angular_groundtruth_frame_id,3,5,[],[],-0.0268588,-0.00441613,0.102172,2.99487,-0.20295,0.642391,0.943783,0.306187,0.118882,0.0372947
+candidate_3,angular_groundtruth_frame_id,3,5,[],[],-0.0223672,0.00849733,0.105415,3.01246,0.260882,2.16704,0.455861,0.878208,-0.00424612,0.144648

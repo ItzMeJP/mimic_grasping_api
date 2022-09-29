@@ -1,0 +1,17 @@
+candidate_0:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: knee_tube_frame_id
+  position:
+    x: 0.0298483
+    y: -0.110576
+    z: 0.0554351
+  orientation:
+    x: 0.416321
+    y: -0.90826
+    z: -0.03674
+    w: 0.0197936

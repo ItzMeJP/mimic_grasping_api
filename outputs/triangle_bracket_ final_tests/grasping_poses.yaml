@@ -1,0 +1,68 @@
+candidate_0:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: triangle_bracket_frame_id
+  position:
+    x: 0.0286387
+    y: -0.0454878
+    z: 0.00701136
+  orientation:
+    x: -0.481518
+    y: 0.499667
+    z: -0.509283
+    w: 0.509023
+candidate_1:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: triangle_bracket_frame_id
+  position:
+    x: 0.0288446
+    y: -0.047654
+    z: -0.000853792
+  orientation:
+    x: -0.632126
+    y: 0.261432
+    z: -0.672786
+    w: 0.281831
+candidate_2:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: triangle_bracket_frame_id
+  position:
+    x: 0.0287519
+    y: -0.0272949
+    z: -0.0331465
+  orientation:
+    x: -0.470931
+    y: 0.511617
+    z: -0.512221
+    w: 0.504085
+candidate_3:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: triangle_bracket_frame_id
+  position:
+    x: 0.0286762
+    y: -0.0495553
+    z: 0.0249746
+  orientation:
+    x: -0.314139
+    y: 0.63023
+    z: -0.353741
+    w: 0.615625

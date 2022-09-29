@@ -1,0 +1,17 @@
+candidate_0:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: 0.0030412
+    y: 1.48991
+    z: 0.058689
+  orientation:
+    x: 0.874516
+    y: -0.483722
+    z: 0.00717856
+    w: 0.0343926

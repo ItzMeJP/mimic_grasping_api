@@ -1,0 +1,527 @@
+candidate_0:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.060203
+    y: -0.00588665
+    z: 0.0698187
+  orientation:
+    x: 0.0158725
+    y: 0.828676
+    z: 0.0429614
+    w: 0.557852
+candidate_1:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0577537
+    y: -0.00796846
+    z: 0.0652191
+  orientation:
+    x: 0.0145799
+    y: 0.838205
+    z: 0.0387888
+    w: 0.543779
+candidate_2:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0582794
+    y: -0.0109615
+    z: 0.0671126
+  orientation:
+    x: 0.0068742
+    y: 0.840751
+    z: 0.0281778
+    w: 0.540645
+candidate_3:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0574522
+    y: -0.000767931
+    z: 0.0675118
+  orientation:
+    x: -0.00628869
+    y: 0.844904
+    z: 0.0312776
+    w: 0.533966
+candidate_4:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0657094
+    y: -0.00356767
+    z: 0.056131
+  orientation:
+    x: 0.00105975
+    y: 0.855288
+    z: 0.0279726
+    w: 0.517397
+candidate_5:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0629898
+    y: -0.00689628
+    z: 0.0629182
+  orientation:
+    x: 0.00446464
+    y: 0.851521
+    z: 0.0251918
+    w: 0.523697
+candidate_6:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0225431
+    y: -0.00397168
+    z: 0.086437
+  orientation:
+    x: 0.019563
+    y: -0.95805
+    z: -0.0230922
+    w: -0.284997
+candidate_7:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0193767
+    y: -0.00815611
+    z: 0.089046
+  orientation:
+    x: 0.219741
+    y: 0.606956
+    z: -0.741466
+    w: 0.183156
+candidate_8:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0194413
+    y: -0.00607691
+    z: 0.0892207
+  orientation:
+    x: 0.300126
+    y: -0.186523
+    z: -0.935061
+    w: -0.0281933
+candidate_9:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0203072
+    y: -0.00434773
+    z: 0.088534
+  orientation:
+    x: 0.035694
+    y: -0.956109
+    z: -0.0195784
+    w: -0.290169
+candidate_10:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0205962
+    y: -0.00466779
+    z: 0.0889857
+  orientation:
+    x: 0.0236663
+    y: -0.956083
+    z: -0.0237097
+    w: -0.291176
+candidate_11:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: -0.0182014
+    y: -0.0103583
+    z: 0.0887776
+  orientation:
+    x: -0.140535
+    y: 0.836515
+    z: 0.463404
+    w: 0.256415
+candidate_12:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0168083
+    y: 0.00102347
+    z: 0.0898365
+  orientation:
+    x: 0.0426881
+    y: -0.99495
+    z: -0.080525
+    w: 0.0420358
+candidate_13:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0210735
+    y: -0.000460214
+    z: 0.0894889
+  orientation:
+    x: 0.0530222
+    y: -0.995103
+    z: -0.0754125
+    w: 0.035658
+candidate_14:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0180961
+    y: 0.00105522
+    z: 0.0898428
+  orientation:
+    x: 0.0454349
+    y: -0.994922
+    z: -0.0804383
+    w: 0.0399403
+candidate_15:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.01862
+    y: 0.000361819
+    z: 0.0895142
+  orientation:
+    x: 0.052439
+    y: -0.99485
+    z: -0.0773252
+    w: 0.0392945
+candidate_16:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0139263
+    y: 0.00204106
+    z: 0.090157
+  orientation:
+    x: 0.0573561
+    y: -0.994283
+    z: -0.0779279
+    w: 0.0451588
+candidate_17:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0198847
+    y: 1.38885e-05
+    z: 0.0896771
+  orientation:
+    x: 0.0551047
+    y: -0.99464
+    z: -0.0797671
+    w: 0.0359536
+candidate_18:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0553132
+    y: -0.000470489
+    z: 0.0864393
+  orientation:
+    x: 0.00129917
+    y: -0.93767
+    z: -0.055827
+    w: 0.343012
+candidate_19:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0552747
+    y: 0.00189243
+    z: 0.0882485
+  orientation:
+    x: -0.0117273
+    y: -0.936633
+    z: -0.0356236
+    w: 0.348298
+candidate_20:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0551033
+    y: 0.000945917
+    z: 0.0879681
+  orientation:
+    x: 0.0188221
+    y: -0.939954
+    z: -0.0434704
+    w: 0.337998
+candidate_21:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.057998
+    y: 0.00351281
+    z: 0.0845602
+  orientation:
+    x: 0.0438568
+    y: -0.943435
+    z: -0.0579896
+    w: 0.323486
+candidate_22:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0562863
+    y: 0.0033689
+    z: 0.0860688
+  orientation:
+    x: 0.0525022
+    y: -0.94465
+    z: -0.0449303
+    w: 0.32072
+candidate_23:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0575321
+    y: 0.00263516
+    z: 0.0850335
+  orientation:
+    x: 0.0445998
+    y: -0.947067
+    z: -0.0501014
+    w: 0.31395
+candidate_24:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0918566
+    y: 0.00579526
+    z: 0.0476049
+  orientation:
+    x: 0.00626694
+    y: -0.838705
+    z: -0.0422999
+    w: 0.542905
+candidate_25:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0917329
+    y: 0.00311153
+    z: 0.0485423
+  orientation:
+    x: -0.00475718
+    y: -0.844098
+    z: -0.0444962
+    w: 0.534318
+candidate_26:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0918403
+    y: 0.00351675
+    z: 0.0480973
+  orientation:
+    x: 0.00182613
+    y: -0.848284
+    z: -0.0364545
+    w: 0.528282
+candidate_27:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0916817
+    y: 0.00540413
+    z: 0.0488219
+  orientation:
+    x: -0.00835015
+    y: -0.849396
+    z: -0.0346196
+    w: 0.526553
+candidate_28:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0913418
+    y: 0.00160212
+    z: 0.049236
+  orientation:
+    x: -0.00918933
+    y: -0.854219
+    z: -0.0238477
+    w: 0.519285
+candidate_29:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0903479
+    y: 0.00590129
+    z: 0.050318
+  orientation:
+    x: -0.0217226
+    y: -0.859199
+    z: -0.00537883
+    w: 0.511152
+candidate_30:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: angular_groundtruth_frame_id
+  position:
+    x: 0.0910105
+    y: 0.00301672
+    z: 0.0498007
+  orientation:
+    x: -0.016213
+    y: -0.861007
+    z: -0.000674714
+    w: 0.508334

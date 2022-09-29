@@ -1,0 +1,43 @@
+{
+	"x":
+  {
+    "type": 2,
+    "description": {
+			"a": 0.0,
+			"b": 0.0
+		  }
+	},
+	"y": {
+		"type": 2,
+		"description": {
+			"a": 0.0,
+			"b": 0.0
+		}
+	},
+	"z": {
+		"type": 2,
+		"description": {
+			"a": 0.0,
+			"b": 0.0
+		}
+	},
+	"roll": {
+		"type": 0,
+		"description": {
+			"offset": 0.0
+		}
+	},
+	"pitch": {
+		"type": 0,
+		"description": {
+			"offset": 0.0
+		}
+	},
+	"yaw": {
+		"type": 0,
+		"description": {
+			"offset": 0.0
+		}
+	}
+
+}

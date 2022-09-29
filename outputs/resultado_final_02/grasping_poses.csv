@@ -1,0 +1,2 @@
+Candidate, Parent Frame, Method Type, Gripper Type, Gripper Params, Gripper DOFs,X, Y, Z, Roll, Pitch, Yaw, qX, qY, qZ, qW
+candidate_0,triangle_bracket_frame_id,3,5,[],[],0.028931,-0.0360097,0.0216912,-1.51893,-0.0381356,-1.633,-0.481483,0.492211,-0.537388,0.486946

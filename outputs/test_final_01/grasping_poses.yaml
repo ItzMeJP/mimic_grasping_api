@@ -1,0 +1,17 @@
+candidate_0:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: linear_groundtruth_frame_id
+  position:
+    x: 0.00928493
+    y: 0.152339
+    z: 0.0344962
+  orientation:
+    x: 0.997753
+    y: 0.00640769
+    z: 0.00238077
+    w: 0.0666502

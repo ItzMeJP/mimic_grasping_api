@@ -141,9 +141,19 @@ bool ErrorCompensation::loadCompensationFile(std::string _file_with_path) {
         applySpecificErrorCompensation(x_data_,t.x());
         applySpecificErrorCompensation(y_data_,t.y());
         applySpecificErrorCompensation(z_data_,t.z());
-        applySpecificErrorCompensation(roll_data_,r.x());
-        applySpecificErrorCompensation(pitch_data_,r.y());
-        applySpecificErrorCompensation(yaw_data_,r.z());
+
+
+        double roll_deg = to_degrees(r.x()),
+               pitch_deg = to_degrees(r.y()),
+               yaw_deg = to_degrees(r.z());
+
+        applySpecificErrorCompensation(roll_data_,roll_deg);
+        applySpecificErrorCompensation(pitch_data_,pitch_deg);
+        applySpecificErrorCompensation(yaw_data_,yaw_deg);
+
+        r.x() = from_degrees(roll_deg);
+        r.y() = from_degrees(pitch_deg);
+        r.z() = from_degrees(yaw_deg);
 
         _pose.setPosition(t);
         _pose.setRPYOrientationZYXOrder(r);

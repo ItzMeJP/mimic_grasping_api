@@ -1,0 +1,17 @@
+candidate_0:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: triangle_bracket_frame_id
+  position:
+    x: 0.028931
+    y: -0.0360097
+    z: 0.0216912
+  orientation:
+    x: -0.481483
+    y: 0.492211
+    z: -0.537388
+    w: 0.486946

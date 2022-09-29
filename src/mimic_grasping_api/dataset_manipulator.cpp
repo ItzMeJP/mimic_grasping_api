@@ -504,4 +504,11 @@ namespace mimic_grasping {
 
         return true;
     }
+
+    std::string DatasetManipulator::getMatrixFileName(){
+        return matrix_file_;
+    }
+    std::string DatasetManipulator::getOutputCompensationFileName(){
+        return output_compensation_file_;
+    }
 }

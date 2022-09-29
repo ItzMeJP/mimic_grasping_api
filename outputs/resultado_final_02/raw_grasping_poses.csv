@@ -1,0 +1,2 @@
+Candidate, Parent Frame, Method Type, Gripper Type, Gripper Params, Gripper DOFs,X, Y, Z, Roll, Pitch, Yaw, qX, qY, qZ, qW
+candidate_0,6dmimic_base,3,5,[],[],0.0030412,1.48991,0.058689,3.0883,-0.0458446,-1.00927,0.874516,-0.483722,0.00717856,0.0343926

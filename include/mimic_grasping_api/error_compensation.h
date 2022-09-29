@@ -7,6 +7,7 @@
 
 #include <string>
 #include <fstream>
+
 #include <transform_manipulation/pose.h>
 
 #include <jsoncpp/json/value.h>
@@ -79,6 +80,16 @@ namespace mimic_grasping {
 
         bool loadSpecificErrorCompensation(errorCompensationData &_in_data, std::string _tag_name);
         bool applySpecificErrorCompensation(errorCompensationData _in_data, double &_input);
+
+        static inline double from_degrees(double degrees)
+        {
+         return degrees * M_PI / 180.0;
+        }
+
+        static inline double to_degrees(double radians)
+        {
+        return radians * 180.0 / M_PI;
+        }
 
 /*
         double applyLinearCorrection(double _a, double _b, double _x)

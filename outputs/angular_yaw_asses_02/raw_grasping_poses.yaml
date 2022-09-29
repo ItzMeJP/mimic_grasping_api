@@ -7,14 +7,14 @@ candidate_0:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0851139
-    y: 1.5317
-    z: 0.150906
+    x: -0.122272
+    y: 1.54241
+    z: 0.194099
   orientation:
-    x: 0.822386
-    y: -0.567035
-    z: 0.00533896
-    w: 0.0460881
+    x: 0.850697
+    y: -0.524066
+    z: 0.00309903
+    w: 0.0407444
 candidate_1:
   method: 
     type: 3
@@ -24,14 +24,14 @@ candidate_1:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0816677
-    y: 1.53362
-    z: 0.151347
+    x: -0.121192
+    y: 1.5421
+    z: 0.194848
   orientation:
-    x: 0.826377
-    y: -0.561992
-    z: 0.00801566
-    w: 0.0346662
+    x: 0.850616
+    y: -0.52464
+    z: 0.00314268
+    w: 0.0345759
 candidate_2:
   method: 
     type: 3
@@ -41,14 +41,14 @@ candidate_2:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.082765
-    y: 1.53418
-    z: 0.151509
+    x: -0.118518
+    y: 1.54258
+    z: 0.194145
   orientation:
-    x: 0.81947
-    y: -0.572115
-    z: -0.000213216
-    w: 0.0339566
+    x: 0.85135
+    y: -0.522662
+    z: 0.00540935
+    w: 0.0447017
 candidate_3:
   method: 
     type: 3
@@ -58,14 +58,14 @@ candidate_3:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0860396
-    y: 1.5337
-    z: 0.151559
+    x: -0.133267
+    y: 1.54448
+    z: 0.195345
   orientation:
-    x: 0.8155
-    y: -0.578068
-    z: -0.00583466
-    w: 0.0276387
+    x: 0.970158
+    y: -0.237607
+    z: 0.00737551
+    w: 0.0477809
 candidate_4:
   method: 
     type: 3
@@ -75,14 +75,14 @@ candidate_4:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0846973
-    y: 1.53361
-    z: 0.151611
+    x: -0.132256
+    y: 1.5443
+    z: 0.195569
   orientation:
-    x: 0.818677
-    y: -0.573652
-    z: -0.00410645
-    w: 0.0259604
+    x: 0.968455
+    y: -0.245288
+    z: 0.00988284
+    w: 0.0427857
 candidate_5:
   method: 
     type: 3
@@ -92,14 +92,14 @@ candidate_5:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0854368
-    y: 1.53378
-    z: 0.151506
+    x: -0.13278
+    y: 1.54459
+    z: 0.195413
   orientation:
-    x: 0.818274
-    y: -0.574095
-    z: -0.00869413
-    w: 0.0276998
+    x: 0.969073
+    y: -0.243692
+    z: 0.00510038
+    w: 0.0385422
 candidate_6:
   method: 
     type: 3
@@ -109,14 +109,14 @@ candidate_6:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0838882
-    y: 1.53356
-    z: 0.151411
+    x: -0.139653
+    y: 1.53832
+    z: 0.194356
   orientation:
-    x: 0.815547
-    y: -0.57772
-    z: -0.00943943
-    w: 0.0321556
+    x: 0.997523
+    y: -0.0392876
+    z: 0.0346881
+    w: 0.0469061
 candidate_7:
   method: 
     type: 3
@@ -126,14 +126,14 @@ candidate_7:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0840951
-    y: 1.53345
-    z: 0.151484
+    x: -0.136667
+    y: 1.53853
+    z: 0.194558
   orientation:
-    x: 0.817392
-    y: -0.575178
-    z: -0.0109077
-    w: 0.0303477
+    x: 0.997358
+    y: -0.0418261
+    z: 0.0404369
+    w: 0.0434962
 candidate_8:
   method: 
     type: 3
@@ -143,14 +143,14 @@ candidate_8:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0845163
-    y: 1.53385
-    z: 0.151621
+    x: -0.137859
+    y: 1.53854
+    z: 0.194511
   orientation:
-    x: 0.821621
-    y: -0.569149
-    z: -0.0106919
-    w: 0.0298914
+    x: 0.997733
+    y: -0.0386059
+    z: 0.0373767
+    w: 0.0405217
 candidate_9:
   method: 
     type: 3
@@ -160,11 +160,147 @@ candidate_9:
     DOFs: []
   parent_frame_id: 6dmimic_base
   position:
-    x: -0.0852273
-    y: 1.53356
-    z: 0.151455
+    x: -0.137597
+    y: 1.53057
+    z: 0.19458
   orientation:
-    x: 0.823478
-    y: -0.566234
-    z: -0.00871161
-    w: 0.034464
+    x: 0.972241
+    y: 0.228398
+    z: 0.04037
+    w: 0.0308455
+candidate_10:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.129126
+    y: 1.53355
+    z: 0.195111
+  orientation:
+    x: 0.973433
+    y: 0.221315
+    z: 0.0538088
+    w: 0.0234998
+candidate_11:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.137866
+    y: 1.52969
+    z: 0.195015
+  orientation:
+    x: 0.971891
+    y: 0.230883
+    z: 0.0325519
+    w: 0.0325841
+candidate_12:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.132006
+    y: 1.52448
+    z: 0.195122
+  orientation:
+    x: 0.889113
+    y: 0.454301
+    z: 0.0469461
+    w: 0.0297569
+candidate_13:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.12984
+    y: 1.52453
+    z: 0.195139
+  orientation:
+    x: 0.887863
+    y: 0.456339
+    z: 0.0501061
+    w: 0.0307259
+candidate_14:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.136402
+    y: 1.52292
+    z: 0.195503
+  orientation:
+    x: 0.891196
+    y: 0.451412
+    z: 0.0351551
+    w: 0.0275745
+candidate_15:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.223573
+    y: 1.83645
+    z: 0.381835
+  orientation:
+    x: -0.862304
+    y: -0.177038
+    z: -0.00121887
+    w: 0.474434
+candidate_16:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.220493
+    y: 1.83834
+    z: 0.38026
+  orientation:
+    x: -0.863791
+    y: -0.175991
+    z: -0.0027636
+    w: 0.472106
+candidate_17:
+  method: 
+    type: 3
+  gripper:
+    type: 5
+    parameters: []
+    DOFs: []
+  parent_frame_id: 6dmimic_base
+  position:
+    x: -0.215216
+    y: 1.83454
+    z: 0.385676
+  orientation:
+    x: -0.860656
+    y: -0.168035
+    z: -0.0141299
+    w: 0.480454

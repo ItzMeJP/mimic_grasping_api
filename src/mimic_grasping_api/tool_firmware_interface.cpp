@@ -100,8 +100,6 @@ namespace mimic_grasping {
 
     bool ToolFirmwareInterface::stopToolCommunication() {
         if (!first_tool_communication_) {
-            writeSerialCommand(MSG_TYPE::RESET); // put the tool to initial state  //TODO: verify this bug
-            writeSerialCommand(MSG_TYPE::RESET); // put the tool to initial state
             writeSerialCommand(MSG_TYPE::RESET); // put the tool to initial state
 
             serial_thread_reader_->interrupt();

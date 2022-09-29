@@ -492,13 +492,33 @@ namespace mimic_grasping {
         }
         last_current_code_ = current_code_;
 
-        DEBUG_MSG( current_msg_ );
+        DEBUG_MSG(current_msg_);
+
+        static bool isReinitialized = false;
+        //return from any crash communication inside loop.
+        if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_INIT){
+            output_string_ = "Firmware has been restarted. Reinitializing it in run-time...";
+            DEBUG_MSG(output_string_);
+            if(!setGripperType()){
+                output_string_ = "Firmware is not able to be reinitialized in run-time.";
+                DEBUG_MSG(output_string_);
+                return false;
+            }
+            isReinitialized = true;
+        }
+
+        if(isReinitialized && current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_RUNNING) {
+            isReinitialized = false;
+            output_string_ = "Firmware reinitialized in run-time with success.";
+            DEBUG_MSG(output_string_);
+        }
+
 
         if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_SAVING && !isOneShoot())
         {
             bool break_it = false; //TODO: change this control variable by using the LocalizationBase::ABORTED from LocalizationBase class.
             output_string_ = "Save pose request received. Running object localization...";
-            DEBUG_MSG ( output_string_ );
+            DEBUG_MSG (output_string_);
             if(requestObjectLocalization()) {
                 DEBUG_MSG( "" << current_obj_pose_.getName() );
                 //obj_pose_arr_.push_back(current_obj_pose_);
@@ -507,7 +527,7 @@ namespace mimic_grasping {
 
             else{
                 sendErrorMsg();
-                output_string_ = "Failed to localize the object.";
+                output_string_ = "Failed to locate the object.";
                 break_it = true;
             }
 
@@ -526,7 +546,7 @@ namespace mimic_grasping {
                     DEBUG_MSG("Acquisition: " << current_tool_pose_.getName());
                 }
                 else {
-                    output_string_ = "Failed to localize the tool.";
+                    output_string_ = "Failed to locate the tool.";
                     obj_pose_arr_.pop_back();
                     sendErrorMsg();
                     //return false;
@@ -548,7 +568,7 @@ namespace mimic_grasping {
                 sendErrorMsg();
                 DEBUG_MSG("Acquisition: " << current_tool_pose_.getName());
             } else {
-                output_string_ = "Failed to localize the tool.";
+                output_string_ = "Failed to locate the tool.";
                 obj_pose_arr_.pop_back();
                 sendErrorMsg();
                 //return false;
@@ -571,7 +591,7 @@ namespace mimic_grasping {
         }
         else if(current_code_ == ToolFirmwareInterface::MSG_TYPE::STATE_CANCELLING && isOneShoot()){
             output_string_ = "Remove last save pose request received.";
-            DEBUG_MSG( output_string_ );
+            DEBUG_MSG(output_string_);
             tool_pose_arr_.erase(tool_pose_arr_.end());
             tool_pose_wrt_obj_frame_arr_.erase(tool_pose_wrt_obj_frame_arr_.end());
 
