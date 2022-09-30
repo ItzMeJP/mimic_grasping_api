@@ -72,6 +72,9 @@ namespace mimic_grasping {
         std::string getMatrixFileName();
         std::string getOutputCompensationFileName();
 
+        void setMatrixFile(std::string _in);
+        void setCompensationFile(std::string _in);
+
     protected:
         Json::Value json_matrix_;
         Eigen::Matrix4d transformation_matrix_;

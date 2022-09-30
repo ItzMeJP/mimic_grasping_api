@@ -511,4 +511,14 @@ namespace mimic_grasping {
     std::string DatasetManipulator::getOutputCompensationFileName(){
         return output_compensation_file_;
     }
+
+    void DatasetManipulator::setMatrixFile(std::string _in){
+
+        matrix_file_ = _in;
+
+    }
+
+    void DatasetManipulator::setCompensationFile(std::string _in){
+        output_compensation_file_ = _in;
+    }
 }
